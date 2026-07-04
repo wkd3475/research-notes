@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import NoteCard from '../../../components/NoteCard.astro';
+import { href } from '../../../config';
+import { locales, t, isLocale, parseNoteId } from '../../../i18n';
+import { filterNotesByLocale } from '../../../utils/notes';
+import { getCollection } from 'astro:content';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale } }));
+}
+
+const { locale: localeParam } = Astro.params;
+if (!localeParam || !isLocale(localeParam)) {
+  return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/`);
+}
+const locale = localeParam;
+const strings = t(locale);
+
+const notes = filterNotesByLocale(await getCollection('notes'), locale).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<BaseLayout title={strings.notes} description={strings.notesPageDesc} locale={locale}>
+  <section class="hero">
+    <h1>{strings.notes}</h1>
+    <p>{strings.notesPageDesc}</p>
+  </section>
+
+  {
+    notes.length > 0 ? (
+      notes.map((note) => {
+        const { translationId } = parseNoteId(note.id);
+        return (
+          <NoteCard
+            title={note.data.title}
+            description={note.data.description}
+            pubDate={note.data.pubDate}
+            tags={note.data.tags}
+            exploreNext={note.data.exploreNext}
+            locale={locale}
+            href={href(`/notes/${translationId}/`, locale)}
+          />
+        );
+      })
+    ) : (
+      <p class="empty-state">{strings.noNotes}</p>
+    )
+  }
+</BaseLayout>

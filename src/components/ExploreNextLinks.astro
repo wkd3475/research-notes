@@ -1,0 +1,57 @@
+---
+import { href } from '../config';
+import type { ExploreNextItem } from '../content.config';
+import { type Locale, t, parseNoteId } from '../i18n';
+import { filterNotesByLocale } from '../utils/notes';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  items: ExploreNextItem[];
+  locale: Locale;
+  compact?: boolean;
+}
+
+const { items, locale, compact = false } = Astro.props;
+const strings = t(locale);
+
+if (items.length === 0) return;
+
+const allNotes = await getCollection('notes');
+const localeNotes = filterNotesByLocale(allNotes, locale);
+const noteTitles = new Map(
+  localeNotes.map((n) => [parseNoteId(n.id).translationId, n.data.title]),
+);
+---
+
+<section class:list={['explore-next', compact && 'explore-next--compact']}>
+  <h3 class="explore-next-heading">{strings.nextResearch}</h3>
+  <ul class="explore-next-list">
+    {
+      items.map((item) => {
+        const linkedTitle = item.note ? noteTitles.get(item.note) : undefined;
+        const isLinked = item.note && linkedTitle;
+
+        return (
+          <li class="explore-next-item">
+            {
+              isLinked ? (
+                <a
+                  class="explore-btn explore-btn--linked"
+                  href={href(`/notes/${item.note}/`, locale)}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <span class="explore-btn explore-btn--pending" title={strings.pendingNote}>
+                  {item.label}
+                </span>
+              )
+            }
+            {item.reason && <span class="explore-reason">{item.reason}</span>}
+            {isLinked && <span class="explore-linked-note">→ {linkedTitle}</span>}
+          </li>
+        );
+      })
+    }
+  </ul>
+</section>

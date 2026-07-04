@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from 'astro:content';
+import NoteLayout from '../../../layouts/NoteLayout.astro';
+import { locales, isLocale, parseNoteId } from '../../../i18n';
+import { filterNotesByLocale } from '../../../utils/notes';
+import { getNoteRevisions, noteFilePath } from '../../../utils/noteHistory';
+
+export async function getStaticPaths() {
+  const allNotes = await getCollection('notes');
+
+  return locales.flatMap((locale) =>
+    filterNotesByLocale(allNotes, locale).map((note) => {
+      const { translationId } = parseNoteId(note.id);
+      return {
+        params: { locale, slug: translationId },
+        props: { note, locale, translationId },
+      };
+    }),
+  );
+}
+
+const { note, locale, translationId } = Astro.props;
+
+if (!isLocale(locale)) {
+  return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/`);
+}
+
+const revisions = getNoteRevisions(noteFilePath(locale, translationId));
+const { Content } = await render(note);
+---
+
+<NoteLayout
+  title={note.data.title}
+  description={note.data.description}
+  pubDate={note.data.pubDate}
+  tags={note.data.tags}
+  exploreNext={note.data.exploreNext}
+  exploredFrom={note.data.exploredFrom}
+  locale={locale}
+  translationId={translationId}
+  revisions={revisions}
+>
+  <Content />
+</NoteLayout>

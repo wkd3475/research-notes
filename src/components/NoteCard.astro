@@ -1,0 +1,40 @@
+---
+import ExploreNextLinks from './ExploreNextLinks.astro';
+import type { ExploreNextItem } from '../content.config';
+import type { Locale } from '../i18n';
+
+interface Props {
+  title: string;
+  description?: string;
+  pubDate: Date;
+  tags: string[];
+  href: string;
+  exploreNext?: ExploreNextItem[];
+  locale: Locale;
+}
+
+const { title, description, pubDate, tags, href, exploreNext = [], locale } = Astro.props;
+
+const formattedDate = pubDate.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+  timeZone: 'UTC',
+});
+---
+
+<article class="card note-card">
+  <p class="note-meta">{formattedDate}</p>
+  <h2><a href={href}>{title}</a></h2>
+  {description && <p class="note-desc">{description}</p>}
+  {
+    tags.length > 0 && (
+      <div class="tags">
+        {tags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    )
+  }
+  {exploreNext.length > 0 && <ExploreNextLinks items={exploreNext} locale={locale} compact />}
+</article>

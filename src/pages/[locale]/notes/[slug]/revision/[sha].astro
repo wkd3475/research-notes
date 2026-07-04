@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content';
+import NoteLayout from '../../../../../layouts/NoteLayout.astro';
+import { locales, isLocale, parseNoteId } from '../../../../../i18n';
+import { filterNotesByLocale } from '../../../../../utils/notes';
+import {
+  getFileAtRevision,
+  getNoteRevisions,
+  noteFilePath,
+  parseNoteFile,
+  resolveRevisionSha,
+} from '../../../../../utils/noteHistory';
+import { renderMarkdown } from '../../../../../utils/renderMarkdown';
+
+export async function getStaticPaths() {
+  const allNotes = await getCollection('notes');
+
+  return locales.flatMap((locale) =>
+    filterNotesByLocale(allNotes, locale).flatMap((note) => {
+      const { translationId } = parseNoteId(note.id);
+      const filePath = noteFilePath(locale, translationId);
+      const revisions = getNoteRevisions(filePath);
+
+      return revisions.slice(1).map((revision) => ({
+        params: { locale, slug: translationId, sha: revision.shortSha },
+        props: {
+          locale,
+          translationId,
+          sha: revision.sha,
+          revisionDate: revision.date,
+        },
+      }));
+    }),
+  );
+}
+
+const { locale, translationId, sha, revisionDate } = Astro.props;
+
+if (!isLocale(locale)) {
+  return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/`);
+}
+
+const filePath = noteFilePath(locale, translationId);
+const fullSha = resolveRevisionSha(filePath, sha);
+
+if (!fullSha) {
+  return Astro.redirect(`${import.meta.env.BASE_URL}${locale}/notes/${translationId}/`);
+}
+
+const raw = getFileAtRevision(filePath, fullSha);
+if (!raw) {
+  return Astro.redirect(`${import.meta.env.BASE_URL}${locale}/notes/${translationId}/`);
+}
+
+const parsed = parseNoteFile(raw);
+const revisions = getNoteRevisions(filePath);
+const html = renderMarkdown(parsed.body);
+---
+
+<NoteLayout
+  title={parsed.title}
+  description={parsed.description}
+  pubDate={parsed.pubDate ?? revisionDate}
+  tags={parsed.tags}
+  locale={locale}
+  translationId={translationId}
+  revisions={revisions}
+  revisionBanner={{ date: revisionDate, sha: fullSha }}
+>
+  <div set:html={html} />
+</NoteLayout>

@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import { parseNoteId } from '../../i18n';
+import { filterNotesByLocale } from '../../utils/notes';
+import { getBrowsableMonths } from '../../utils/studyGrass';
+
+export async function getStaticPaths() {
+  const allNotes = await getCollection('notes');
+  const enNotes = filterNotesByLocale(allNotes, 'en');
+  const translationIds = new Set(enNotes.map((n) => parseNoteId(n.id).translationId));
+  const months = getBrowsableMonths(enNotes);
+
+  const slugs = [...translationIds, ...months];
+
+  return slugs.map((slug) => ({
+    params: { slug },
+  }));
+}
+
+const slug = Astro.params.slug ?? '';
+return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/${slug}/`);
+---

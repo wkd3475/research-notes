@@ -1,0 +1,118 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import ExploreNextLinks from '../components/ExploreNextLinks.astro';
+import NoteHistory from '../components/NoteHistory.astro';
+import { href } from '../config';
+import type { ExploreNextItem } from '../content.config';
+import { type Locale, t } from '../i18n';
+import { findNoteByTranslationId } from '../utils/notes';
+import type { NoteRevision } from '../utils/noteHistory';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title: string;
+  description?: string;
+  pubDate: Date;
+  tags: string[];
+  exploreNext?: ExploreNextItem[];
+  exploredFrom?: string;
+  locale: Locale;
+  translationId: string;
+  revisions?: NoteRevision[];
+  revisionBanner?: {
+    date: Date;
+    sha: string;
+  };
+}
+
+const {
+  title,
+  description,
+  pubDate,
+  tags,
+  exploreNext = [],
+  exploredFrom,
+  locale,
+  translationId,
+  revisions = [],
+  revisionBanner,
+} = Astro.props;
+
+const strings = t(locale);
+
+let parentNote: { title: string; translationId: string } | null = null;
+
+if (exploredFrom) {
+  const allNotes = await getCollection('notes');
+  const parent = findNoteByTranslationId(allNotes, exploredFrom, locale);
+  if (parent) {
+    parentNote = {
+      title: parent.data.title,
+      translationId: exploredFrom,
+    };
+  }
+}
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  locale={locale}
+  translationId={translationId}
+>
+  <article class="note-content">
+    <a class="back-link" href={href('/notes/', locale)}>{strings.backToNotes}</a>
+
+    {
+      parentNote && (
+        <p class="explored-from">
+          {strings.exploredFrom}:{' '}
+          <a href={href(`/notes/${parentNote.translationId}/`, locale)}>{parentNote.title}</a>
+        </p>
+      )
+    }
+
+    {
+      revisionBanner && (
+        <div class="revision-banner" role="status">
+          <p>
+            {strings.viewingRevision}{' '}
+            <time datetime={revisionBanner.date.toISOString()}>
+              {revisionBanner.date.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </time>
+          </p>
+          <a class="revision-banner-link" href={href(`/notes/${translationId}/`, locale)}>
+            {strings.backToCurrent}
+          </a>
+        </div>
+      )
+    }
+
+    <h1>{title}</h1>
+    <div class="note-meta">
+      <NoteHistory
+        locale={locale}
+        translationId={translationId}
+        pubDate={pubDate}
+        revisions={revisions}
+      />
+    </div>
+    {
+      tags.length > 0 && (
+        <div class="tags">
+          {tags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      )
+    }
+    <slot />
+    {exploreNext.length > 0 && <ExploreNextLinks items={exploreNext} locale={locale} />}
+  </article>
+</BaseLayout>

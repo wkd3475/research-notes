@@ -1,0 +1,183 @@
+---
+import { getCollection } from 'astro:content';
+import { href } from '../config';
+import { type Locale, t } from '../i18n';
+import { filterNotesByLocale } from '../utils/notes';
+import {
+  buildGrassWeeks,
+  computeStats,
+  dayAnchorId,
+  formatDateLabel,
+  getDayLabels,
+  getMonthLabels,
+  groupNotesByDate,
+} from '../utils/studyGrass';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const strings = t(locale);
+
+const allNotes = await getCollection('notes');
+const notes = filterNotesByLocale(allNotes, locale);
+const notesByDate = groupNotesByDate(notes);
+const weeks = buildGrassWeeks(notesByDate);
+const monthLabels = getMonthLabels(weeks, locale);
+const stats = computeStats(notesByDate);
+const dayLabels = getDayLabels(locale);
+---
+
+<section class="contribution-section card">
+  <h2 class="section-title">{strings.studyGrass}</h2>
+  <p class="note-desc">{strings.studyGrassDesc}</p>
+
+  <div class="grass-stats">
+    <div class="stat-item">
+      <span class="stat-value">{stats.totalNotes}</span>
+      <span class="stat-label">{strings.totalNotes}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{stats.activeDays}</span>
+      <span class="stat-label">{strings.activeDays}</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">{stats.longestStreak}</span>
+      <span class="stat-label">{strings.longestStreak}</span>
+    </div>
+  </div>
+
+  <div class="grass-calendar">
+    <p class="grass-scroll-hint" data-grass-hint>{strings.grassScrollHint}</p>
+    <div class="grass-scroll-viewport" data-grass-scroll>
+      <div class="grass-scroll-content">
+        <div class="grass-months" aria-hidden="true">
+          {monthLabels.map(({ label, weekIndex }) => (
+            <span class="grass-month" style={`grid-column: ${weekIndex + 2}`}>
+              {label}
+            </span>
+          ))}
+        </div>
+
+        <div class="grass-body">
+          <div class="grass-day-labels" aria-hidden="true">
+            {dayLabels.map((label, i) => (
+              <span class={`grass-day-label ${i % 2 === 0 ? '' : 'grass-day-label--spacer'}`}>
+                {i % 2 === 0 ? label : ''}
+              </span>
+            ))}
+          </div>
+
+          <div class="grass-weeks">
+            {
+              weeks.map((week) => (
+                <div class="grass-week">
+                  {week.map((day) => {
+                    const todayClass = day.isToday ? ' grass-cell--today' : '';
+                    const tooltip =
+                      day.count > 0
+                        ? `${formatDateLabel(day.date, locale)} · ${day.notes.map((n) => n.title).join(', ')}`
+                        : `${formatDateLabel(day.date, locale)} · ${strings.noNotesDay}`;
+
+                    if (day.isFuture) {
+                      return <span class="grass-cell grass-cell--future" aria-hidden="true" />;
+                    }
+
+                    if (day.count === 0) {
+                      return (
+                        <span
+                          class={`grass-cell grass-cell--0${todayClass}`}
+                          data-tooltip={tooltip}
+                          tabindex="0"
+                          role="img"
+                          aria-label={tooltip}
+                        />
+                      );
+                    }
+
+                    return (
+                      <a
+                        class={`grass-cell grass-cell--${day.level}${todayClass}`}
+                        href={href(`/notes/${day.date.slice(0, 7)}/#${dayAnchorId(day.date)}`, locale)}
+                        data-tooltip={tooltip}
+                        aria-label={tooltip}
+                      />
+                    );
+                  })}
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grass-legend" aria-hidden="true">
+    <span>{strings.less}</span>
+    <span class="grass-cell grass-cell--0" />
+    <span class="grass-cell grass-cell--1" />
+    <span class="grass-cell grass-cell--2" />
+    <span class="grass-cell grass-cell--3" />
+    <span class="grass-cell grass-cell--4" />
+    <span>{strings.more}</span>
+  </div>
+
+  <div id={`grass-tooltip-${locale}`} class="grass-tooltip" role="tooltip" hidden />
+</section>
+
+<script define:vars={{ locale }}>
+  const scrollViewport = document.querySelector(`[data-grass-scroll]`);
+  const scrollHint = document.querySelector(`[data-grass-hint]`);
+
+  const scrollToRecent = () => {
+    if (!scrollViewport) return;
+    scrollViewport.scrollLeft = scrollViewport.scrollWidth - scrollViewport.clientWidth;
+  };
+
+  const updateScrollHint = () => {
+    if (!scrollViewport || !scrollHint) return;
+    const overflows = scrollViewport.scrollWidth - scrollViewport.clientWidth > 4;
+    const atRecentEnd =
+      scrollViewport.scrollLeft >= scrollViewport.scrollWidth - scrollViewport.clientWidth - 4;
+    scrollHint.classList.toggle('grass-scroll-hint--visible', overflows && atRecentEnd);
+  };
+
+  if (scrollViewport) {
+    scrollToRecent();
+    updateScrollHint();
+    scrollViewport.addEventListener('scroll', updateScrollHint, { passive: true });
+    window.addEventListener('resize', updateScrollHint);
+  }
+
+  const tooltip = document.getElementById(`grass-tooltip-${locale}`);
+  if (tooltip) {
+    const cells = document.querySelectorAll('[data-tooltip]');
+
+    const show = (cell, text) => {
+      tooltip.textContent = text;
+      tooltip.hidden = false;
+      const rect = cell.getBoundingClientRect();
+      tooltip.style.left = `${rect.left + rect.width / 2}px`;
+      tooltip.style.top = `${rect.top - 8}px`;
+    };
+
+    const hide = () => {
+      tooltip.hidden = true;
+    };
+
+    cells.forEach((cell) => {
+      cell.addEventListener('mouseenter', () => {
+        const text = cell.getAttribute('data-tooltip');
+        if (text) show(cell, text);
+      });
+      cell.addEventListener('mouseleave', hide);
+      cell.addEventListener('focus', () => {
+        const text = cell.getAttribute('data-tooltip');
+        if (text) show(cell, text);
+      });
+      cell.addEventListener('blur', hide);
+    });
+  }
+</script>

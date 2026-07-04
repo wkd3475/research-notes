@@ -1,0 +1,69 @@
+---
+import '../styles/global.css';
+import ThemePicker from '../components/ThemePicker.astro';
+import LangToggle from '../components/LangToggle.astro';
+import { site, href } from '../config';
+import { DEFAULT_THEME } from '../themes';
+import { type Locale, t } from '../i18n';
+
+interface Props {
+  title: string;
+  description?: string;
+  locale: Locale;
+  translationId?: string;
+}
+
+const { title, description, locale, translationId } = Astro.props;
+const strings = t(locale);
+const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description ?? strings.siteDescription} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <script is:inline define:vars={{ defaultTheme: DEFAULT_THEME, storageKey: 'research-notes-theme' }}>
+      try {
+        var saved = localStorage.getItem(storageKey);
+        if (saved) document.documentElement.setAttribute('data-theme', saved);
+        else document.documentElement.setAttribute('data-theme', defaultTheme);
+      } catch (e) {}
+    </script>
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container">
+        <a class="site-title" href={href('/', locale)}>{site.title}</a>
+        <nav class="site-nav">
+          <a href={href('/notes/', locale)}>{strings.notes}</a>
+          <a href={`https://github.com/${site.githubUsername}/${site.githubRepo}`} target="_blank" rel="noopener">
+            GitHub
+          </a>
+          <ThemePicker locale={locale} />
+          <LangToggle locale={locale} translationId={translationId} />
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        {strings.footer} · <a href={`https://github.com/${site.githubUsername}`}>{site.githubUsername}</a>
+      </p>
+    </footer>
+  </body>
+</html>

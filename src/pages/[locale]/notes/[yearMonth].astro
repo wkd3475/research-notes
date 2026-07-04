@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import NoteCard from '../../../components/NoteCard.astro';
+import { href } from '../../../config';
+import { locales, t, isLocale, parseNoteId } from '../../../i18n';
+import { filterNotesByLocale } from '../../../utils/notes';
+import {
+  findNextMonthWithNotes,
+  findPreviousMonthWithNotes,
+  formatDayHeading,
+  dayAnchorId,
+  formatDateKey,
+  formatYearMonthLabel,
+  getBrowsableMonths,
+  getCurrentYearMonth,
+  getEarliestMonthWithNotes,
+  getMonthsWithNotes,
+  skippedMonthsBetween,
+} from '../../../utils/studyGrass';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const allNotes = await getCollection('notes');
+
+  return locales.flatMap((locale) => {
+    const localeNotes = filterNotesByLocale(allNotes, locale);
+    const months = getBrowsableMonths(localeNotes);
+    return months.map((yearMonth) => ({
+      params: { locale, yearMonth },
+      props: { yearMonth, locale },
+    }));
+  });
+}
+
+const { yearMonth, locale: localeProp } = Astro.props;
+
+if (!localeProp || !isLocale(localeProp)) {
+  return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/`);
+}
+
+const locale = localeProp;
+const strings = t(locale);
+
+const allNotesCollection = filterNotesByLocale(await getCollection('notes'), locale);
+const monthsWithNotes = getMonthsWithNotes(allNotesCollection);
+const currentYearMonth = getCurrentYearMonth();
+const earliestMonth = getEarliestMonthWithNotes(allNotesCollection) ?? currentYearMonth;
+
+const allNotes = allNotesCollection
+  .filter((note) => formatDateKey(note.data.pubDate).startsWith(`${yearMonth}-`))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const notesByDate = new Map<string, typeof allNotes>();
+
+for (const note of allNotes) {
+  const dateKey = formatDateKey(note.data.pubDate);
+  const existing = notesByDate.get(dateKey) ?? [];
+  existing.push(note);
+  notesByDate.set(dateKey, existing);
+}
+
+const dateGroups = [...notesByDate.entries()].sort(([a], [b]) => b.localeCompare(a));
+
+const prevTarget = findPreviousMonthWithNotes(yearMonth, monthsWithNotes);
+const nextTarget = findNextMonthWithNotes(yearMonth, monthsWithNotes, currentYearMonth);
+const skippedPrevMonths =
+  prevTarget !== null ? skippedMonthsBetween(prevTarget, yearMonth) : [];
+
+const monthLabel = formatYearMonthLabel(yearMonth, locale);
+const hasPrevMonth = prevTarget !== null;
+const hasNextMonth = nextTarget !== null;
+const isEarliestMonthWithNotes =
+  monthsWithNotes.length > 0 && yearMonth === monthsWithNotes[0];
+---
+
+<BaseLayout title={`${monthLabel}`} description={strings.notesPageDesc} locale={locale}>
+  <section class="hero">
+    <a class="back-link" href={href('/notes/', locale)}>{strings.backToNotes}</a>
+    <h1>{monthLabel}</h1>
+    <p>
+      {allNotes.length > 0 ? strings.notesThisMonth(allNotes.length) : strings.noNotesThisMonth}
+    </p>
+  </section>
+
+  <nav class="month-nav" aria-label="month navigation">
+    {
+      hasPrevMonth ? (
+        <div class="month-nav-group">
+          <a class="month-nav-btn" href={href(`/notes/${prevTarget}/`, locale)}>
+            ← {formatYearMonthLabel(prevTarget!, locale)}
+          </a>
+          {
+            skippedPrevMonths.length > 0 && (
+              <span class="month-nav-hint">
+                {strings.skippedMonths(
+                  skippedPrevMonths.map((m) => formatYearMonthLabel(m, locale)).join(', '),
+                )}
+              </span>
+            )
+          }
+        </div>
+      ) : (
+        <span class="month-nav-btn month-nav-btn--disabled">{strings.noNotesEarlier}</span>
+      )
+    }
+    {
+      hasNextMonth ? (
+        <a class="month-nav-btn" href={href(`/notes/${nextTarget}/`, locale)}>
+          {formatYearMonthLabel(nextTarget!, locale)} →
+        </a>
+      ) : (
+        <span class="month-nav-btn month-nav-btn--disabled">{strings.noNextMonth}</span>
+      )
+    }
+  </nav>
+
+  {
+    allNotes.length === 0 && (
+      <div class="month-empty-notice card">
+        <p>
+          {
+            prevTarget ? (
+              <>
+                {strings.monthEmptyWithPrev}{' '}
+                <a href={href(`/notes/${prevTarget}/`, locale)}>
+                  {formatYearMonthLabel(prevTarget, locale)}
+                </a>
+              </>
+            ) : isEarliestMonthWithNotes ? (
+              strings.monthEmptyFirst
+            ) : (
+              strings.monthEmpty
+            )
+          }
+        </p>
+      </div>
+    )
+  }
+
+  {
+    dateGroups.length > 0 &&
+      dateGroups.map(([dateKey, notes]) => (
+        <section id={dayAnchorId(dateKey)} class="day-group">
+          <h2 class="day-group-title">{formatDayHeading(dateKey, locale)}</h2>
+          {notes.map((note) => {
+            const { translationId } = parseNoteId(note.id);
+            return (
+              <NoteCard
+                title={note.data.title}
+                description={note.data.description}
+                pubDate={note.data.pubDate}
+                tags={note.data.tags}
+                exploreNext={note.data.exploreNext}
+                locale={locale}
+                href={href(`/notes/${translationId}/`, locale)}
+              />
+            );
+          })}
+        </section>
+      ))
+  }
+
+  <nav class="month-nav month-nav--bottom" aria-label="month navigation">
+    {
+      hasPrevMonth ? (
+        <div class="month-nav-group">
+          <a class="month-nav-btn" href={href(`/notes/${prevTarget}/`, locale)}>
+            ← {formatYearMonthLabel(prevTarget!, locale)}
+          </a>
+          {
+            skippedPrevMonths.length > 0 && (
+              <span class="month-nav-hint">
+                {strings.skippedMonths(
+                  skippedPrevMonths.map((m) => formatYearMonthLabel(m, locale)).join(', '),
+                )}
+              </span>
+            )
+          }
+        </div>
+      ) : (
+        <span class="month-nav-btn month-nav-btn--disabled">{strings.noNotesEarlier}</span>
+      )
+    }
+    {
+      hasNextMonth ? (
+        <a class="month-nav-btn" href={href(`/notes/${nextTarget}/`, locale)}>
+          {formatYearMonthLabel(nextTarget!, locale)} →
+        </a>
+      ) : (
+        <span class="month-nav-btn month-nav-btn--disabled">{strings.noNextMonth}</span>
+      )
+    }
+  </nav>
+</BaseLayout>
+
+<script>
+  const scrollToHash = () => {
+    const { hash } = window.location;
+    if (!hash) return;
+    const target = document.querySelector(hash);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  scrollToHash();
+  window.addEventListener('hashchange', scrollToHash);
+</script>

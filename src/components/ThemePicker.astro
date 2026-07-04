@@ -1,0 +1,96 @@
+---
+import { themes, DEFAULT_THEME } from '../themes';
+import type { Locale } from '../i18n';
+import { t } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const strings = t(locale);
+---
+
+<div class="theme-picker">
+  <button
+    type="button"
+    class="theme-picker-toggle"
+    aria-label={strings.themePicker}
+    aria-expanded="false"
+    aria-haspopup="listbox"
+    id="theme-picker-toggle"
+  >
+    <span class="theme-picker-current" id="theme-picker-current" data-theme={DEFAULT_THEME}></span>
+  </button>
+  <ul class="theme-picker-menu" id="theme-picker-menu" role="listbox" aria-label={strings.themePicker} hidden>
+    {
+      themes.map((theme) => (
+        <li role="option">
+          <button
+            type="button"
+            class="theme-picker-option"
+            data-theme={theme.id}
+            aria-label={theme.label}
+            title={theme.label}
+          >
+            <span class="theme-swatch" style={`background: ${theme.swatch}`}></span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  import { DEFAULT_THEME, THEME_STORAGE_KEY, isThemeId } from '../themes';
+
+  const toggle = document.getElementById('theme-picker-toggle');
+  const menu = document.getElementById('theme-picker-menu');
+  const current = document.getElementById('theme-picker-current');
+
+  const applyTheme = (themeId: string) => {
+    if (!isThemeId(themeId)) return;
+    document.documentElement.setAttribute('data-theme', themeId);
+    localStorage.setItem(THEME_STORAGE_KEY, themeId);
+    if (current) current.setAttribute('data-theme', themeId);
+    menu?.querySelectorAll('.theme-picker-option').forEach((btn) => {
+      btn.setAttribute('aria-selected', btn.getAttribute('data-theme') === themeId ? 'true' : 'false');
+    });
+  };
+
+  const saved = localStorage.getItem(THEME_STORAGE_KEY);
+  if (saved && isThemeId(saved)) {
+    applyTheme(saved);
+  } else {
+    applyTheme(DEFAULT_THEME);
+  }
+
+  const closeMenu = () => {
+    menu?.setAttribute('hidden', '');
+    toggle?.setAttribute('aria-expanded', 'false');
+  };
+
+  const openMenu = () => {
+    menu?.removeAttribute('hidden');
+    toggle?.setAttribute('aria-expanded', 'true');
+  };
+
+  toggle?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (menu?.hasAttribute('hidden')) openMenu();
+    else closeMenu();
+  });
+
+  menu?.querySelectorAll('.theme-picker-option').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const themeId = btn.getAttribute('data-theme');
+      if (themeId) applyTheme(themeId);
+      closeMenu();
+    });
+  });
+
+  document.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+</script>

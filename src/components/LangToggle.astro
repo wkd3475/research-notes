@@ -1,0 +1,74 @@
+---
+import { href } from '../config';
+import type { Locale } from '../i18n';
+
+interface Props {
+  locale: Locale;
+  translationId?: string;
+}
+
+const { locale, translationId } = Astro.props;
+
+function localeHref(target: Locale, pathname: string): string {
+  if (translationId) {
+    return href(`/notes/${translationId}/`, target);
+  }
+
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+  if (/\/en(\/|$)/.test(pathname)) {
+    return pathname.replace(/\/en(\/|$)/, `/${target}$1`);
+  }
+  if (/\/ko(\/|$)/.test(pathname)) {
+    return pathname.replace(/\/ko(\/|$)/, `/${target}$1`);
+  }
+
+  return `${base}/${target}/`;
+}
+
+const enHref = localeHref('en', Astro.url.pathname);
+const koHref = localeHref('ko', Astro.url.pathname);
+const otherLocale: Locale = locale === 'en' ? 'ko' : 'en';
+const otherHref = otherLocale === 'en' ? enHref : koHref;
+---
+
+<button
+  type="button"
+  class="lang-toggle"
+  data-active={locale}
+  data-other-href={otherHref}
+  data-other-locale={otherLocale}
+  aria-label={locale === 'en' ? 'Switch to Korean' : 'Switch to English'}
+>
+  <span class="lang-toggle-slider" aria-hidden="true"></span>
+  <span class:list={['lang-toggle-label', locale === 'ko' && 'is-active']} data-locale="ko">한</span>
+  <span class:list={['lang-toggle-label', locale === 'en' && 'is-active']} data-locale="en">영</span>
+</button>
+
+<script>
+  const ANIM_MS = 280;
+
+  document.querySelectorAll('.lang-toggle').forEach((toggle) => {
+    const switchLang = () => {
+      const otherLocale = toggle.getAttribute('data-other-locale');
+      const otherHref = toggle.getAttribute('data-other-href');
+      if (!otherLocale || !otherHref) return;
+
+      toggle.setAttribute('data-active', otherLocale);
+
+      toggle.querySelectorAll('.lang-toggle-label').forEach((label) => {
+        label.classList.toggle(
+          'is-active',
+          label.getAttribute('data-locale') === otherLocale,
+        );
+      });
+
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.setTimeout(() => {
+        window.location.href = otherHref;
+      }, reduced ? 0 : ANIM_MS);
+    };
+
+    toggle.addEventListener('click', switchLang);
+  });
+</script>
