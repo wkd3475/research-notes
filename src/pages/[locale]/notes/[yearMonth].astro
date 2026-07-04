@@ -35,7 +35,7 @@ export async function getStaticPaths() {
 const { yearMonth, locale: localeProp } = Astro.props;
 
 if (!localeProp || !isLocale(localeProp)) {
-  return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/`);
+  return Astro.redirect(href('/notes/'));
 }
 
 const locale = localeProp;

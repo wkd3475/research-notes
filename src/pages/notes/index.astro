@@ -1,3 +1,5 @@
 ---
-return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/`);
+import { href } from '../../config';
+
+return Astro.redirect(href('/notes/'));
 ---

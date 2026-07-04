@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { href } from '../../config';
 import { parseNoteId } from '../../i18n';
 import { filterNotesByLocale } from '../../utils/notes';
 import { getBrowsableMonths } from '../../utils/studyGrass';
@@ -18,5 +19,5 @@ export async function getStaticPaths() {
 }
 
 const slug = Astro.params.slug ?? '';
-return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/${slug}/`);
+return Astro.redirect(href(`/notes/${slug}/`));
 ---

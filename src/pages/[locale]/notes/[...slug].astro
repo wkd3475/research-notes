@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import NoteLayout from '../../../layouts/NoteLayout.astro';
+import { href } from '../../../config';
 import { locales, isLocale, parseNoteId } from '../../../i18n';
 import { filterNotesByLocale } from '../../../utils/notes';
 import { getNoteRevisions, noteFilePath } from '../../../utils/noteHistory';
@@ -22,7 +23,7 @@ export async function getStaticPaths() {
 const { note, locale, translationId } = Astro.props;
 
 if (!isLocale(locale)) {
-  return Astro.redirect(`${import.meta.env.BASE_URL}en/notes/`);
+  return Astro.redirect(href('/notes/'));
 }
 
 const revisions = getNoteRevisions(noteFilePath(locale, translationId));
