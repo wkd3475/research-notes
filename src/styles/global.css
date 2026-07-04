@@ -361,6 +361,14 @@ img {
   margin: 0 0 1rem;
 }
 
+.recent-notes-section {
+  margin-bottom: 2.5rem;
+}
+
+.recent-notes-more {
+  margin-top: 1.5rem;
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -607,17 +615,34 @@ img {
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
   scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.grass-scroll-viewport::-webkit-scrollbar {
+  height: 5px;
+}
+
+.grass-scroll-viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.grass-scroll-viewport::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
 }
 
 .grass-scroll-content {
   min-width: max-content;
+  width: fit-content;
+  margin-inline: auto;
+  padding-bottom: 0.35rem;
 }
 
 .grass-months {
   display: grid;
-  grid-template-columns: 28px repeat(53, 13px);
+  grid-template-columns: 28px repeat(var(--grass-weeks, 13), 13px);
   gap: 3px;
   margin-bottom: 4px;
 }
@@ -630,6 +655,7 @@ img {
 .grass-body {
   display: flex;
   gap: 8px;
+  padding-bottom: 0.15rem;
 }
 
 .grass-day-labels {
@@ -898,63 +924,118 @@ a.grass-cell:focus-visible,
   margin: 0;
   padding: 0;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0.5rem;
 }
 
 .explore-next-item {
+  margin: 0;
+}
+
+.explore-next-link {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.explore-btn {
-  display: inline-block;
-  font-size: 0.85rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
+  align-items: flex-start;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
   border: 1px solid var(--border);
-  line-height: 1.3;
-}
-
-.explore-btn--linked {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: transparent;
-  text-decoration: none;
-}
-
-.explore-btn--linked:hover {
-  text-decoration: none;
-  filter: brightness(0.95);
-}
-
-.explore-btn--pending {
+  border-radius: 8px;
   background: var(--surface);
-  color: var(--text-muted);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.explore-next-link:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
+}
+
+.explore-next-link--pending {
   border-style: dashed;
+  background: transparent;
   cursor: default;
 }
 
-.explore-reason,
-.explore-linked-note {
-  font-size: 0.75rem;
+.explore-next-link--pending:hover {
+  border-color: var(--border);
+  background: transparent;
+  box-shadow: none;
+}
+
+.explore-next-icon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.2rem;
+}
+
+.explore-next-icon--link {
+  color: var(--accent);
+}
+
+.explore-next-icon--pending {
   color: var(--text-muted);
 }
 
-.explore-next--compact .explore-next-item {
+.explore-next-content {
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
+  gap: 0.2rem;
+  min-width: 0;
 }
 
-.explore-next--compact .explore-reason,
-.explore-next--compact .explore-linked-note {
+.explore-next-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.explore-next-link:not(.explore-next-link--pending) .explore-next-label {
+  color: var(--accent);
+}
+
+.explore-next-reason,
+.explore-next-target {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.explore-next-target {
+  font-style: italic;
+}
+
+.explore-next-badge {
+  display: inline-block;
+  width: fit-content;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--text-muted);
+}
+
+.explore-next--compact .explore-next-link {
+  padding: 0.55rem 0.7rem;
+}
+
+.explore-next--compact .explore-next-label {
+  font-size: 0.85rem;
+}
+
+.explore-next--compact .explore-next-reason,
+.explore-next--compact .explore-next-target,
+.explore-next--compact .explore-next-badge {
   display: none;
 }
 
 .note-card .explore-next--compact .explore-next-list {
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 

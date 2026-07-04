@@ -9,6 +9,7 @@ import {
   dayAnchorId,
   formatDateLabel,
   getDayLabels,
+  getGrassYear,
   getMonthLabels,
   groupNotesByDate,
 } from '../utils/studyGrass';
@@ -24,7 +25,8 @@ const allNotes = await getCollection('notes');
 const notes = filterNotesByLocale(allNotes, locale);
 const notesByDate = groupNotesByDate(notes);
 const weeks = buildGrassWeeks(notesByDate);
-const monthLabels = getMonthLabels(weeks, locale);
+const weekCount = weeks.length;
+const monthLabels = getMonthLabels(weeks, locale, getGrassYear());
 const stats = computeStats(notesByDate);
 const dayLabels = getDayLabels(locale);
 ---
@@ -52,7 +54,7 @@ const dayLabels = getDayLabels(locale);
     <p class="grass-scroll-hint" data-grass-hint>{strings.grassScrollHint}</p>
     <div class="grass-scroll-viewport" data-grass-scroll>
       <div class="grass-scroll-content">
-        <div class="grass-months" aria-hidden="true">
+        <div class="grass-months" style={`--grass-weeks: ${weekCount}`} aria-hidden="true">
           {monthLabels.map(({ label, weekIndex }) => (
             <span class="grass-month" style={`grid-column: ${weekIndex + 2}`}>
               {label}
@@ -80,14 +82,21 @@ const dayLabels = getDayLabels(locale);
                         ? `${formatDateLabel(day.date, locale)} · ${day.notes.map((n) => n.title).join(', ')}`
                         : `${formatDateLabel(day.date, locale)} · ${strings.noNotesDay}`;
 
-                    if (day.isFuture) {
-                      return <span class="grass-cell grass-cell--future" aria-hidden="true" />;
+                    if (day.isOutsideRange || (day.isFuture && day.count === 0)) {
+                      return (
+                        <span
+                          class="grass-cell grass-cell--future"
+                          data-grass-date={day.date}
+                          aria-hidden="true"
+                        />
+                      );
                     }
 
                     if (day.count === 0) {
                       return (
                         <span
                           class={`grass-cell grass-cell--0${todayClass}`}
+                          data-grass-date={day.date}
                           data-tooltip={tooltip}
                           tabindex="0"
                           role="img"
@@ -99,6 +108,7 @@ const dayLabels = getDayLabels(locale);
                     return (
                       <a
                         class={`grass-cell grass-cell--${day.level}${todayClass}`}
+                        data-grass-date={day.date}
                         href={href(`/notes/${day.date.slice(0, 7)}/#${dayAnchorId(day.date)}`, locale)}
                         data-tooltip={tooltip}
                         aria-label={tooltip}
@@ -128,27 +138,62 @@ const dayLabels = getDayLabels(locale);
 </section>
 
 <script define:vars={{ locale }}>
+  const STUDY_TIMEZONE = 'Asia/Seoul';
   const scrollViewport = document.querySelector(`[data-grass-scroll]`);
   const scrollHint = document.querySelector(`[data-grass-hint]`);
 
-  const scrollToRecent = () => {
+  const getTodayKey = () =>
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: STUDY_TIMEZONE,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(new Date());
+
+  const syncTodayMarker = () => {
+    if (!scrollViewport) return null;
+    const todayKey = getTodayKey();
+    let todayCell = null;
+
+    scrollViewport.querySelectorAll('[data-grass-date]').forEach((cell) => {
+      const isToday = cell.getAttribute('data-grass-date') === todayKey;
+      cell.classList.toggle('grass-cell--today', isToday);
+      if (isToday) todayCell = cell;
+    });
+
+    return todayCell;
+  };
+
+  const scrollTodayToCenter = () => {
     if (!scrollViewport) return;
-    scrollViewport.scrollLeft = scrollViewport.scrollWidth - scrollViewport.clientWidth;
+    const todayCell = syncTodayMarker();
+    const maxScroll = scrollViewport.scrollWidth - scrollViewport.clientWidth;
+
+    if (!todayCell || maxScroll <= 4) return;
+
+    const viewportRect = scrollViewport.getBoundingClientRect();
+    const cellRect = todayCell.getBoundingClientRect();
+    const delta =
+      cellRect.left + cellRect.width / 2 - (viewportRect.left + viewportRect.width / 2);
+    scrollViewport.scrollLeft = Math.max(0, Math.min(scrollViewport.scrollLeft + delta, maxScroll));
+  };
+
+  const initGrassScroll = () => {
+    scrollTodayToCenter();
+    updateScrollHint();
   };
 
   const updateScrollHint = () => {
     if (!scrollViewport || !scrollHint) return;
     const overflows = scrollViewport.scrollWidth - scrollViewport.clientWidth > 4;
-    const atRecentEnd =
-      scrollViewport.scrollLeft >= scrollViewport.scrollWidth - scrollViewport.clientWidth - 4;
-    scrollHint.classList.toggle('grass-scroll-hint--visible', overflows && atRecentEnd);
+    const canScrollOlder = scrollViewport.scrollLeft > 4;
+    scrollHint.classList.toggle('grass-scroll-hint--visible', overflows && canScrollOlder);
   };
 
   if (scrollViewport) {
-    scrollToRecent();
-    updateScrollHint();
+    requestAnimationFrame(() => requestAnimationFrame(initGrassScroll));
     scrollViewport.addEventListener('scroll', updateScrollHint, { passive: true });
-    window.addEventListener('resize', updateScrollHint);
+    window.addEventListener('resize', initGrassScroll);
   }
 
   const tooltip = document.getElementById(`grass-tooltip-${locale}`);

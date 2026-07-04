@@ -32,23 +32,52 @@ const noteTitles = new Map(
         const isLinked = item.note && linkedTitle;
 
         return (
-          <li class="explore-next-item">
+          <li class:list={['explore-next-item', !isLinked && 'explore-next-item--pending']}>
             {
               isLinked ? (
-                <a
-                  class="explore-btn explore-btn--linked"
-                  href={href(`/notes/${item.note}/`, locale)}
-                >
-                  {item.label}
+                <a class="explore-next-link" href={href(`/notes/${item.note}/`, locale)}>
+                  <svg
+                    class="explore-next-icon explore-next-icon--link"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    aria-hidden="true"
+                  >
+                    <path d="M7 4h9v9" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M16 4 4 16" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <span class="explore-next-content">
+                    <span class="explore-next-label">{item.label}</span>
+                    {item.reason && <span class="explore-next-reason">{item.reason}</span>}
+                    {
+                      linkedTitle !== item.label && (
+                        <span class="explore-next-target">{linkedTitle}</span>
+                      )
+                    }
+                  </span>
                 </a>
               ) : (
-                <span class="explore-btn explore-btn--pending" title={strings.pendingNote}>
-                  {item.label}
+                <span class="explore-next-link explore-next-link--pending" title={strings.pendingNote}>
+                  <svg
+                    class="explore-next-icon explore-next-icon--pending"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    aria-hidden="true"
+                  >
+                    <circle cx="10" cy="10" r="7" stroke-dasharray="3 3" />
+                    <path d="M10 6v4l2.5 2.5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                  <span class="explore-next-content">
+                    <span class="explore-next-label">{item.label}</span>
+                    {item.reason && <span class="explore-next-reason">{item.reason}</span>}
+                    <span class="explore-next-badge">{strings.pendingNote}</span>
+                  </span>
                 </span>
               )
             }
-            {item.reason && <span class="explore-reason">{item.reason}</span>}
-            {isLinked && <span class="explore-linked-note">→ {linkedTitle}</span>}
           </li>
         );
       })

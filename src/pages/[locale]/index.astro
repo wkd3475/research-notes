@@ -30,7 +30,7 @@ const notes = filterNotesByLocale(await getCollection('notes'), locale)
 
   <StudyGrass locale={locale} />
 
-  <section>
+  <section class="recent-notes-section">
     <h2 class="section-title">{strings.recentNotes}</h2>
     {
       notes.length > 0 ? (
@@ -53,7 +53,7 @@ const notes = filterNotesByLocale(await getCollection('notes'), locale)
       )
     }
     {notes.length > 0 && (
-      <p style="margin-top: 1.5rem">
+      <p class="recent-notes-more">
         <a href={href('/notes/', locale)}>{strings.allNotes} →</a>
       </p>
     )}

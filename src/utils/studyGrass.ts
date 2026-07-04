@@ -1,6 +1,8 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '../i18n';
 
+export const STUDY_TIMEZONE = 'Asia/Seoul';
+
 export interface DayNote {
   id: string;
   title: string;
@@ -13,25 +15,30 @@ export interface GrassDay {
   level: 0 | 1 | 2 | 3 | 4;
   isFuture: boolean;
   isToday: boolean;
+  isOutsideRange: boolean;
+}
+
+function formatCalendarDate(date: Date, timeZone: string): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
 }
 
 export function formatDateKey(date: Date): string {
-  const y = date.getUTCFullYear();
-  const m = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const d = String(date.getUTCDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  // pubDate in frontmatter is a calendar date (YYYY-MM-DD), not a timestamp.
+  return formatCalendarDate(date, 'UTC');
 }
 
 export function getTodayKey(): string {
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, '0');
-  const d = String(now.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
+  return formatCalendarDate(new Date(), STUDY_TIMEZONE);
 }
 
-export function parseDateKey(key: string): Date {
-  return new Date(`${key}T00:00:00Z`);
+function parseCalendarDateKey(key: string): Date {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d);
 }
 
 const localeTag: Record<Locale, string> = { en: 'en-US', ko: 'ko-KR' };
@@ -44,13 +51,16 @@ export function getDayLabels(locale: Locale): string[] {
   return dayLabels[locale];
 }
 
+export function parseDateKey(key: string): Date {
+  return parseCalendarDateKey(key);
+}
+
 export function formatDateLabel(key: string, locale: Locale = 'en'): string {
-  const date = parseDateKey(key);
+  const date = parseCalendarDateKey(key);
   return date.toLocaleDateString(localeTag[locale], {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
-    timeZone: 'UTC',
   });
 }
 
@@ -67,6 +77,8 @@ export function groupNotesByDate(notes: CollectionEntry<'notes'>[]): Map<string,
   return map;
 }
 
+export const GRASS_FUTURE_MONTHS = 3;
+
 function getLevel(count: number): 0 | 1 | 2 | 3 | 4 {
   if (count === 0) return 0;
   if (count === 1) return 1;
@@ -75,17 +87,30 @@ function getLevel(count: number): 0 | 1 | 2 | 3 | 4 {
   return 4;
 }
 
-export function buildGrassWeeks(notesByDate: Map<string, DayNote[]>, weeks = 53): GrassDay[][] {
-  const todayKey = getTodayKey();
-  const [ty, tm, td] = todayKey.split('-').map(Number);
-  const today = new Date(ty, tm - 1, td);
+export function getGrassYear(todayKey = getTodayKey()): number {
+  return Number(todayKey.slice(0, 4));
+}
+
+export function getGrassRange(
+  todayKey = getTodayKey(),
+  futureMonths = GRASS_FUTURE_MONTHS,
+): { start: Date; end: Date; year: number } {
+  const today = parseCalendarDateKey(todayKey);
+  const year = getGrassYear(todayKey);
+
+  const start = new Date(year, 0, 1);
+  start.setDate(start.getDate() - start.getDay());
 
   const end = new Date(today);
+  end.setMonth(end.getMonth() + futureMonths);
   end.setDate(end.getDate() + (6 - end.getDay()));
 
-  const start = new Date(end);
-  start.setDate(start.getDate() - (weeks * 7 - 1));
-  start.setDate(start.getDate() - start.getDay());
+  return { start, end, year };
+}
+
+export function buildGrassWeeks(notesByDate: Map<string, DayNote[]>): GrassDay[][] {
+  const todayKey = getTodayKey();
+  const { start, end, year } = getGrassRange(todayKey);
 
   const result: GrassDay[][] = [];
   const current = new Date(start);
@@ -100,14 +125,16 @@ export function buildGrassWeeks(notesByDate: Map<string, DayNote[]>, weeks = 53)
       const key = `${y}-${m}-${day}`;
       const dayNotes = notesByDate.get(key) ?? [];
       const isFuture = key > todayKey;
+      const isOutsideRange = key < `${year}-01-01`;
 
       week.push({
         date: key,
         count: dayNotes.length,
         notes: dayNotes,
-        level: isFuture ? 0 : getLevel(dayNotes.length),
+        level: getLevel(dayNotes.length),
         isFuture,
         isToday: key === todayKey,
+        isOutsideRange,
       });
 
       current.setDate(current.getDate() + 1);
@@ -122,19 +149,23 @@ export function buildGrassWeeks(notesByDate: Map<string, DayNote[]>, weeks = 53)
 export function getMonthLabels(
   weeks: GrassDay[][],
   locale: Locale = 'en',
+  year = getGrassYear(),
 ): { label: string; weekIndex: number }[] {
   const labels: { label: string; weekIndex: number }[] = [];
   let lastMonth = -1;
+  const yearPrefix = `${year}-`;
 
   weeks.forEach((week, weekIndex) => {
-    const firstDay = week.find((day) => !day.isFuture) ?? week[0];
-    const month = parseDateKey(firstDay.date).getUTCMonth();
+    const firstDay =
+      week.find((day) => day.date.startsWith(yearPrefix)) ??
+      week.find((day) => !day.isFuture) ??
+      week[0];
+    const month = parseDateKey(firstDay.date).getMonth();
 
     if (month !== lastMonth) {
       labels.push({
         label: parseDateKey(firstDay.date).toLocaleDateString(localeTag[locale], {
           month: 'short',
-          timeZone: 'UTC',
         }),
         weekIndex,
       });
