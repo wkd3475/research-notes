@@ -2,5 +2,28 @@
 import { href } from '../config';
 import { defaultLocale } from '../i18n';
 
-return Astro.redirect(href('/', defaultLocale));
+const target = href('/', defaultLocale);
+const canonical = new URL(target, Astro.site).href;
 ---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={canonical} />
+    <title>Redirecting…</title>
+    <script is:inline define:vars={{ target }}>
+      location.replace(target);
+    </script>
+  </head>
+  <body>
+    <p>
+      <a href={target}>Continue to Research Notes</a>
+    </p>
+  </body>
+</html>
