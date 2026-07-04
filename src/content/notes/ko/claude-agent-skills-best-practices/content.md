@@ -1,15 +1,5 @@
 ---
 title: 'Claude Agent Skills — Skill 작성 모범 사례'
-description: '왜 찾아봤는지, 뭘 느꼈고 배웠는지, 다음에 볼 것'
-pubDate: 2026-07-05
-tags: ['claude', 'agent-skills', 'ai']
-exploreNext:
-  - label: 'Skill 개요'
-    reason: '개념적 배경 정리'
-  - label: 'Cursor Agent Skills 직접 만들어보기'
-    reason: 'SKILL.md 실습'
-  - label: 'Progressive disclosure × MCP'
-    reason: '다른 도구에도 적용할 수 있는지'
 ---
 
 > 원문: [Skill 작성 모범 사례](https://platform.claude.com/docs/ko/agents-and-tools/agent-skills/best-practices)
@@ -65,4 +55,4 @@ exploreNext:
 
 <!-- 자유 메모 -->
 
-`exploreNext` frontmatter에 후속 탐구 주제를 적으면 Next Research 버튼으로 표시됩니다.
+`meta.yaml`의 `exploreNext`에 후속 탐구 주제를 적으면 Next Research 버튼으로 표시됩니다.

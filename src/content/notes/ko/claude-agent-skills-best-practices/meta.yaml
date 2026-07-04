@@ -1,0 +1,13 @@
+description: '왜 찾아봤는지, 뭘 느꼈고 배웠는지, 다음에 볼 것'
+pubDate: 2026-07-05
+tags:
+  - claude
+  - agent-skills
+  - ai
+exploreNext:
+  - label: 'Skill 개요'
+    reason: '개념적 배경 정리'
+  - label: 'Cursor Agent Skills 직접 만들어보기'
+    reason: 'SKILL.md 실습'
+  - label: 'Progressive disclosure × MCP'
+    reason: '다른 도구에도 적용할 수 있는지'

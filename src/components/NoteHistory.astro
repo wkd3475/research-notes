@@ -5,6 +5,8 @@ import {
   type NoteRevision,
   formatNoteDate,
   formatRevisionDate,
+  getFirstWrittenDate,
+  getLastUpdatedDate,
   githubCommitUrl,
   shouldShowLastUpdated,
 } from '../utils/noteHistory';
@@ -20,59 +22,70 @@ const { locale, translationId, pubDate, revisions } = Astro.props;
 const strings = t(locale);
 
 const formattedPubDate = formatNoteDate(pubDate, locale);
-const lastUpdated = revisions[0]?.date ?? null;
-const showLastUpdated = shouldShowLastUpdated(pubDate, revisions);
+const firstWritten = getFirstWrittenDate(pubDate, revisions);
+const lastUpdated = getLastUpdatedDate(revisions);
+const showLastUpdated = shouldShowLastUpdated(firstWritten, revisions);
 const hasHistory = revisions.length > 0;
+const formattedFirstWritten = hasHistory
+  ? formatRevisionDate(firstWritten, locale)
+  : formattedPubDate;
 ---
 
-<div class="note-dates">
-  <div class="note-date-row">
-    <span class="note-date-label">{strings.published}</span>
-    {
-      hasHistory ? (
-        <details class="note-history-details">
-          <summary class="note-date-value note-date-value--interactive">{formattedPubDate}</summary>
-          <ul class="note-history-list">
-            {revisions.map((revision, index) => {
-              const isCurrent = index === 0;
-              const revisionHref = isCurrent
-                ? href(`/notes/${translationId}/`, locale)
-                : href(`/notes/${translationId}/revision/${revision.shortSha}/`, locale);
+<dl class="note-meta-panel">
+  <div class="note-meta-row">
+    <dt class="note-meta-label">{strings.firstWritten}</dt>
+    <dd class="note-meta-value">
+      {
+        hasHistory ? (
+          <details class="note-history-details">
+            <summary class="note-meta-date note-meta-date--interactive">
+              <time datetime={firstWritten.toISOString()}>{formattedFirstWritten}</time>
+              <span class="note-meta-hint">{strings.viewEditHistory}</span>
+            </summary>
+            <ul class="note-history-list">
+              {revisions.map((revision, index) => {
+                const isCurrent = index === 0;
+                const revisionHref = isCurrent
+                  ? href(`/notes/${translationId}/`, locale)
+                  : href(`/notes/${translationId}/revision/${revision.shortSha}/`, locale);
 
-              return (
-                <li class="note-history-item">
-                  <a class="note-history-link" href={revisionHref}>
-                    <time datetime={revision.date.toISOString()}>{formatRevisionDate(revision.date, locale)}</time>
-                    {isCurrent && <span class="note-history-badge">{strings.currentVersion}</span>}
-                    <span class="note-history-message">{revision.message}</span>
-                  </a>
-                  <a
-                    class="note-history-diff"
-                    href={githubCommitUrl(revision.sha)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {strings.viewDiff}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </details>
-      ) : (
-        <time class="note-date-value" datetime={pubDate.toISOString()}>{formattedPubDate}</time>
-      )
-    }
+                return (
+                  <li class="note-history-item">
+                    <a class="note-history-link" href={revisionHref}>
+                      <time datetime={revision.date.toISOString()}>{formatRevisionDate(revision.date, locale)}</time>
+                      {isCurrent && <span class="note-history-badge">{strings.currentVersion}</span>}
+                      <span class="note-history-message">{revision.message}</span>
+                    </a>
+                    <a
+                      class="note-history-diff"
+                      href={githubCommitUrl(revision.sha)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {strings.viewDiff}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        ) : (
+          <time class="note-meta-date" datetime={pubDate.toISOString()}>{formattedPubDate}</time>
+        )
+      }
+    </dd>
   </div>
 
   {
     showLastUpdated && lastUpdated && (
-      <div class="note-date-row">
-        <span class="note-date-label">{strings.lastUpdated}</span>
-        <time class="note-date-value" datetime={lastUpdated.toISOString()}>
-          {formatNoteDate(lastUpdated, locale)}
-        </time>
+      <div class="note-meta-row">
+        <dt class="note-meta-label">{strings.lastUpdated}</dt>
+        <dd class="note-meta-value">
+          <time class="note-meta-date" datetime={lastUpdated.toISOString()}>
+            {formatRevisionDate(lastUpdated, locale)}
+          </time>
+        </dd>
       </div>
     )
   }
-</div>
+</dl>

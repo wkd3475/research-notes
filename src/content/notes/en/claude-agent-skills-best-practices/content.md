@@ -1,15 +1,5 @@
 ---
 title: 'Claude Agent Skills — Best Practices'
-description: 'Why I read it, what I felt, what I learned, and what to explore next'
-pubDate: 2026-07-05
-tags: ['claude', 'agent-skills', 'ai']
-exploreNext:
-  - label: 'Skill Overview'
-    reason: 'Conceptual background'
-  - label: 'Build a Cursor Agent Skill'
-    reason: 'Hands-on SKILL.md practice'
-  - label: 'Progressive disclosure × MCP'
-    reason: 'Apply the pattern to other tools'
 ---
 
 > Source: [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
@@ -65,4 +55,4 @@ exploreNext:
 
 <!-- free notes -->
 
-Add follow-up topics in `exploreNext` frontmatter. Link `note` to the slug once the article exists.
+Add follow-up topics in `meta.yaml` under `exploreNext`. Link `note` to the slug once the article exists.

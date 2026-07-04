@@ -4,7 +4,7 @@ import NoteLayout from '../../../layouts/NoteLayout.astro';
 import { href } from '../../../config';
 import { locales, isLocale, parseNoteId } from '../../../i18n';
 import { filterNotesByLocale } from '../../../utils/notes';
-import { getNoteRevisions, noteFilePath } from '../../../utils/noteHistory';
+import { getNoteRevisions, noteContentPath } from '../../../utils/noteHistory';
 
 export async function getStaticPaths() {
   const allNotes = await getCollection('notes');
@@ -26,7 +26,7 @@ if (!isLocale(locale)) {
   return Astro.redirect(href('/notes/'));
 }
 
-const revisions = getNoteRevisions(noteFilePath(locale, translationId));
+const revisions = getNoteRevisions(noteContentPath(locale, translationId));
 const { Content } = await render(note);
 ---
 

@@ -1,6 +1,8 @@
 import { execSync } from 'node:child_process';
 import type { Locale } from '../i18n';
 import { site } from '../config';
+import { parseContentFile } from '../content/notesLoader';
+import { parse as parseYaml } from 'yaml';
 
 export interface NoteRevision {
   sha: string;
@@ -9,18 +11,32 @@ export interface NoteRevision {
   message: string;
 }
 
-export interface ParsedNoteFile {
+export interface ParsedNoteContent {
   title: string;
+  body: string;
+}
+
+export interface ParsedNoteMeta {
   description?: string;
   pubDate?: Date;
   tags: string[];
-  body: string;
+  exploreNext: Array<{ label: string; reason?: string; note?: string }>;
+  exploredFrom?: string;
 }
 
 const FIELD_DELIM = '\x1f';
 
+export function noteContentPath(locale: Locale, translationId: string): string {
+  return `src/content/notes/${locale}/${translationId}/content.md`;
+}
+
+export function noteMetaPath(locale: Locale, translationId: string): string {
+  return `src/content/notes/${locale}/${translationId}/meta.yaml`;
+}
+
+/** @deprecated Use noteContentPath — git history tracks content.md only */
 export function noteFilePath(locale: Locale, translationId: string): string {
-  return `src/content/notes/${locale}/${translationId}.md`;
+  return noteContentPath(locale, translationId);
 }
 
 function canReadGitHistory(): boolean {
@@ -81,71 +97,21 @@ export function getFileAtRevision(relativePath: string, sha: string): string | n
   }
 }
 
-function unquote(value: string): string {
-  const trimmed = value.trim();
-  if (
-    (trimmed.startsWith("'") && trimmed.endsWith("'")) ||
-    (trimmed.startsWith('"') && trimmed.endsWith('"'))
-  ) {
-    return trimmed.slice(1, -1);
-  }
-  return trimmed;
-}
-
-function parseTagsBlock(yaml: string): string[] {
-  const lines = yaml.split('\n');
-  const tags: string[] = [];
-  let inTags = false;
-
-  for (const line of lines) {
-    if (/^tags:\s*\[/.test(line)) {
-      const inline = line.match(/^tags:\s*\[(.*)\]\s*$/);
-      if (inline?.[1]) {
-        return inline[1]
-          .split(',')
-          .map((tag) => unquote(tag.trim()))
-          .filter(Boolean);
-      }
-    }
-
-    if (/^tags:\s*$/.test(line)) {
-      inTags = true;
-      continue;
-    }
-
-    if (inTags) {
-      const item = line.match(/^\s*-\s*(.+)$/);
-      if (item) {
-        tags.push(unquote(item[1]));
-        continue;
-      }
-      if (line.trim() !== '' && !/^\s/.test(line)) {
-        inTags = false;
-      }
-    }
-  }
-
-  return tags;
-}
-
-export function parseNoteFile(raw: string): ParsedNoteFile {
-  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
-  if (!match) {
-    return { title: 'Untitled', tags: [], body: raw };
-  }
-
-  const [, yaml, body] = match;
-  const titleMatch = yaml.match(/^title:\s*(.+)$/m);
-  const descriptionMatch = yaml.match(/^description:\s*(.+)$/m);
-  const pubDateMatch = yaml.match(/^pubDate:\s*(.+)$/m);
+export function parseNoteMeta(raw: string): ParsedNoteMeta {
+  const meta = parseYaml(raw) ?? {};
 
   return {
-    title: titleMatch ? unquote(titleMatch[1]) : 'Untitled',
-    description: descriptionMatch ? unquote(descriptionMatch[1]) : undefined,
-    pubDate: pubDateMatch ? new Date(unquote(pubDateMatch[1])) : undefined,
-    tags: parseTagsBlock(yaml),
-    body,
+    description: typeof meta.description === 'string' ? meta.description : undefined,
+    pubDate: meta.pubDate ? new Date(String(meta.pubDate)) : undefined,
+    tags: Array.isArray(meta.tags) ? meta.tags.map(String) : [],
+    exploreNext: Array.isArray(meta.exploreNext) ? meta.exploreNext : [],
+    exploredFrom: typeof meta.exploredFrom === 'string' ? meta.exploredFrom : undefined,
   };
+}
+
+/** Parse content.md at a git revision (title + body only). */
+export function parseNoteFile(raw: string): ParsedNoteContent {
+  return parseContentFile(raw);
 }
 
 export function githubCommitUrl(sha: string): string {
@@ -171,10 +137,25 @@ export function formatNoteDate(date: Date, locale: Locale): string {
   });
 }
 
-export function shouldShowLastUpdated(pubDate: Date, revisions: NoteRevision[]): boolean {
-  if (revisions.length === 0) return false;
-  const lastUpdated = revisions[0].date;
-  const pubDay = pubDate.toISOString().slice(0, 10);
+export function getFirstWrittenDate(pubDate: Date, revisions: NoteRevision[]): Date {
+  if (revisions.length === 0) return pubDate;
+  return revisions[revisions.length - 1].date;
+}
+
+export function getLastUpdatedDate(revisions: NoteRevision[]): Date | null {
+  if (revisions.length === 0) return null;
+  return revisions[0].date;
+}
+
+export function shouldShowLastUpdated(firstWritten: Date, revisions: NoteRevision[]): boolean {
+  const lastUpdated = getLastUpdatedDate(revisions);
+  if (!lastUpdated) return false;
+
+  const firstDay = firstWritten.toISOString().slice(0, 10);
   const updatedDay = lastUpdated.toISOString().slice(0, 10);
-  return revisions.length > 1 || pubDay !== updatedDay;
+  return revisions.length > 1 || firstDay !== updatedDay;
+}
+
+export function githubContentDiffUrl(sha: string, contentPath: string): string {
+  return `${githubCommitUrl(sha)}`;
 }

@@ -18,19 +18,28 @@ npm run dev      # http://localhost:4321/research-notes/
 
 ## 노트 작성
 
-`src/content/notes/` 폴더에 마크다운 파일을 추가합니다.
+`src/content/notes/{en,ko}/{slug}/` 폴더에 노트를 추가합니다. 같은 `slug`로 영문·한글 쌍을 맞춥니다.
+
+| 파일 | 내용 |
+|------|------|
+| `content.md` | 제목 + 본문 (Git 수정 이력은 이 파일만 추적) |
+| `meta.yaml` | description, pubDate, tags, exploreNext 등 |
 
 ```md
 ---
 title: '노트 제목'
-description: '한 줄 요약 (선택)'
-pubDate: 2026-07-04
-tags: ['태그1', '태그2']
-draft: false
 ---
 
 내용을 여기에 작성합니다.
 ```
+
+```yaml
+description: '한 줄 요약 (선택)'
+pubDate: 2026-07-04
+tags: ['태그1', '태그2']
+```
+
+스캐폴드: `scripts/new-note.sh {slug} "Title" --both`
 
 ## GitHub Pages 배포
 

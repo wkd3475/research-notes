@@ -7,8 +7,10 @@ import { filterNotesByLocale } from '../../../../../utils/notes';
 import {
   getFileAtRevision,
   getNoteRevisions,
-  noteFilePath,
+  noteContentPath,
+  noteMetaPath,
   parseNoteFile,
+  parseNoteMeta,
   resolveRevisionSha,
 } from '../../../../../utils/noteHistory';
 import { renderMarkdown } from '../../../../../utils/renderMarkdown';
@@ -19,8 +21,8 @@ export async function getStaticPaths() {
   return locales.flatMap((locale) =>
     filterNotesByLocale(allNotes, locale).flatMap((note) => {
       const { translationId } = parseNoteId(note.id);
-      const filePath = noteFilePath(locale, translationId);
-      const revisions = getNoteRevisions(filePath);
+      const contentPath = noteContentPath(locale, translationId);
+      const revisions = getNoteRevisions(contentPath);
 
       return revisions.slice(1).map((revision) => ({
         params: { locale, slug: translationId, sha: revision.shortSha },
@@ -41,28 +43,32 @@ if (!isLocale(locale)) {
   return Astro.redirect(href('/notes/'));
 }
 
-const filePath = noteFilePath(locale, translationId);
-const fullSha = resolveRevisionSha(filePath, sha);
+const contentPath = noteContentPath(locale, translationId);
+const metaPath = noteMetaPath(locale, translationId);
+const fullSha = resolveRevisionSha(contentPath, sha);
 
 if (!fullSha) {
   return Astro.redirect(href(`/notes/${translationId}/`, locale));
 }
 
-const raw = getFileAtRevision(filePath, fullSha);
-if (!raw) {
+const rawContent = getFileAtRevision(contentPath, fullSha);
+if (!rawContent) {
   return Astro.redirect(href(`/notes/${translationId}/`, locale));
 }
 
-const parsed = parseNoteFile(raw);
-const revisions = getNoteRevisions(filePath);
+const parsed = parseNoteFile(rawContent);
+const rawMeta = getFileAtRevision(metaPath, fullSha);
+const meta = rawMeta ? parseNoteMeta(rawMeta) : { tags: [], exploreNext: [] };
+const revisions = getNoteRevisions(contentPath);
 const html = renderMarkdown(parsed.body);
 ---
 
 <NoteLayout
   title={parsed.title}
-  description={parsed.description}
-  pubDate={parsed.pubDate ?? revisionDate}
-  tags={parsed.tags}
+  description={meta.description}
+  pubDate={meta.pubDate ?? revisionDate}
+  tags={meta.tags}
+  exploredFrom={meta.exploredFrom}
   locale={locale}
   translationId={translationId}
   revisions={revisions}

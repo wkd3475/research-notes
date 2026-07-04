@@ -1,23 +1,14 @@
 # Note templates
 
-All notes exist as **pairs**: `en/{slug}.md` + `ko/{slug}.md` with the same slug.
+All notes exist as **pairs**: `en/{slug}/` + `ko/{slug}/` with the same slug. Each folder has `content.md` and `meta.yaml`.
 
 ## English note
 
-`src/content/notes/en/{slug}.md`
+`src/content/notes/en/{slug}/content.md`
 
 ```md
 ---
 title: 'Note title'
-description: 'One-line summary'
-pubDate: 2026-07-05
-tags: ['tag1']
-exploreNext:
-  - label: 'Next topic'
-    reason: 'Why it matters'
-  - label: 'Linked follow-up'
-    reason: 'Reason'
-    note: existing-slug
 ---
 
 > Source: [Title](https://example.com)
@@ -64,19 +55,29 @@ exploreNext:
 
 ```
 
+`src/content/notes/en/{slug}/meta.yaml`
+
+```yaml
+description: 'One-line summary'
+pubDate: 2026-07-05
+tags: ['tag1']
+exploreNext:
+  - label: 'Next topic'
+    reason: 'Why it matters'
+  - label: 'Linked follow-up'
+    reason: 'Reason'
+    note: existing-slug
+```
+
 ## Korean note
 
-`src/content/notes/ko/{slug}.md` — same frontmatter keys, Korean prose, matching `pubDate` / slugs in `exploreNext.note` / `exploredFrom`.
+`src/content/notes/ko/{slug}/content.md` — Korean prose, same section structure.
+
+`src/content/notes/ko/{slug}/meta.yaml` — same keys, Korean labels in `exploreNext`, matching `pubDate` / slugs in `exploreNext.note` / `exploredFrom`.
 
 ```md
 ---
 title: '노트 제목'
-description: '한 줄 요약'
-pubDate: 2026-07-05
-tags: ['태그1']
-exploreNext:
-  - label: '다음 주제'
-    reason: '이유'
 ---
 
 > 원문: [제목](https://example.com)
@@ -99,13 +100,24 @@ exploreNext:
 
 ```
 
+```yaml
+description: '한 줄 요약'
+pubDate: 2026-07-05
+tags: ['태그1']
+exploreNext:
+  - label: '다음 주제'
+    reason: '이유'
+```
+
 ## Linked note (both locales)
+
+In child `meta.yaml`:
 
 ```yaml
 exploredFrom: parent-slug
 ```
 
-Update parent's `exploreNext` in **both** `en/` and `ko/`:
+Update parent's `exploreNext` in **both** `en/` and `ko/` `meta.yaml`:
 
 ```yaml
 - label: '...'
@@ -125,5 +137,5 @@ Removing a note? See [remove-research-note](../remove-research-note/SKILL.md).
 ## Slug rules
 
 - kebab-case English: `react-use-effect`, `skill-authoring`
-- Filename = translation ID = `exploreNext.note` = `exploredFrom`
+- Folder name = translation ID = `exploreNext.note` = `exploredFrom`
 - No date prefix in slug

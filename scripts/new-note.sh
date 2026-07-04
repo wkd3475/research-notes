@@ -60,26 +60,16 @@ if [[ -n $FROM ]]; then
 fi
 
 make_content() {
-  local locale=$1
-  local title=$2
-  local desc=$3
-  local source_label=$4
-  local why=$5
-  local felt=$6
-  local learned=$7
-  local memo=$8
-
-  local desc_line=""
-  [[ -n $desc ]] && desc_line="description: '${desc}'"
+  local title=$1
+  local source_label=$2
+  local why=$3
+  local felt=$4
+  local learned=$5
+  local memo=$6
 
   cat <<EOF
 ---
 title: '${title}'
-${desc_line}
-pubDate: ${DATE}
-tags: ${TAGS_YAML}
-${EXPLORED_FROM}
-exploreNext: []
 ---
 
 > ${source_label}
@@ -107,14 +97,38 @@ exploreNext: []
 EOF
 }
 
-CONTENT_EN=$(make_content en "$TITLE_EN" "$DESC_EN" "Source:" "Why I looked this up" "What stood out" "What I learned" "Memo")
+make_meta() {
+  local desc=$1
+
+  local desc_line=""
+  [[ -n $desc ]] && desc_line="description: '${desc}'"
+
+  cat <<EOF
+${desc_line}
+pubDate: ${DATE}
+tags: ${TAGS_YAML}
+${EXPLORED_FROM}
+exploreNext: []
+EOF
+}
+
+CONTENT_EN=$(make_content "$TITLE_EN" "Source:" "Why I looked this up" "What stood out" "What I learned" "Memo")
+META_EN=$(make_meta "$DESC_EN")
 TITLE_KO="${DESC_KO:-$TITLE_EN}"
-CONTENT_KO=$(make_content ko "$TITLE_KO" "$DESC_KO" "원문:" "왜 이 글을 찾아봤나" "읽으면서 느낀 점" "배운 것" "메모")
+CONTENT_KO=$(make_content "$TITLE_KO" "원문:" "왜 이 글을 찾아봤나" "읽으면서 느낀 점" "배운 것" "메모")
+META_KO=$(make_meta "$DESC_KO")
 
 if [[ $DRY_RUN == true ]]; then
-  echo "=== en/${SLUG}.md ==="
+  echo "=== en/${SLUG}/content.md ==="
   echo "$CONTENT_EN"
-  [[ $BOTH == true ]] && echo "=== ko/${SLUG}.md ===" && echo "$CONTENT_KO"
+  echo "=== en/${SLUG}/meta.yaml ==="
+  echo "$META_EN"
+  if [[ $BOTH == true ]]; then
+    echo "=== ko/${SLUG}/content.md ==="
+    echo "$CONTENT_KO"
+    echo "=== ko/${SLUG}/meta.yaml ==="
+    echo "$META_KO"
+  fi
   exit 0
 fi
 
@@ -129,12 +143,27 @@ write_file() {
   echo "Created $path"
 }
 
-write_file "src/content/notes/en/${SLUG}.md" "$CONTENT_EN"
-[[ $BOTH == true ]] && write_file "src/content/notes/ko/${SLUG}.md" "$CONTENT_KO"
+write_note() {
+  local locale=$1
+  local content=$2
+  local meta=$3
+  local dir="src/content/notes/${locale}/${SLUG}"
+
+  if [[ -d $dir ]]; then
+    echo "Error: $dir already exists" >&2
+    exit 1
+  fi
+  mkdir -p "$dir"
+  write_file "${dir}/content.md" "$content"
+  write_file "${dir}/meta.yaml" "$meta"
+}
+
+write_note en "$CONTENT_EN" "$META_EN"
+[[ $BOTH == true ]] && write_note ko "$CONTENT_KO" "$META_KO"
 
 echo "Preview EN: http://localhost:4321/research-notes/en/notes/${SLUG}/"
 [[ $BOTH == true ]] && echo "Preview KO: http://localhost:4321/research-notes/ko/notes/${SLUG}/"
 
 if [[ -n $FROM ]]; then
-  echo "Next: update exploreNext.note in en/${FROM}.md and ko/${FROM}.md → ${SLUG}"
+  echo "Next: update exploreNext.note in en/${FROM}/meta.yaml and ko/${FROM}/meta.yaml → ${SLUG}"
 fi

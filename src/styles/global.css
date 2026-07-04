@@ -406,6 +406,63 @@ img {
   gap: 0.25rem;
 }
 
+.note-meta-panel {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  overflow: hidden;
+}
+
+.note-meta-row {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, 7.5rem) 1fr;
+  gap: 0.75rem 1rem;
+  align-items: start;
+  padding: 0.7rem 0.9rem;
+}
+
+.note-meta-row + .note-meta-row {
+  border-top: 1px solid var(--border);
+}
+
+.note-meta-label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.5;
+  padding-top: 0.1rem;
+}
+
+.note-meta-value {
+  margin: 0;
+  min-width: 0;
+}
+
+.note-meta-date {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.note-meta-date--interactive {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.note-meta-hint {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
 .note-date-row {
   display: flex;
   flex-wrap: wrap;
@@ -428,11 +485,11 @@ img {
 }
 
 .note-history-details {
-  display: inline;
+  display: block;
 }
 
 .note-history-details > summary {
-  display: inline;
+  display: block;
   list-style: none;
 }
 
@@ -440,23 +497,22 @@ img {
   display: none;
 }
 
-.note-history-details > summary::after {
+.note-history-details > summary .note-meta-hint::after {
   content: ' ▾';
-  font-size: 0.75em;
-  color: var(--text-muted);
+  font-size: 0.85em;
 }
 
-.note-history-details[open] > summary::after {
+.note-history-details[open] > summary .note-meta-hint::after {
   content: ' ▴';
 }
 
 .note-history-list {
-  margin: 0.5rem 0 0;
+  margin: 0.65rem 0 0;
   padding: 0.65rem 0.75rem;
   list-style: none;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--accent-soft);
+  background: var(--surface);
 }
 
 .note-history-item {
