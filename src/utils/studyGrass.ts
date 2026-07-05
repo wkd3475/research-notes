@@ -1,7 +1,8 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '../i18n';
+import { DISPLAY_TIMEZONE, dateFromCalendarKey, toDateKey } from './dates';
 
-export const STUDY_TIMEZONE = 'Asia/Seoul';
+export const STUDY_TIMEZONE = DISPLAY_TIMEZONE;
 
 export interface DayNote {
   id: string;
@@ -18,22 +19,13 @@ export interface GrassDay {
   isOutsideRange: boolean;
 }
 
-function formatCalendarDate(date: Date, timeZone: string): string {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(date);
-}
-
 export function formatDateKey(date: Date): string {
-  // pubDate in frontmatter is a calendar date (YYYY-MM-DD), not a timestamp.
-  return formatCalendarDate(date, 'UTC');
+  // pubDate in frontmatter is a calendar date (YYYY-MM-DD), shown in KST.
+  return toDateKey(date, DISPLAY_TIMEZONE);
 }
 
 export function getTodayKey(): string {
-  return formatCalendarDate(new Date(), STUDY_TIMEZONE);
+  return toDateKey(new Date(), DISPLAY_TIMEZONE);
 }
 
 function parseCalendarDateKey(key: string): Date {
@@ -56,11 +48,12 @@ export function parseDateKey(key: string): Date {
 }
 
 export function formatDateLabel(key: string, locale: Locale = 'en'): string {
-  const date = parseCalendarDateKey(key);
+  const date = dateFromCalendarKey(key);
   return date.toLocaleDateString(localeTag[locale], {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
+    timeZone: DISPLAY_TIMEZONE,
   });
 }
 
@@ -289,11 +282,11 @@ export function dayAnchorId(dateKey: string): string {
 }
 
 export function formatDayHeading(dateKey: string, locale: Locale = 'en'): string {
-  const date = parseDateKey(dateKey);
+  const date = dateFromCalendarKey(dateKey);
   return date.toLocaleDateString(localeTag[locale], {
     month: 'long',
     day: 'numeric',
     weekday: 'short',
-    timeZone: 'UTC',
+    timeZone: DISPLAY_TIMEZONE,
   });
 }

@@ -6,7 +6,7 @@ import { href } from '../config';
 import type { ExploreNextItem } from '../content.config';
 import { type Locale, t } from '../i18n';
 import { findNoteByTranslationId } from '../utils/notes';
-import type { NoteRevision } from '../utils/noteHistory';
+import { formatRevisionDate, type NoteRevision } from '../utils/noteHistory';
 import { getCollection } from 'astro:content';
 
 interface Props {
@@ -78,13 +78,7 @@ if (exploredFrom) {
           <p>
             {strings.viewingRevision}{' '}
             <time datetime={revisionBanner.date.toISOString()}>
-              {revisionBanner.date.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
+              {formatRevisionDate(revisionBanner.date, locale)}
             </time>
           </p>
           <a class="revision-banner-link" href={href(`/notes/${translationId}/`, locale)}>
