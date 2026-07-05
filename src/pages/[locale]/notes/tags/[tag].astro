@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import NoteCard from '../../../../components/NoteCard.astro';
+import ReadingQueueCard from '../../../../components/ReadingQueueCard.astro';
+import { href } from '../../../../config';
+import { locales, t, isLocale, parseNoteId } from '../../../../i18n';
+import {
+  collectTags,
+  decodeTagParam,
+  filterNotesByTag,
+  filterQueueByTag,
+} from '../../../../utils/tags';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const allNotes = await getCollection('notes');
+  const allQueue = await getCollection('readingQueue');
+
+  return locales.flatMap((locale) =>
+    collectTags(allNotes, allQueue, locale).map((tag) => ({
+      params: { locale, tag: encodeURIComponent(tag) },
+      props: { locale, tag },
+    })),
+  );
+}
+
+const { locale: localeParam, tag: tagParam } = Astro.params;
+if (!localeParam || !isLocale(localeParam) || !tagParam) {
+  return Astro.redirect('/research-notes/en/notes/');
+}
+
+const locale = localeParam;
+const tag = decodeTagParam(tagParam);
+const strings = t(locale);
+
+const allNotes = await getCollection('notes');
+const allQueue = await getCollection('readingQueue');
+const notes = filterNotesByTag(allNotes, locale, tag);
+const queueItems = filterQueueByTag(allQueue, locale, tag);
+const isEmpty = notes.length === 0 && queueItems.length === 0;
+---
+
+<BaseLayout title={strings.taggedWith(tag)} description={strings.tagPageDesc(tag)} locale={locale}>
+  <section class="hero">
+    <a class="back-link" href={href('/notes/', locale)}>{strings.backToNotes}</a>
+    <h1>{strings.taggedWith(tag)}</h1>
+    <p>{strings.tagPageDesc(tag)}</p>
+  </section>
+
+  {
+    isEmpty ? (
+      <p class="empty-state">{strings.noTaggedItems(tag)}</p>
+    ) : (
+      <>
+        {notes.length > 0 && (
+          <section class="tag-section">
+            <h2 class="tag-section-heading">{strings.taggedNotes}</h2>
+            {notes.map((note) => {
+              const { translationId } = parseNoteId(note.id);
+              return (
+                <NoteCard
+                  title={note.data.title}
+                  description={note.data.description}
+                  pubDate={note.data.pubDate}
+                  tags={note.data.tags}
+                  exploreNext={note.data.exploreNext}
+                  locale={locale}
+                  href={href(`/notes/${translationId}/`, locale)}
+                />
+              );
+            })}
+          </section>
+        )}
+
+        {queueItems.length > 0 && (
+          <section class="tag-section">
+            <h2 class="tag-section-heading">{strings.taggedReadingQueue}</h2>
+            {queueItems.map((item) => (
+              <ReadingQueueCard
+                title={item.data.title}
+                url={item.data.url}
+                reason={item.data.reason}
+                savedAt={item.data.savedAt}
+                tags={item.data.tags}
+                source={item.data.source}
+                locale={locale}
+              />
+            ))}
+          </section>
+        )}
+      </>
+    )
+  }
+</BaseLayout>

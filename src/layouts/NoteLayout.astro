@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import ExploreNextLinks from '../components/ExploreNextLinks.astro';
 import NoteHistory from '../components/NoteHistory.astro';
+import TagList from '../components/TagList.astro';
 import { href } from '../config';
 import type { ExploreNextItem } from '../content.config';
 import { type Locale, t } from '../i18n';
@@ -97,15 +98,7 @@ if (exploredFrom) {
         revisions={revisions}
       />
     </div>
-    {
-      tags.length > 0 && (
-        <div class="tags">
-          {tags.map((tag) => (
-            <span class="tag">{tag}</span>
-          ))}
-        </div>
-      )
-    }
+    <TagList tags={tags} locale={locale} />
     <slot />
     {exploreNext.length > 0 && <ExploreNextLinks items={exploreNext} locale={locale} />}
   </article>

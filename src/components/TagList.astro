@@ -1,0 +1,23 @@
+---
+import { type Locale } from '../i18n';
+import { tagHref } from '../utils/tags';
+
+interface Props {
+  tags: string[];
+  locale: Locale;
+}
+
+const { tags, locale } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <div class="tags">
+      {tags.map((tag) => (
+        <a class="tag" href={tagHref(tag, locale)}>
+          {tag}
+        </a>
+      ))}
+    </div>
+  )
+}
