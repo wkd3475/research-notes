@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import type { Locale } from '../i18n';
 import { site } from '../config';
 import { parseContentFile } from '../content/notesLoader';
+import { formatDisplayDate, toDateKey } from './dates';
 import { parse as parseYaml } from 'yaml';
 
 export interface NoteRevision {
@@ -119,7 +120,7 @@ export function githubCommitUrl(sha: string): string {
 }
 
 export function formatRevisionDate(date: Date, locale: Locale): string {
-  return date.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
+  return formatDisplayDate(date, locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -128,12 +129,15 @@ export function formatRevisionDate(date: Date, locale: Locale): string {
   });
 }
 
-export function formatNoteDate(date: Date, locale: Locale): string {
-  return date.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
+export function formatNoteDate(
+  date: Date,
+  locale: Locale,
+  month: 'long' | 'short' = 'long',
+): string {
+  return formatDisplayDate(date, locale, {
     year: 'numeric',
-    month: 'long',
+    month,
     day: 'numeric',
-    timeZone: 'UTC',
   });
 }
 
@@ -151,8 +155,8 @@ export function shouldShowLastUpdated(firstWritten: Date, revisions: NoteRevisio
   const lastUpdated = getLastUpdatedDate(revisions);
   if (!lastUpdated) return false;
 
-  const firstDay = firstWritten.toISOString().slice(0, 10);
-  const updatedDay = lastUpdated.toISOString().slice(0, 10);
+  const firstDay = toDateKey(firstWritten);
+  const updatedDay = toDateKey(lastUpdated);
   return revisions.length > 1 || firstDay !== updatedDay;
 }
 
