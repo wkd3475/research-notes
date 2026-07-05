@@ -1,3 +1,7 @@
+## Korean note content
+
+When writing or editing Korean study notes (`src/content/notes/ko/`), apply the **humanize-korean** skill (`.cursor/skills/humanize-korean/`) after drafting. Read `references/quick-rules.md`, remove AI-translation tells, and keep meaning unchanged. Genre default: 블로그.
+
 ## Development
 
 When starting the dev server, use background mode:
