@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { notesLoader } from './content/notesLoader';
+import { readingQueueLoader } from './content/readingQueueLoader';
 
 const exploreNextItem = z.object({
   label: z.string(),
@@ -17,9 +18,22 @@ const notes = defineCollection({
     draft: z.boolean().default(false),
     exploreNext: z.array(exploreNextItem).default([]),
     exploredFrom: z.string().optional(),
+    readingQueueFrom: z.string().optional(),
   }),
 });
 
-export const collections = { notes };
+const readingQueue = defineCollection({
+  loader: readingQueueLoader(),
+  schema: z.object({
+    title: z.string(),
+    url: z.string().url(),
+    reason: z.string(),
+    savedAt: z.coerce.date(),
+    tags: z.array(z.string()).default([]),
+    source: z.string().optional(),
+  }),
+});
+
+export const collections = { notes, readingQueue };
 
 export type ExploreNextItem = z.infer<typeof exploreNextItem>;

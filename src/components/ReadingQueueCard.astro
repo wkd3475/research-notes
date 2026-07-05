@@ -1,0 +1,39 @@
+---
+import type { Locale } from '../i18n';
+import { t } from '../i18n';
+import { formatNoteDate } from '../utils/noteHistory';
+
+interface Props {
+  title: string;
+  url: string;
+  reason: string;
+  savedAt: Date;
+  tags: string[];
+  source?: string;
+  locale: Locale;
+}
+
+const { title, url, reason, savedAt, tags, source, locale } = Astro.props;
+const strings = t(locale);
+const formattedDate = formatNoteDate(savedAt, locale, 'short');
+---
+
+<article class="card reading-queue-card">
+  <p class="note-meta">
+    {strings.savedOn} {formattedDate}
+    {source && <span class="reading-queue-source"> · {source}</span>}
+  </p>
+  <h2>
+    <a href={url} target="_blank" rel="noopener noreferrer">{title}</a>
+  </h2>
+  <p class="reading-queue-reason">{reason}</p>
+  {
+    tags.length > 0 && (
+      <div class="tags">
+        {tags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    )
+  }
+</article>
