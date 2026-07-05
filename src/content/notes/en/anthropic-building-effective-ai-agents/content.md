@@ -16,9 +16,7 @@ title: 'Building Effective AI Agents — Architecture Patterns'
 
 ## What stood out
 
-- **Memorable parts:** Not much that was brand new — mostly a clean recap of patterns I already knew (start simple, add complexity only when measured value justifies it).
-- **Parts I questioned:** The customer case studies are impressive but read like marketing; the architectural guidance itself is the useful part.
-- **Connections to my experience:** Good mindset refresh. Reinforced: don't jump to multi-agent because it sounds sophisticated.
+Not much, honestly — mostly a mindset refresh.
 
 ---
 
@@ -56,4 +54,4 @@ title: 'Building Effective AI Agents — Architecture Patterns'
 
 ## Memo
 
-Useful as a **pattern vocabulary** check-in, not a deep dive. The line I'll keep: *the best architecture is the simplest one that meets today's requirements while leaving a path to tomorrow's capabilities.*
+Summary from the guide. No follow-up topics planned.
