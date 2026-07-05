@@ -17,17 +17,13 @@ title: 'Note title'
 
 ## Why I looked this up
 
-- **Trigger:**
-- **Context:**
-- **Questions I had:**
+<!-- Author voice only — facts the user stated. Do not guess trigger/context/questions. -->
 
 ---
 
 ## What stood out
 
-- **Memorable parts:**
-- **Parts I questioned:**
-- **Connections to my experience:**
+<!-- Author voice only — user's words; no invented bullets or impressions. -->
 
 ---
 
@@ -52,6 +48,8 @@ title: 'Note title'
 ---
 
 ## Memo
+
+<!-- Author voice only — user's closing note, not agent takeaways. -->
 
 ```
 
@@ -86,17 +84,25 @@ title: '노트 제목'
 
 ## 왜 이 글을 찾아봤나
 
+<!-- 작성자가 말한 사실만. 계기·맥락·질문을 추측하지 않는다. -->
+
 ---
 
 ## 읽으면서 느낀 점
+
+<!-- 작성자 표현만. 임의로 불릿·인상·의문을 추가하지 않는다. -->
 
 ---
 
 ## 배운 것
 
+<!-- 원문 요약·정리는 에이전트가 작성 가능 -->
+
 ---
 
 ## 메모
+
+<!-- 작성자 마무리 메모만. 에이전트 소감·인용구를 넣지 않는다. -->
 
 ```
 
