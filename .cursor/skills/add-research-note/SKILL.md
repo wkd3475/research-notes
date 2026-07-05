@@ -41,10 +41,11 @@ src/content/notes/{en,ko}/{slug}/
 2. **Primary language** — write **English first**, then Korean translation (same structure, same `pubDate`, same `exploreNext` / `exploredFrom`)
 3. **Check duplicates** — slug folder must not already exist in `en/` or `ko/`
 4. **Body sections** — EN: "Why I looked this up", "What stood out", "What I learned", "Memo". KO: "왜 이 글을 찾아봤나", "읽으면서 느낀 점", "배운 것", "메모"
-5. **pubDate** — `YYYY-MM-DD` in `meta.yaml` (study date; defaults to today KST)
-6. **exploreNext** — 2–4 items in `meta.yaml`. UI label is **Next Research**. Omit `note` until follow-up exists
-7. **Verify** — `npm run build`
-8. **Share URLs** — both locales:
+5. **Korean humanize** — after the KO draft, follow [humanize-korean](../humanize-korean/SKILL.md): read `references/quick-rules.md`, apply fast-mode 윤문 to `ko/{slug}/content.md` (genre: 블로그). Meaning must stay identical; only style and rhythm change.
+6. **pubDate** — `YYYY-MM-DD` in `meta.yaml` (study date; defaults to today KST)
+7. **exploreNext** — 2–4 items in `meta.yaml`. UI label is **Next Research**. Omit `note` until follow-up exists
+8. **Verify** — `npm run build`
+9. **Share URLs** — both locales:
    - `http://localhost:4321/research-notes/en/notes/{slug}/`
    - `http://localhost:4321/research-notes/ko/notes/{slug}/`
 
@@ -98,6 +99,7 @@ Keep `exploreNext` labels/reasons localized per locale (EN → English labels, K
 
 ```
 - [ ] en/{slug}/ and ko/{slug}/ created or updated (content.md + meta.yaml)
+- [ ] ko/{slug}/content.md humanized via humanize-korean (when body changed)
 - [ ] exploredFrom / exploreNext links in meta.yaml (if applicable)
 - [ ] Parent exploreNext.note updated in both parent meta.yaml files
 - [ ] npm run build passes
