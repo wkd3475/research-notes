@@ -16,9 +16,9 @@ title: 'Claude Agent Skills — Best Practices'
 
 ## What stood out
 
-- **Memorable parts:** Making Skills well felt less like “writing prompts” and more like **designing how work gets done**.
-- **Parts I questioned:** The mental model overlapped with **abstraction-based programming**—naming the right layer, hiding detail, exposing only what the agent needs.
-- **Connections to my experience:** It also rhymed with **writing and maintaining documentation**: clear structure, consistent conventions, and context you can trust over time. In the end, the hard part is **structuring problem-solving approaches** well—closer to **system design** than to one-off instructions.
+- **Memorable parts:** Making Skills well felt less like “writing prompts” and more like designing how work gets done. It also resembled abstraction in code—deciding which layer to expose and what to hide.
+- **Parts I questioned:** The doc’s comparison to documentation felt like an overreach at first. Once structure and governance were tied in, the system-design angle made sense.
+- **Connections to my experience:** The same instincts from code and docs—abstraction, progressive disclosure, a clear “when to use”—carry over to how our team might build shared Skills.
 
 ---
 
