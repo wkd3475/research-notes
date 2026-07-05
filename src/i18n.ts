@@ -27,7 +27,7 @@ export const ui = {
     pendingNote: 'Not written yet',
     exploredFrom: 'Continued from',
     footer: 'Study log',
-    langSwitch: '한국어',
+    langSwitch: 'Korean',
     themePicker: 'Choose color theme',
     notesThisMonth: (n: number) => `${n} note${n === 1 ? '' : 's'} this month`,
     noNotesThisMonth: 'No notes this month.',
