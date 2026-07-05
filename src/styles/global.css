@@ -1091,7 +1091,23 @@ a.grass-cell:focus-visible,
   display: none;
 }
 
-.note-card .explore-next--compact .explore-next-list {
-  gap: 0.35rem;
+.reading-queue-card h2 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.reading-queue-card h2 a:hover {
+  color: var(--accent);
+}
+
+.reading-queue-reason {
+  margin: 0.5rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.reading-queue-source {
+  color: var(--text-muted);
 }
 

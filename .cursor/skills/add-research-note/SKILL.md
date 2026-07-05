@@ -6,7 +6,8 @@ description: >-
   sets meta (pubDate, tags, exploreNext, exploredFrom), links Next Research
   follow-ups, and verifies with npm run build. Subjective sections (feelings,
   memo, why I looked it up) must use the author's words only — never invent
-  impressions. Use when the user asks to write a note, add a post, record what
+  impressions. When a note comes from the reading queue, set readingQueueFrom
+  and remove the queue item per reading-queue skill. Use when the user asks to write a note, add a post, record what
   they studied, create a follow-up article, or fill in a template. For deletion,
   use remove-research-note skill.
 ---
@@ -34,6 +35,7 @@ src/content/notes/{en,ko}/{slug}/
 |---------|--------|
 | New note / today's reading | [New note](#new-note) |
 | Follow-up from `exploreNext` | [Linked note](#linked-note) |
+| Note from reading queue | [From reading queue](#from-reading-queue) |
 | Fill existing template | Edit `content.md` / `meta.yaml` as needed |
 | Template only | See [templates.md](templates.md) |
 
@@ -60,6 +62,15 @@ When writing a follow-up from a parent's **Next Research**:
 3. Update **both** parent `meta.yaml` files — add `note: {new-slug}` on the matching `exploreNext` item
 4. `exploreNext.note` and `exploredFrom` use translation ID only (no `en/` prefix)
 
+## From reading queue
+
+When the note is written from a saved reading-queue item:
+
+1. Create the note as usual (`en/{slug}/` + `ko/{slug}/`)
+2. Set `readingQueueFrom: {queue-slug}` in **both** `meta.yaml` files
+3. Delete both queue YAML files — see [reading-queue](../reading-queue/SKILL.md#complete-item-note-written)
+4. Put the article URL in the `> Source:` / `> 원문:` blockquote
+
 ## content.md
 
 ```md
@@ -82,6 +93,7 @@ exploreNext:
     reason: string   # optional
     note: slug       # optional — linked follow-up
 exploredFrom: slug   # optional — parent note
+readingQueueFrom: slug   # optional — queue item this note replaced
 ```
 
 Keep `exploreNext` labels/reasons localized per locale (EN → English labels, KO → Korean labels). Slugs stay identical across locales.
@@ -131,6 +143,7 @@ These sections record **the author's experience**, not the agent's inference. Do
 - [ ] ko/{slug}/content.md humanized via humanize-korean (when body changed)
 - [ ] exploredFrom / exploreNext links in meta.yaml (if applicable)
 - [ ] Parent exploreNext.note updated in both parent meta.yaml files
+- [ ] readingQueueFrom set + queue YAML removed (if from reading queue)
 - [ ] npm run build passes
 - [ ] Both locale URLs shared
 ```
@@ -140,3 +153,4 @@ These sections record **the author's experience**, not the agent's inference. Do
 - Templates: [templates.md](templates.md)
 - Scaffold: `scripts/new-note.sh {slug} "Title" --both`
 - Remove note: [remove-research-note](../remove-research-note/SKILL.md)
+- Reading queue: [reading-queue](../reading-queue/SKILL.md)

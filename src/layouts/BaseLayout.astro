@@ -47,6 +47,7 @@ const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
         <a class="site-title" href={href('/', locale)}>{site.title}</a>
         <nav class="site-nav">
           <a href={href('/notes/', locale)}>{strings.notes}</a>
+          <a href={href('/reading-queue/', locale)}>{strings.readingQueue}</a>
           <a href={`https://github.com/${site.githubUsername}/${site.githubRepo}`} target="_blank" rel="noopener">
             GitHub
           </a>

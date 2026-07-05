@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ReadingQueueCard from '../../../components/ReadingQueueCard.astro';
+import { locales, t, isLocale } from '../../../i18n';
+import { filterReadingQueueByLocale } from '../../../utils/readingQueue';
+import { getCollection } from 'astro:content';
+
+export function getStaticPaths() {
+  return locales.map((locale) => ({ params: { locale } }));
+}
+
+const { locale: localeParam } = Astro.params;
+if (!localeParam || !isLocale(localeParam)) {
+  return Astro.redirect('/research-notes/en/reading-queue/');
+}
+const locale = localeParam;
+const strings = t(locale);
+
+const items = filterReadingQueueByLocale(await getCollection('readingQueue'), locale).sort(
+  (a, b) => b.data.savedAt.valueOf() - a.data.savedAt.valueOf(),
+);
+---
+
+<BaseLayout title={strings.readingQueue} description={strings.readingQueueDesc} locale={locale}>
+  <section class="hero">
+    <h1>{strings.readingQueue}</h1>
+    <p>{strings.readingQueueDesc}</p>
+  </section>
+
+  {
+    items.length > 0 ? (
+      items.map((item) => (
+        <ReadingQueueCard
+          title={item.data.title}
+          url={item.data.url}
+          reason={item.data.reason}
+          savedAt={item.data.savedAt}
+          tags={item.data.tags}
+          source={item.data.source}
+          locale={locale}
+        />
+      ))
+    ) : (
+      <p class="empty-state">{strings.noReadingQueue}</p>
+    )
+  }
+</BaseLayout>
