@@ -5,9 +5,5 @@ tags:
   - agent-skills
   - ai
 exploreNext:
-  - label: 'Skill 개요'
-    reason: '개념적 배경 정리'
-  - label: 'Cursor Agent Skills 직접 만들어보기'
-    reason: 'SKILL.md 실습'
-  - label: 'Progressive disclosure × MCP'
-    reason: '다른 도구에도 적용할 수 있는지'
+  - label: '팀·조직 단위 공용 Skill 축적 Best Practice'
+    reason: '팀/회사 규모에서 Skill을 쌓고 운영하는 방법'

@@ -5,9 +5,5 @@ tags:
   - agent-skills
   - ai
 exploreNext:
-  - label: 'Skill Overview'
-    reason: 'Conceptual background'
-  - label: 'Build a Cursor Agent Skill'
-    reason: 'Hands-on SKILL.md practice'
-  - label: 'Progressive disclosure × MCP'
-    reason: 'Apply the pattern to other tools'
+  - label: 'Team & org shared Skills — best practices'
+    reason: 'How to accumulate and govern skills at team/company scale'
