@@ -617,6 +617,26 @@ img {
   border-radius: 999px;
   background: var(--accent-soft);
   color: var(--accent);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+a.tag:hover {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+.tag-section {
+  margin-bottom: 2rem;
+}
+
+.tag-section-heading {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem;
 }
 
 .contribution-section {

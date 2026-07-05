@@ -56,6 +56,11 @@ export const ui = {
     viewDiff: 'Diff',
     viewingRevision: 'Viewing an earlier version from',
     backToCurrent: '← Back to current version',
+    taggedWith: (tag: string) => `#${tag}`,
+    tagPageDesc: (tag: string) => `Notes and saved articles tagged “${tag}”.`,
+    taggedNotes: 'Notes',
+    taggedReadingQueue: 'Reading Queue',
+    noTaggedItems: (tag: string) => `Nothing tagged “${tag}”.`,
   },
   ko: {
     siteDescription: '궁금한 건, 끝까지 파보기',
@@ -109,6 +114,11 @@ export const ui = {
     viewDiff: 'Diff',
     viewingRevision: '이전 버전 보기',
     backToCurrent: '← 현재 글로 돌아가기',
+    taggedWith: (tag: string) => `#${tag}`,
+    tagPageDesc: (tag: string) => `“${tag}” 태그가 붙은 노트와 읽을 글.`,
+    taggedNotes: '노트',
+    taggedReadingQueue: '읽을 글',
+    noTaggedItems: (tag: string) => `“${tag}” 태그가 붙은 항목이 없습니다.`,
   },
 } as const;
 
