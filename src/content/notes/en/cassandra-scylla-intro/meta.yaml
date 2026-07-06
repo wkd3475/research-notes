@@ -1,0 +1,15 @@
+description: 'Light read on Cassandra basics and Scylla positioning — prep for standing up Scylla at work'
+pubDate: 2026-07-06
+tags:
+  - scylla
+  - cassandra
+  - nosql
+  - database
+draft: false
+exploreNext:
+  - label: 'How Scylla works under the hood'
+    reason: 'The post only positions Scylla vs Cassandra; need a deeper dive on internals before operating it'
+  - label: 'Cluster join on boot'
+    reason: 'Need to understand how a new node discovers the cluster and receives tokens when we bring nodes up'
+  - label: 'Node replacement runbook'
+    reason: 'Practical ops — safest way to swap a failed or decommissioned node without data loss'
