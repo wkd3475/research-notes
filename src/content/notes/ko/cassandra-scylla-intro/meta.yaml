@@ -9,6 +9,7 @@ draft: false
 exploreNext:
   - label: 'Scylla 내부 동작'
     reason: '글은 Scylla vs Cassandra 소개 수준이라, 운영 전에 내부 구조를 더 깊게 봐야 함'
+    note: scylla-shard-per-core
   - label: '부팅 시 클러스터 조인'
     reason: '노드를 올릴 때 클러스터 발견·token 할당이 어떻게 되는지 알아야 함'
   - label: '노드 교체 절차'
