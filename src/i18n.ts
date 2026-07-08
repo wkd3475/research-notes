@@ -5,7 +5,12 @@ export const defaultLocale: Locale = 'en';
 
 export const ui = {
   en: {
-    siteDescription: 'Diving deep until the questions clear',
+    siteDescription: 'Never lose curiosity',
+    homePageLead: 'Not a polished archive—a study engine.',
+    homePageDesc:
+      'I record what I explore with AI, notice what I still don’t know, and follow the next thread. Deep dives matter, but the goal is to read widely as a habit—building background knowledge naturally along the way.',
+    homeMetaDescription:
+      'A study engine—not a polished archive. Record explorations with AI, read widely, build background knowledge.',
     home: 'Home',
     notes: 'Notes',
     readingQueue: 'Reading Queue',
@@ -65,7 +70,13 @@ export const ui = {
     noTaggedItems: (tag: string) => `Nothing tagged “${tag}”.`,
   },
   ko: {
-    siteDescription: '궁금한 건, 끝까지 파보기',
+    siteDescription: '절대로 호기심을 잃지 않기',
+    homePageLead:
+      '정리된 지식을 쌓아두는 곳이 아닙니다. 끊임없이 공부하게 만드는 기록장이에요.',
+    homePageDesc:
+      'AI와 대화하며 찾아본 걸 남기고, 뭘 아직 모르는지·뭘 더 봐야 하는지 짚으며 다음 질문으로 이어갑니다. 각 잡고 공부하는 것도 좋지만, 평소 습관처럼 많은 정보를 읽으며 배경 지식을 자연스럽게 넓혀가는 것이 목표입니다.',
+    homeMetaDescription:
+      '정리된 지식 저장소가 아닌 공부 기록장. AI와 함께 탐색하고, 습관처럼 많이 읽으며 배경 지식 넓히기.',
     home: '홈',
     notes: '노트',
     readingQueue: '읽을 글',

@@ -350,6 +350,17 @@ img {
   color: var(--text-muted);
   margin: 0;
   font-size: 1.05rem;
+  max-width: 42rem;
+  line-height: 1.65;
+}
+
+.hero p + p {
+  margin-top: 0.75rem;
+}
+
+.hero-home .home-lead {
+  color: var(--text);
+  font-size: 1.1rem;
 }
 
 .section-title {

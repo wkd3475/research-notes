@@ -23,9 +23,11 @@ const notes = filterNotesByLocale(await getCollection('notes'), locale)
   .slice(0, 5);
 ---
 
-<BaseLayout title={site.title} locale={locale}>
-  <section class="hero">
+<BaseLayout title={site.title} description={strings.homeMetaDescription} locale={locale}>
+  <section class="hero hero-home">
     <h1>{strings.siteDescription}</h1>
+    <p class="home-lead">{strings.homePageLead}</p>
+    <p>{strings.homePageDesc}</p>
   </section>
 
   <StudyGrass locale={locale} />
