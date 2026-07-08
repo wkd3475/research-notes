@@ -5,7 +5,7 @@ export const defaultLocale: Locale = 'en';
 
 export const ui = {
   en: {
-    siteDescription: 'Diving deep until the questions clear',
+    siteDescription: 'Never stop being curious',
     homePageLead: 'Not a polished archive—a study engine.',
     homePageDesc:
       'I record what I explore with AI, notice what I still don’t know, and follow the next thread. Deep dives matter, but the goal is to read widely as a habit—building background knowledge naturally along the way.',
@@ -70,7 +70,7 @@ export const ui = {
     noTaggedItems: (tag: string) => `Nothing tagged “${tag}”.`,
   },
   ko: {
-    siteDescription: '궁금한 건, 끝까지 파보기',
+    siteDescription: '호기심, 절대 멈추지 않기',
     homePageLead:
       '정리된 지식을 쌓아두는 곳이 아닙니다. 끊임없이 공부하게 만드는 기록장이에요.',
     homePageDesc:
