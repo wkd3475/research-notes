@@ -6,6 +6,11 @@ export const defaultLocale: Locale = 'en';
 export const ui = {
   en: {
     siteDescription: 'Diving deep until the questions clear',
+    homePageLead: 'Not a polished archive—a study engine.',
+    homePageDesc:
+      'I record what I explore with AI, notice what I still don’t know, and follow the next thread. Well-written articles get the same treatment: read critically, question gaps, keep moving. The goal is to read more, not to collect tidy answers.',
+    homeMetaDescription:
+      'A study engine—not a polished archive. Record explorations with AI, question gaps, read more.',
     home: 'Home',
     notes: 'Notes',
     readingQueue: 'Reading Queue',
@@ -66,6 +71,12 @@ export const ui = {
   },
   ko: {
     siteDescription: '궁금한 건, 끝까지 파보기',
+    homePageLead:
+      '정리된 지식을 쌓아두는 곳이 아닙니다. 끊임없이 공부하게 만드는 기록장이에요.',
+    homePageDesc:
+      'AI와 대화하며 찾아본 걸 남기고, 뭘 아직 모르는지·뭘 더 봐야 하는지 짚으며 다음 질문으로 이어갑니다. 잘 다듬어진 글도 비판적으로 읽어요. 답을 모으기보다 많이 읽는 것이 목표입니다.',
+    homeMetaDescription:
+      '정리된 지식 저장소가 아닌 공부 기록장. AI와 함께 탐색하고, 모르는 것을 짚으며, 많이 읽기.',
     home: '홈',
     notes: '노트',
     readingQueue: '읽을 글',
