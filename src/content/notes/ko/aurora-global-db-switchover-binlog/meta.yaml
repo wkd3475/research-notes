@@ -1,0 +1,15 @@
+description: 'Aurora Global Database switchover와 binlog — CDC connector 준비, binlog_replication_globaldb, 세컨더리는 CDC 소스가 아님'
+pubDate: 2026-07-08
+tags:
+  - aurora
+  - mysql
+  - global-database
+  - binlog
+  - cdc
+  - aws
+draft: false
+exploreNext:
+  - label: 'Aurora cluster vs Global DB switchover — 내부 단계'
+    reason: '단일 클러스터 승격과 크로스 리전 Global DB switchover 때 Aurora가 내부적으로 무엇을 하는지 알아야 함'
+  - label: 'JDBC failover 감지와 최소 다운타임'
+    reason: 'switchover 후 endpoint/DNS 변경을 드라이버가 어떻게 인지하고, 어떤 연결 설정이 앱 다운타임을 줄이는지'

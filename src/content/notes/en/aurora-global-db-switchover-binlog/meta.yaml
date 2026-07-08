@@ -1,0 +1,15 @@
+description: 'Aurora Global Database switchover and binlog — CDC connector prep, binlog_replication_globaldb, why secondary cannot be a CDC source'
+pubDate: 2026-07-08
+tags:
+  - aurora
+  - mysql
+  - global-database
+  - binlog
+  - cdc
+  - aws
+draft: false
+exploreNext:
+  - label: 'Aurora cluster vs Global DB switchover — internal steps'
+    reason: 'Need to understand what Aurora does under the hood during promotion in a single cluster vs cross-Region Global Database switchover'
+  - label: 'JDBC failover detection and minimal downtime'
+    reason: 'How the driver notices endpoint/DNS changes after switchover and what connection settings reduce application downtime'
