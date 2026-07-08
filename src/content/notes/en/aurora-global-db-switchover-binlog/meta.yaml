@@ -1,0 +1,16 @@
+description: 'How Aurora MySQL binlog behaves during Global Database switchover — enhanced vs community binlog, binlog_replication_globaldb, and what the new primary retains'
+pubDate: 2026-07-08
+tags:
+  - aurora
+  - mysql
+  - global-database
+  - binlog
+  - aws
+draft: false
+exploreNext:
+  - label: 'Enhanced binlog vs community binlog in production'
+    reason: 'Trade-off between lower overhead and binlog availability after promotion needs a concrete decision framework'
+  - label: 'External binlog consumer reconfiguration after Global DB switchover'
+    reason: 'Blue/green documents coordinate events; Global Database does not — need a runbook for CDC tools'
+  - label: 'Aurora Global Database switchover runbook (non-binlog)'
+    reason: 'Parameter groups, monitoring, and global writer endpoint behavior are separate prep work beyond binlog'

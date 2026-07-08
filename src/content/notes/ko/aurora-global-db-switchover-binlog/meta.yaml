@@ -1,0 +1,16 @@
+description: 'Aurora Global Database switchover 시 MySQL binlog 동작 — enhanced vs community binlog, binlog_replication_globaldb, 승격 후 새 primary가 남기는 binlog'
+pubDate: 2026-07-08
+tags:
+  - aurora
+  - mysql
+  - global-database
+  - binlog
+  - aws
+draft: false
+exploreNext:
+  - label: '프로덕션에서 enhanced binlog vs community binlog'
+    reason: '오버헤드 감소와 승격 후 binlog 가용성 사이 트레이드오프를 어떻게 결정할지 프레임이 필요함'
+  - label: 'Global DB switchover 후 외부 binlog 소비자 재설정'
+    reason: 'Blue/green은 좌표 이벤트를 문서화하지만 Global Database는 아님 — CDC 도구용 런북이 따로 필요함'
+  - label: 'Aurora Global Database switchover 런북 (binlog 외)'
+    reason: '파라미터 그룹, 모니터링, global writer endpoint는 binlog와 별도로 준비할 항목임'
