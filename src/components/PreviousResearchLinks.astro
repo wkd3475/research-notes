@@ -1,0 +1,44 @@
+---
+import { href } from '../config';
+import { type Locale, t } from '../i18n';
+import type { ReferrerNote } from '../utils/notes';
+
+interface Props {
+  items: ReferrerNote[];
+  locale: Locale;
+}
+
+const { items, locale } = Astro.props;
+const strings = t(locale);
+
+if (items.length === 0) return;
+---
+
+<section class="previous-research">
+  <h3 class="explore-next-heading">{strings.previousResearch}</h3>
+  <ul class="explore-next-list">
+    {
+      items.map((item) => (
+        <li class="explore-next-item">
+          <a class="explore-next-link" href={href(`/notes/${item.translationId}/`, locale)}>
+            <svg
+              class="explore-next-icon explore-next-icon--link"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              aria-hidden="true"
+            >
+              <path d="M13 16H4V7" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M4 16 16 4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="explore-next-content">
+              <span class="explore-next-label">{item.title}</span>
+              {item.reason && <span class="explore-next-reason">{item.reason}</span>}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

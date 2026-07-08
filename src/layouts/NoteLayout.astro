@@ -2,11 +2,12 @@
 import BaseLayout from './BaseLayout.astro';
 import ExploreNextLinks from '../components/ExploreNextLinks.astro';
 import NoteHistory from '../components/NoteHistory.astro';
+import PreviousResearchLinks from '../components/PreviousResearchLinks.astro';
 import TagList from '../components/TagList.astro';
 import { href } from '../config';
 import type { ExploreNextItem } from '../content.config';
 import { type Locale, t } from '../i18n';
-import { findNoteByTranslationId } from '../utils/notes';
+import { findReferrerNotes } from '../utils/notes';
 import { formatRevisionDate, type NoteRevision } from '../utils/noteHistory';
 import { getCollection } from 'astro:content';
 
@@ -41,18 +42,8 @@ const {
 
 const strings = t(locale);
 
-let parentNote: { title: string; translationId: string } | null = null;
-
-if (exploredFrom) {
-  const allNotes = await getCollection('notes');
-  const parent = findNoteByTranslationId(allNotes, exploredFrom, locale);
-  if (parent) {
-    parentNote = {
-      title: parent.data.title,
-      translationId: exploredFrom,
-    };
-  }
-}
+const allNotes = await getCollection('notes');
+const referrerNotes = findReferrerNotes(allNotes, translationId, locale, exploredFrom);
 ---
 
 <BaseLayout
@@ -64,14 +55,9 @@ if (exploredFrom) {
   <article class="note-content">
     <a class="back-link" href={href('/notes/', locale)}>{strings.backToNotes}</a>
 
-    {
-      parentNote && (
-        <p class="explored-from">
-          {strings.exploredFrom}:{' '}
-          <a href={href(`/notes/${parentNote.translationId}/`, locale)}>{parentNote.title}</a>
-        </p>
-      )
-    }
+    {referrerNotes.length > 0 && (
+      <PreviousResearchLinks items={referrerNotes} locale={locale} />
+    )}
 
     {
       revisionBanner && (

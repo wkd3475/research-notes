@@ -997,13 +997,10 @@ a.grass-cell:focus-visible,
   border-bottom: 1px solid var(--border);
 }
 
-.explored-from {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin: 0 0 1rem;
-  padding: 0.65rem 0.85rem;
-  background: var(--accent-soft);
-  border-radius: 8px;
+.previous-research {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .explore-next {
