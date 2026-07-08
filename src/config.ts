@@ -3,7 +3,7 @@ import { localePath } from './i18n';
 
 export const site = {
   title: 'Research Notes',
-  description: 'Never stop being curious',
+  description: 'Never lose curiosity',
   githubUsername: 'wkd3475',
   githubRepo: 'research-notes',
 } as const;
