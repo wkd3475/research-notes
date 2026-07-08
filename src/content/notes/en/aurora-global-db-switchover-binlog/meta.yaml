@@ -1,16 +1,15 @@
-description: 'How Aurora MySQL binlog behaves during Global Database switchover — enhanced vs community binlog, binlog_replication_globaldb, and what the new primary retains'
+description: 'Aurora Global Database switchover and binlog — CDC connector prep, binlog_replication_globaldb, why secondary cannot be a CDC source'
 pubDate: 2026-07-08
 tags:
   - aurora
   - mysql
   - global-database
   - binlog
+  - cdc
   - aws
 draft: false
 exploreNext:
-  - label: 'Enhanced binlog vs community binlog in production'
-    reason: 'Trade-off between lower overhead and binlog availability after promotion needs a concrete decision framework'
-  - label: 'External binlog consumer reconfiguration after Global DB switchover'
-    reason: 'Blue/green documents coordinate events; Global Database does not — need a runbook for CDC tools'
-  - label: 'Aurora Global Database switchover runbook (non-binlog)'
-    reason: 'Parameter groups, monitoring, and global writer endpoint behavior are separate prep work beyond binlog'
+  - label: 'Aurora cluster vs Global DB switchover — internal steps'
+    reason: 'Need to understand what Aurora does under the hood during promotion in a single cluster vs cross-Region Global Database switchover'
+  - label: 'JDBC failover detection and minimal downtime'
+    reason: 'How the driver notices endpoint/DNS changes after switchover and what connection settings reduce application downtime'
