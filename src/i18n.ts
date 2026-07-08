@@ -86,7 +86,7 @@ export const ui = {
     more: '많음',
     grassScrollHint: '← 스와이프하면 과거 기록',
     nextResearch: 'Next Research',
-    previousResearch: 'Previous Research',
+    previousResearch: '이전 리서치',
     pendingNote: '아직 작성 전',
     footer: '공부 기록',
     langSwitch: 'English',
