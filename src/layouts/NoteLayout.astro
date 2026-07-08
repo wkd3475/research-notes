@@ -86,6 +86,8 @@ const referrerNotes = findReferrerNotes(allNotes, translationId, locale, explore
     </div>
     <TagList tags={tags} locale={locale} />
     <slot />
-    {exploreNext.length > 0 && <ExploreNextLinks items={exploreNext} locale={locale} />}
+    {exploreNext.length > 0 && (
+      <ExploreNextLinks items={exploreNext} locale={locale} fromTitle={title} />
+    )}
   </article>
 </BaseLayout>

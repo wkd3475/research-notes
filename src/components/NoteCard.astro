@@ -25,5 +25,7 @@ const formattedDate = formatNoteDate(pubDate, locale, 'short');
   <h2><a href={href}>{title}</a></h2>
   {description && <p class="note-desc">{description}</p>}
   <TagList tags={tags} locale={locale} />
-  {exploreNext.length > 0 && <ExploreNextLinks items={exploreNext} locale={locale} compact />}
+  {exploreNext.length > 0 && (
+    <ExploreNextLinks items={exploreNext} locale={locale} compact fromTitle={title} />
+  )}
 </article>

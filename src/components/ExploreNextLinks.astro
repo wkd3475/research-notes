@@ -2,6 +2,7 @@
 import { href } from '../config';
 import type { ExploreNextItem } from '../content.config';
 import { type Locale, t, parseNoteId } from '../i18n';
+import { buildNextResearchPrompt, encodeCopyText } from '../utils/nextResearchPrompt';
 import { filterNotesByLocale } from '../utils/notes';
 import { getCollection } from 'astro:content';
 
@@ -9,9 +10,10 @@ interface Props {
   items: ExploreNextItem[];
   locale: Locale;
   compact?: boolean;
+  fromTitle?: string;
 }
 
-const { items, locale, compact = false } = Astro.props;
+const { items, locale, compact = false, fromTitle } = Astro.props;
 const strings = t(locale);
 
 if (items.length === 0) return;
@@ -30,6 +32,10 @@ const noteTitles = new Map(
       items.map((item) => {
         const linkedTitle = item.note ? noteTitles.get(item.note) : undefined;
         const isLinked = item.note && linkedTitle;
+        const copyText = !isLinked
+          ? buildNextResearchPrompt(locale, item, fromTitle)
+          : undefined;
+        const copyTextB64 = copyText ? encodeCopyText(copyText) : undefined;
 
         return (
           <li class:list={['explore-next-item', !isLinked && 'explore-next-item--pending']}>
@@ -58,7 +64,13 @@ const noteTitles = new Map(
                   </span>
                 </a>
               ) : (
-                <span class="explore-next-link explore-next-link--pending" title={strings.pendingNote}>
+                <button
+                  type="button"
+                  class="explore-next-link explore-next-link--pending explore-next-copy-btn"
+                  title={strings.pendingCopyHint}
+                  data-copy-text-b64={copyTextB64}
+                  data-copy-toast={strings.copyGuideToast}
+                >
                   <svg
                     class="explore-next-icon explore-next-icon--pending"
                     viewBox="0 0 20 20"
@@ -67,15 +79,19 @@ const noteTitles = new Map(
                     stroke-width="1.75"
                     aria-hidden="true"
                   >
-                    <circle cx="10" cy="10" r="7" stroke-dasharray="3 3" />
-                    <path d="M10 6v4l2.5 2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <rect x="6" y="6" width="11" height="11" rx="1.5" stroke-linecap="round" />
+                    <path
+                      d="M4 14V4.5A1.5 1.5 0 0 1 5.5 3H13"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
                   </svg>
                   <span class="explore-next-content">
                     <span class="explore-next-label">{item.label}</span>
                     {item.reason && <span class="explore-next-reason">{item.reason}</span>}
                     <span class="explore-next-badge">{strings.pendingNote}</span>
                   </span>
-                </span>
+                </button>
               )
             }
           </li>
@@ -84,3 +100,7 @@ const noteTitles = new Map(
     }
   </ul>
 </section>
+
+<script>
+  import '../scripts/explore-next-copy.ts';
+</script>

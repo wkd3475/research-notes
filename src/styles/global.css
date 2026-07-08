@@ -1063,13 +1063,59 @@ a.grass-cell:focus-visible,
 .explore-next-link--pending {
   border-style: dashed;
   background: transparent;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+}
+
+.explore-next-copy-btn {
+  cursor: pointer;
+}
+
+.explore-next-copy-btn:hover,
+.explore-next-copy-btn:focus-visible {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 6%);
+  outline: none;
+}
+
+.explore-next-link--pending:not(.explore-next-copy-btn) {
   cursor: default;
 }
 
-.explore-next-link--pending:hover {
+.explore-next-link--pending:not(.explore-next-copy-btn):hover {
   border-color: var(--border);
   background: transparent;
   box-shadow: none;
+}
+
+.copy-toast {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  z-index: 200;
+  max-width: min(90vw, 24rem);
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-align: center;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 18%);
+  opacity: 0;
+  transform: translate(-50%, 0.75rem);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+  pointer-events: none;
+}
+
+.copy-toast--visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 .explore-next-icon {
