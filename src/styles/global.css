@@ -883,6 +883,38 @@ a.grass-cell:focus-visible,
   border-radius: 4px;
 }
 
+.note-content table {
+  width: 100%;
+  margin: 1.25rem 0;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.note-content thead {
+  background: var(--accent-soft);
+}
+
+.note-content th,
+.note-content td {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.note-content th {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.note-content tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--surface) 88%, var(--border));
+}
+
 .site-footer {
   border-top: 1px solid var(--border);
   margin-top: 3rem;
