@@ -1,0 +1,11 @@
+description: 'MCP gateway landscape, team RBAC, per-user OAuth, RFC 8693 token exchange, agent OBO delegation, and Slack bot per-user permissions — full study session.'
+pubDate: 2026-07-09
+tags: ['mcp', 'gateway', 'oauth', 'rbac', 'token-exchange', 'agent', 'slack']
+draft: false
+exploreNext:
+  - label: 'Microsoft MCP Gateway local deployment'
+    reason: 'Try kind/minikube with Entra app roles and adapter requiredRoles'
+  - label: 'Azure AD OBO flow for agents'
+    reason: 'Actor/subject app registration and X-On-Behalf-Of gateway config'
+  - label: 'MCP Enterprise-Managed Authorization (EMA)'
+    reason: 'IdP-centralized agent-user-server policy without per-server consent'
