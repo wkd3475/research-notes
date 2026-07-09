@@ -6,8 +6,10 @@ import { buildNextResearchPrompt, encodeCopyText } from '../utils/nextResearchPr
 import { filterNotesByLocale } from '../utils/notes';
 import { getCollection } from 'astro:content';
 
+type ExploreNextDisplayItem = ExploreNextItem & { fromTitle?: string };
+
 interface Props {
-  items: ExploreNextItem[];
+  items: ExploreNextDisplayItem[];
   locale: Locale;
   compact?: boolean;
   fromTitle?: string;
@@ -32,8 +34,9 @@ const noteTitles = new Map(
       items.map((item) => {
         const linkedTitle = item.note ? noteTitles.get(item.note) : undefined;
         const isLinked = item.note && linkedTitle;
+        const itemFromTitle = item.fromTitle ?? fromTitle;
         const copyText = !isLinked
-          ? buildNextResearchPrompt(locale, item, fromTitle)
+          ? buildNextResearchPrompt(locale, item, itemFromTitle)
           : undefined;
         const copyTextB64 = copyText ? encodeCopyText(copyText) : undefined;
 
@@ -56,6 +59,7 @@ const noteTitles = new Map(
                   <span class="explore-next-content">
                     <span class="explore-next-label">{item.label}</span>
                     {item.reason && <span class="explore-next-reason">{item.reason}</span>}
+                    {item.fromTitle && <span class="explore-next-source">{item.fromTitle}</span>}
                     {
                       linkedTitle !== item.label && (
                         <span class="explore-next-target">{linkedTitle}</span>
@@ -89,6 +93,7 @@ const noteTitles = new Map(
                   <span class="explore-next-content">
                     <span class="explore-next-label">{item.label}</span>
                     {item.reason && <span class="explore-next-reason">{item.reason}</span>}
+                    {item.fromTitle && <span class="explore-next-source">{item.fromTitle}</span>}
                     <span class="explore-next-badge">{strings.pendingNote}</span>
                   </span>
                 </button>
