@@ -1,13 +1,14 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import ExploreNextLinks from '../components/ExploreNextLinks.astro';
+import NoteAdjacentNav from '../components/NoteAdjacentNav.astro';
 import NoteHistory from '../components/NoteHistory.astro';
 import PreviousResearchLinks from '../components/PreviousResearchLinks.astro';
 import TagList from '../components/TagList.astro';
 import { href } from '../config';
 import type { ExploreNextItem } from '../content.config';
 import { type Locale, t } from '../i18n';
-import { findReferrerNotes } from '../utils/notes';
+import { findReferrerNotes, getAdjacentNotes } from '../utils/notes';
 import { formatRevisionDate, type NoteRevision } from '../utils/noteHistory';
 import { getCollection } from 'astro:content';
 
@@ -44,6 +45,7 @@ const strings = t(locale);
 
 const allNotes = await getCollection('notes');
 const referrerNotes = findReferrerNotes(allNotes, translationId, locale, exploredFrom);
+const adjacentNotes = getAdjacentNotes(allNotes, translationId, locale);
 ---
 
 <BaseLayout
@@ -89,5 +91,6 @@ const referrerNotes = findReferrerNotes(allNotes, translationId, locale, explore
     {exploreNext.length > 0 && (
       <ExploreNextLinks items={exploreNext} locale={locale} fromTitle={title} />
     )}
+    <NoteAdjacentNav adjacent={adjacentNotes} locale={locale} />
   </article>
 </BaseLayout>

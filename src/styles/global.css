@@ -994,6 +994,16 @@ a.grass-cell:focus-visible,
   cursor: default;
 }
 
+.month-nav-group--end {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.note-adjacent-nav {
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+
 .day-group {
   scroll-margin-top: 1.5rem;
   margin-bottom: 2rem;
