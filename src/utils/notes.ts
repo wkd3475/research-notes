@@ -7,6 +7,16 @@ export type ReferrerNote = {
   reason?: string;
 };
 
+export type AdjacentNote = {
+  translationId: string;
+  title: string;
+};
+
+export type AdjacentNotes = {
+  prev: AdjacentNote | null;
+  next: AdjacentNote | null;
+};
+
 export function filterNotesByLocale(
   notes: CollectionEntry<'notes'>[],
   locale: Locale,
@@ -82,4 +92,30 @@ export function findReferrerNotes(
   }
 
   return result;
+}
+
+/** Chronological neighbors by pubDate (prev = older, next = newer). */
+export function getAdjacentNotes(
+  notes: CollectionEntry<'notes'>[],
+  translationId: string,
+  locale: Locale,
+): AdjacentNotes {
+  const sorted = filterNotesByLocale(notes, locale).sort(
+    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+  );
+
+  const index = sorted.findIndex((note) => parseNoteId(note.id).translationId === translationId);
+  if (index === -1) {
+    return { prev: null, next: null };
+  }
+
+  const toAdjacent = (note: CollectionEntry<'notes'>): AdjacentNote => ({
+    translationId: parseNoteId(note.id).translationId,
+    title: note.data.title,
+  });
+
+  return {
+    prev: index < sorted.length - 1 ? toAdjacent(sorted[index + 1]) : null,
+    next: index > 0 ? toAdjacent(sorted[index - 1]) : null,
+  };
 }

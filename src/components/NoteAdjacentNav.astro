@@ -1,0 +1,43 @@
+---
+import { href } from '../config';
+import { type Locale, t } from '../i18n';
+import type { AdjacentNotes } from '../utils/notes';
+
+interface Props {
+  adjacent: AdjacentNotes;
+  locale: Locale;
+}
+
+const { adjacent, locale } = Astro.props;
+const strings = t(locale);
+const { prev, next } = adjacent;
+
+if (!prev && !next) return;
+---
+
+<nav class="month-nav month-nav--bottom note-adjacent-nav" aria-label={strings.noteNavLabel}>
+  {
+    prev ? (
+      <div class="month-nav-group">
+        <a class="month-nav-btn" href={href(`/notes/${prev.translationId}/`, locale)}>
+          {strings.prevNote}
+        </a>
+        <span class="month-nav-hint">{prev.title}</span>
+      </div>
+    ) : (
+      <span class="month-nav-btn month-nav-btn--disabled">{strings.noPrevNote}</span>
+    )
+  }
+  {
+    next ? (
+      <div class="month-nav-group month-nav-group--end">
+        <a class="month-nav-btn" href={href(`/notes/${next.translationId}/`, locale)}>
+          {strings.nextNote}
+        </a>
+        <span class="month-nav-hint">{next.title}</span>
+      </div>
+    ) : (
+      <span class="month-nav-btn month-nav-btn--disabled">{strings.noNextNote}</span>
+    )
+  }
+</nav>
