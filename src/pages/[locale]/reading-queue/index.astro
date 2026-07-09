@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ExploreNextLinks from '../../../components/ExploreNextLinks.astro';
 import ReadingQueueCard from '../../../components/ReadingQueueCard.astro';
 import { locales, t, isLocale } from '../../../i18n';
+import { collectNextResearchItems } from '../../../utils/nextResearch';
 import { filterReadingQueueByLocale } from '../../../utils/readingQueue';
 import { getCollection } from 'astro:content';
 
@@ -16,9 +18,16 @@ if (!localeParam || !isLocale(localeParam)) {
 const locale = localeParam;
 const strings = t(locale);
 
-const items = filterReadingQueueByLocale(await getCollection('readingQueue'), locale).sort(
+const [allNotes, allQueue] = await Promise.all([
+  getCollection('notes'),
+  getCollection('readingQueue'),
+]);
+
+const items = filterReadingQueueByLocale(allQueue, locale).sort(
   (a, b) => b.data.savedAt.valueOf() - a.data.savedAt.valueOf(),
 );
+const nextResearch = collectNextResearchItems(allNotes, locale);
+const isEmpty = items.length === 0 && nextResearch.length === 0;
 ---
 
 <BaseLayout title={strings.readingQueue} description={strings.readingQueueDesc} locale={locale}>
@@ -28,20 +37,31 @@ const items = filterReadingQueueByLocale(await getCollection('readingQueue'), lo
   </section>
 
   {
-    items.length > 0 ? (
-      items.map((item) => (
-        <ReadingQueueCard
-          title={item.data.title}
-          url={item.data.url}
-          reason={item.data.reason}
-          savedAt={item.data.savedAt}
-          tags={item.data.tags}
-          source={item.data.source}
-          locale={locale}
-        />
-      ))
-    ) : (
-      <p class="empty-state">{strings.noReadingQueue}</p>
+    items.length > 0 && (
+      <section class="backlog-section">
+        <h2 class="section-title">{strings.savedArticles}</h2>
+        {items.map((item) => (
+          <ReadingQueueCard
+            title={item.data.title}
+            url={item.data.url}
+            reason={item.data.reason}
+            savedAt={item.data.savedAt}
+            tags={item.data.tags}
+            source={item.data.source}
+            locale={locale}
+          />
+        ))}
+      </section>
     )
   }
+
+  {
+    nextResearch.length > 0 && (
+      <section class="backlog-section">
+        <ExploreNextLinks items={nextResearch} locale={locale} />
+      </section>
+    )
+  }
+
+  {isEmpty && <p class="empty-state">{strings.noBacklog}</p>}
 </BaseLayout>
