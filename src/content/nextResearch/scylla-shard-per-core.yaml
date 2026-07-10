@@ -1,0 +1,7 @@
+label:
+  en: 'How Scylla works under the hood'
+  ko: 'Scylla 내부 동작'
+reason:
+  en: 'The post only positions Scylla vs Cassandra; need a deeper dive on internals before operating it'
+  ko: '글은 Scylla vs Cassandra 소개 수준이라, 운영 전에 내부 구조를 더 깊게 봐야 함'
+note: scylla-shard-per-core

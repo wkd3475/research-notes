@@ -1,11 +1,18 @@
 import { defineCollection, z } from 'astro:content';
+import { nextResearchLoader } from './content/nextResearchLoader';
 import { notesLoader } from './content/notesLoader';
 import { readingQueueLoader } from './content/readingQueueLoader';
 
 const exploreNextItem = z.object({
+  id: z.string(),
   label: z.string(),
   reason: z.string().optional(),
   note: z.string().optional(),
+});
+
+const localizedText = z.object({
+  en: z.string(),
+  ko: z.string(),
 });
 
 const notes = defineCollection({
@@ -22,6 +29,15 @@ const notes = defineCollection({
   }),
 });
 
+const nextResearch = defineCollection({
+  loader: nextResearchLoader(),
+  schema: z.object({
+    label: localizedText,
+    reason: localizedText.optional(),
+    note: z.string().optional(),
+  }),
+});
+
 const readingQueue = defineCollection({
   loader: readingQueueLoader(),
   schema: z.object({
@@ -34,6 +50,6 @@ const readingQueue = defineCollection({
   }),
 });
 
-export const collections = { notes, readingQueue };
+export const collections = { notes, nextResearch, readingQueue };
 
 export type ExploreNextItem = z.infer<typeof exploreNextItem>;

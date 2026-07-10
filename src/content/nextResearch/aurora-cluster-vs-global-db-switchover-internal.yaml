@@ -1,0 +1,7 @@
+label:
+  en: 'Aurora cluster vs Global DB switchover — internal steps'
+  ko: 'Aurora cluster vs Global DB switchover — 내부 단계'
+reason:
+  en: 'Need to understand what Aurora does under the hood during promotion in a single cluster vs cross-Region Global Database switchover'
+  ko: '단일 클러스터 승격과 크로스 리전 Global DB switchover 때 Aurora가 내부적으로 무엇을 하는지 알아야 함'
+note: aurora-cluster-vs-global-db-switchover-internal

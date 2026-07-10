@@ -6,6 +6,11 @@ import type { Loader, LoaderContext } from 'astro/loaders';
 import { glob } from 'tinyglobby';
 import { parse as parseYaml } from 'yaml';
 import { renderMarkdown } from '../utils/renderMarkdown';
+import { parseNoteId } from '../i18n';
+import {
+  loadNextResearchRegistry,
+  resolveExploreNextValue,
+} from '../utils/nextResearchRegistry';
 
 function unquote(value: string): string {
   const trimmed = value.trim();
@@ -47,6 +52,7 @@ async function syncNotes(context: LoaderContext) {
     absolute: true,
   });
 
+  const registry = loadNextResearchRegistry();
   const untouchedEntries = new Set(store.keys());
 
   for (const contentPath of contentFiles) {
@@ -65,6 +71,16 @@ async function syncNotes(context: LoaderContext) {
     const metaRaw = await readFile(metaPath, 'utf-8');
     const { title, body } = parseContentFile(contentRaw);
     const meta = parseYaml(metaRaw) ?? {};
+    const { locale } = parseNoteId(id);
+
+    if (meta.exploreNext !== undefined) {
+      meta.exploreNext = resolveExploreNextValue(meta.exploreNext, locale, registry);
+      for (const item of meta.exploreNext) {
+        if (!registry.has(item.id)) {
+          logger.warn(`Unknown next research id "${item.id}" in ${id}/meta.yaml`);
+        }
+      }
+    }
 
     const data = await parseData({
       id,

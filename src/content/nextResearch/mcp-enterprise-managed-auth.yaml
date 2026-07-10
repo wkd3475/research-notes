@@ -1,0 +1,6 @@
+label:
+  en: 'MCP Enterprise-Managed Authorization (EMA)'
+  ko: 'MCP Enterprise-Managed Authorization (EMA)'
+reason:
+  en: 'IdP-centralized agent-user-server policy without per-server consent'
+  ko: 'IdP 중앙 agent-user-server policy, per-server consent 없이'

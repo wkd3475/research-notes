@@ -167,5 +167,5 @@ echo "Preview EN: http://localhost:4321/research-notes/en/notes/${SLUG}/"
 [[ $BOTH == true ]] && echo "Preview KO: http://localhost:4321/research-notes/ko/notes/${SLUG}/"
 
 if [[ -n $FROM ]]; then
-  echo "Next: update exploreNext.note in en/${FROM}/meta.yaml and ko/${FROM}/meta.yaml → ${SLUG}"
+  echo "Next: set note: ${SLUG} on the matching src/content/nextResearch/{id}.yaml"
 fi

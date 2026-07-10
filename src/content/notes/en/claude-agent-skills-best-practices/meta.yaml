@@ -5,5 +5,4 @@ tags:
   - agent-skills
   - ai
 exploreNext:
-  - label: 'Team & org shared Skills — best practices'
-    reason: 'How to accumulate and govern skills at team/company scale'
+  - team-org-shared-skills

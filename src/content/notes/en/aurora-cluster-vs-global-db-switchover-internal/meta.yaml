@@ -10,5 +10,4 @@ tags:
 draft: false
 exploredFrom: aurora-global-db-switchover-binlog
 exploreNext:
-  - label: 'JDBC failover detection and minimal downtime'
-    reason: 'How the driver notices endpoint/DNS changes after switchover and what connection settings reduce application downtime'
+  - jdbc-failover-minimal-downtime

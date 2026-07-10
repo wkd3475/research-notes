@@ -25,11 +25,42 @@ Each note is a **folder** per locale:
 ```
 src/content/notes/{en,ko}/{slug}/
   content.md   # title + body — Git history tracks this file only
-  meta.yaml    # description, pubDate, tags, exploreNext, exploredFrom, draft
+  meta.yaml    # description, pubDate, tags, exploreNext IDs, exploredFrom, draft
 ```
 
 - Edit **content.md** when title or body changes (shows in revision history)
 - Edit **meta.yaml** when tags, Next Research links, or pubDate change (no revision entry)
+
+## Next Research registry
+
+Next Research topics are normalized like a small DB:
+
+| Layer | Path | Role |
+|-------|------|------|
+| **Registry** | `src/content/nextResearch/{id}.yaml` | Canonical label/reason (EN+KO) and optional `note:` slug when written |
+| **Note link** | `meta.yaml` → `exploreNext: [id, …]` | Many-to-one references to registry IDs |
+
+```yaml
+# src/content/nextResearch/jdbc-failover-minimal-downtime.yaml
+label:
+  en: 'JDBC failover detection and minimal downtime'
+  ko: 'JDBC failover 감지와 최소 다운타임'
+reason:
+  en: 'How the driver notices endpoint/DNS changes…'
+  ko: 'switchover 후 endpoint/DNS 변경을…'
+note: aurora-jdbc-failover   # optional — set when the follow-up note exists
+```
+
+```yaml
+# meta.yaml — same ID list in both locales
+exploreNext:
+  - jdbc-failover-minimal-downtime
+  - scylla-use-cases
+```
+
+- **Edit label/reason once** in the registry → updates every note card and the reading queue
+- **IDs** = kebab-case; reuse the note slug when the topic becomes a note (`note:` field)
+- Scaffold: `scripts/new-next-research.sh <id> --label-en "…" --label-ko "…" --reason-en "…" --reason-ko "…"`
 
 ## Quick routing
 
@@ -64,7 +95,7 @@ While planning or drafting, compare the proposed **title** to the **body**:
 6. **Review quiz** — after "What I learned" / "배운 것", add **3–5** recap questions from the study material. Answers must be hidden in clickable quiz cards — see [Review quiz format](#review-quiz-format). Do **not** put answers in plain visible headings.
 7. **Korean humanize** — after the KO draft, follow [humanize-korean](../humanize-korean/SKILL.md): read `references/quick-rules.md`, apply fast-mode 윤문 to `ko/{slug}/content.md` (genre: 블로그). Meaning must stay identical; only style and rhythm change.
 8. **pubDate** — `YYYY-MM-DD` in `meta.yaml` (study date; defaults to today KST)
-9. **exploreNext** — 2–4 items in `meta.yaml`. UI label is **Next Research**. Omit `note` until follow-up exists
+9. **exploreNext** — 2–4 registry IDs in `meta.yaml` (create new topics in `src/content/nextResearch/` first). UI label is **Next Research**
 10. **Verify** — `npm run build`
 11. **Share URLs** — both locales:
    - `http://localhost:4321/research-notes/en/notes/{slug}/`
@@ -76,8 +107,9 @@ When writing a follow-up from a parent's **Next Research**:
 
 1. Create `en/{slug}/` and `ko/{slug}/` (content.md + meta.yaml each)
 2. Set `exploredFrom: {parent-slug}` in **both** `meta.yaml` files
-3. Update **both** parent `meta.yaml` files — add `note: {new-slug}` on the matching `exploreNext` item
-4. `exploreNext.note` and `exploredFrom` use translation ID only (no `en/` prefix)
+3. Set `note: {new-slug}` on the matching registry file in `src/content/nextResearch/{id}.yaml`
+4. Parent `meta.yaml` keeps the same registry ID — no per-locale label/reason edits needed
+5. `exploredFrom` and registry `note:` use translation ID only (no `en/` prefix)
 
 ## From reading queue
 
@@ -106,14 +138,12 @@ pubDate: YYYY-MM-DD
 tags: []
 draft: false
 exploreNext:
-  - label: string
-    reason: string   # optional
-    note: slug       # optional — linked follow-up
+  - next-research-id   # registry ID — same list in en + ko meta.yaml
 exploredFrom: slug   # optional — parent note
 readingQueueFrom: slug   # optional — queue item this note replaced
 ```
 
-Keep `exploreNext` labels/reasons localized per locale (EN → English labels, KO → Korean labels). Slugs stay identical across locales.
+Registry IDs are locale-neutral. Labels and reasons live in `src/content/nextResearch/{id}.yaml`.
 
 ## UI naming
 

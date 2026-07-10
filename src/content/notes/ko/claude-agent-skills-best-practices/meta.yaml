@@ -5,5 +5,4 @@ tags:
   - agent-skills
   - ai
 exploreNext:
-  - label: '팀·조직 단위 공용 Skill 축적 Best Practice'
-    reason: '팀/회사 규모에서 Skill을 쌓고 운영하는 방법'
+  - team-org-shared-skills

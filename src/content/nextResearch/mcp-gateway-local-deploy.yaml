@@ -1,0 +1,6 @@
+label:
+  en: 'Microsoft MCP Gateway local deployment'
+  ko: 'Microsoft MCP Gateway 로컬 배포'
+reason:
+  en: 'Try kind/minikube with Entra app roles and adapter requiredRoles'
+  ko: 'kind/minikube + Entra app roles + adapter requiredRoles'

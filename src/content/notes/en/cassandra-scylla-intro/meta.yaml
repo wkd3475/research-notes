@@ -7,10 +7,6 @@ tags:
   - database
 draft: false
 exploreNext:
-  - label: 'How Scylla works under the hood'
-    reason: 'The post only positions Scylla vs Cassandra; need a deeper dive on internals before operating it'
-    note: scylla-shard-per-core
-  - label: 'Cluster join on boot'
-    reason: 'Need to understand how a new node discovers the cluster and receives tokens when we bring nodes up'
-  - label: 'Node replacement runbook'
-    reason: 'Practical ops — safest way to swap a failed or decommissioned node without data loss'
+  - scylla-shard-per-core
+  - cassandra-cluster-join
+  - cassandra-node-replacement

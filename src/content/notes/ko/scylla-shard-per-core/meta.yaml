@@ -9,7 +9,5 @@ tags:
 draft: false
 exploredFrom: cassandra-scylla-intro
 exploreNext:
-  - label: 'Scylla가 적합한 경우 (use case)'
-    reason: '회사에서 쓰기 전에 잘 맞는 워크로드와 피해야 할 경우를 구분하고 싶음'
-  - label: '클라이언트 베스트 프랙티스 (드라이버, 데이터 모델, CL)'
-    reason: '서버 아키텍처만큼 shard-aware 라우팅·모델링 선택이 중요해 보임'
+  - scylla-use-cases
+  - scylla-client-best-practices

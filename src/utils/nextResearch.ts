@@ -44,16 +44,16 @@ export function collectNextResearchItems(
 
   const seen = new Map<string, NextResearchEntry>();
   for (const item of sorted) {
-    const existing = seen.get(item.label);
+    const existing = seen.get(item.id);
     if (!existing) {
-      seen.set(item.label, item);
+      seen.set(item.id, item);
       continue;
     }
 
     const existingDate = pubDates.get(existing.fromNoteId) ?? 0;
     const itemDate = pubDates.get(item.fromNoteId) ?? 0;
     if (itemDate > existingDate) {
-      seen.set(item.label, item);
+      seen.set(item.id, item);
     }
   }
 

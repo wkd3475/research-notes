@@ -1,0 +1,6 @@
+label:
+  en: 'Node replacement runbook'
+  ko: '노드 교체 절차'
+reason:
+  en: 'Practical ops — safest way to swap a failed or decommissioned node without data loss'
+  ko: '장애·폐기 노드를 바꿀 때 데이터 손실 없이 처리하는 실무 runbook'

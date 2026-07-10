@@ -1,0 +1,6 @@
+label:
+  en: 'Cluster join on boot'
+  ko: '부팅 시 클러스터 조인'
+reason:
+  en: 'Need to understand how a new node discovers the cluster and receives tokens when we bring nodes up'
+  ko: '노드를 올릴 때 클러스터 발견·token 할당이 어떻게 되는지 알아야 함'

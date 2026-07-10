@@ -1,0 +1,6 @@
+label:
+  en: 'Client-side best practices (drivers, data model, CL)'
+  ko: '클라이언트 베스트 프랙티스 (드라이버, 데이터 모델, CL)'
+reason:
+  en: 'Shard-aware routing and modeling choices matter as much as server architecture'
+  ko: '서버 아키텍처만큼 shard-aware 라우팅·모델링 선택이 중요해 보임'

@@ -9,7 +9,5 @@ tags:
 draft: false
 exploredFrom: cassandra-scylla-intro
 exploreNext:
-  - label: 'When Scylla is the right fit (use cases)'
-    reason: 'Know where it shines and where it is a bad match before committing at work'
-  - label: 'Client-side best practices (drivers, data model, CL)'
-    reason: 'Shard-aware routing and modeling choices matter as much as server architecture'
+  - scylla-use-cases
+  - scylla-client-best-practices

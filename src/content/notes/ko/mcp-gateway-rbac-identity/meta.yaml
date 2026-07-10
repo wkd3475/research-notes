@@ -3,9 +3,6 @@ pubDate: 2026-07-09
 tags: ['mcp', 'gateway', 'oauth', 'rbac', 'token-exchange', 'agent', 'slack']
 draft: false
 exploreNext:
-  - label: 'Microsoft MCP Gateway 로컬 배포'
-    reason: 'kind/minikube + Entra app roles + adapter requiredRoles'
-  - label: 'Azure AD OBO flow (agent용)'
-    reason: 'actor/subject app registration + X-On-Behalf-Of gateway 설정'
-  - label: 'MCP Enterprise-Managed Authorization (EMA)'
-    reason: 'IdP 중앙 agent-user-server policy, per-server consent 없이'
+  - mcp-gateway-local-deploy
+  - azure-ad-obo-agent
+  - mcp-enterprise-managed-auth

@@ -1,0 +1,6 @@
+label:
+  en: 'Azure AD OBO flow for agents'
+  ko: 'Azure AD OBO flow (agent용)'
+reason:
+  en: 'Actor/subject app registration and X-On-Behalf-Of gateway config'
+  ko: 'actor/subject app registration + X-On-Behalf-Of gateway 설정'

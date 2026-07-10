@@ -9,7 +9,7 @@ This repository is for recording what I study.
 Each note lives in a folder under `src/content/notes/en/` and `src/content/notes/ko/`:
 
 - `content.md` — title and body (Git tracks changes here)
-- `meta.yaml` — description, pubDate, tags, exploreNext
+- `meta.yaml` — description, pubDate, tags, exploreNext (registry IDs) (registry IDs)
 
 ```md
 ---
@@ -24,9 +24,10 @@ description: 'One-line summary'
 pubDate: 2026-07-04
 tags: ['tag1']
 exploreNext:
-  - label: 'Next topic'
-    reason: 'Why it matters'
+  - next-research-id
 ```
+
+Labels and reasons live once in `src/content/nextResearch/{id}.yaml`.
 
 ## Study Grass
 
