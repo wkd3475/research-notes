@@ -60,12 +60,13 @@ While planning or drafting, compare the proposed **title** to the **body**:
 2. **Primary language** — write **English first**, then Korean translation (same structure, same `pubDate`, same `exploreNext` / `exploredFrom`)
 3. **Check duplicates** — slug folder must not already exist in `en/` or `ko/`
 4. **Title–content fit** — before and while writing, apply [Scope and splitting](#scope-and-splitting). Trim or move material that does not belong under this title.
-5. **Body sections** — EN: "Why I looked this up", "What stood out", "What I learned", "Memo". KO: "왜 이 글을 찾아봤나", "읽으면서 느낀 점", "배운 것", "메모". Subjective sections: see [Author voice](#author-voice-subjective-sections).
-6. **Korean humanize** — after the KO draft, follow [humanize-korean](../humanize-korean/SKILL.md): read `references/quick-rules.md`, apply fast-mode 윤문 to `ko/{slug}/content.md` (genre: 블로그). Meaning must stay identical; only style and rhythm change.
-7. **pubDate** — `YYYY-MM-DD` in `meta.yaml` (study date; defaults to today KST)
-8. **exploreNext** — 2–4 items in `meta.yaml`. UI label is **Next Research**. Omit `note` until follow-up exists
-9. **Verify** — `npm run build`
-10. **Share URLs** — both locales:
+5. **Body sections** — EN: "Why I looked this up", "What stood out", "What I learned", "Review quiz", "Memo". KO: "왜 이 글을 찾아봤나", "읽으면서 느낀 점", "배운 것", "복습 퀴즈", "메모". Subjective sections: see [Author voice](#author-voice-subjective-sections).
+6. **Review quiz** — after "What I learned" / "배운 것", add **3–5** recap questions from the study material. Answers must be hidden in clickable quiz cards — see [Review quiz format](#review-quiz-format). Do **not** put answers in plain visible headings.
+7. **Korean humanize** — after the KO draft, follow [humanize-korean](../humanize-korean/SKILL.md): read `references/quick-rules.md`, apply fast-mode 윤문 to `ko/{slug}/content.md` (genre: 블로그). Meaning must stay identical; only style and rhythm change.
+8. **pubDate** — `YYYY-MM-DD` in `meta.yaml` (study date; defaults to today KST)
+9. **exploreNext** — 2–4 items in `meta.yaml`. UI label is **Next Research**. Omit `note` until follow-up exists
+10. **Verify** — `npm run build`
+11. **Share URLs** — both locales:
    - `http://localhost:4321/research-notes/en/notes/{slug}/`
    - `http://localhost:4321/research-notes/ko/notes/{slug}/`
 
@@ -131,6 +132,45 @@ These sections record **the author's experience**, not the agent's inference. Do
 
 **Allowed without user input:** `What I learned` / `배운 것` — summaries, tables, and takeaways from the source material the user asked you to read.
 
+**Allowed without user input:** `Review quiz` / `복습 퀴즈` — 3–5 questions with answers derived from the study session. Use the [quiz card format](#review-quiz-format); never show answers as plain visible text.
+
+## Review quiz format
+
+After the main learning section, add a recap quiz. The site renders `:::quiz` blocks as **click-to-reveal cards** (`<details>`); answers stay hidden until the reader opens a card.
+
+**Section heading:** `## Review quiz` (EN) / `## 복습 퀴즈` (KO)
+
+**Hint line** (localized, italic, directly under the heading):
+
+- EN: `*Click a card to reveal the answer.*`
+- KO: `*카드를 클릭하면 답이 열립니다.*`
+
+**Per question** — fenced block with `---` separating question and answer:
+
+````md
+:::quiz
+**Q1.** Short question tied to a key concept from this note?
+---
+Answer in 1–3 sentences. Markdown OK (lists, tables, `code`).
+:::
+
+:::quiz
+**Q2.** ...
+---
+...
+:::
+````
+
+**Rules:**
+
+- **3–5 questions** per note (more only if the study session was unusually broad)
+- Questions should test **understanding**, not trivia — compare concepts, explain *why*, spot differences (e.g. single-cluster failover vs Global DB switchover)
+- Answers: concise but complete; reuse wording from "What I learned" / "배운 것"
+- Same question count and order in EN and KO; translate labels (`Q1.` stays or use `Q1.` in both)
+- Do **not** duplicate the quiz as a visible "Questions — answers" subsection elsewhere in the note
+
+**When studying with the user before writing the note:** if you posed study questions during the session, turn those into quiz cards (with the answers you already discussed).
+
 **When the user gives little or nothing for a subjective section:**
 
 - Keep it short — one sentence or a brief paragraph in their voice.
@@ -158,6 +198,7 @@ These sections record **the author's experience**, not the agent's inference. Do
 - [ ] en/{slug}/ and ko/{slug}/ created or updated (content.md + meta.yaml)
 - [ ] Title matches body scope; off-topic material split into separate linked notes (if any)
 - [ ] Subjective sections use only the author's words (no invented impressions)
+- [ ] Review quiz: 3–5 `:::quiz` cards with hidden answers (EN + KO)
 - [ ] ko/{slug}/content.md humanized via humanize-korean (when body changed)
 - [ ] exploredFrom / exploreNext links in meta.yaml (if applicable)
 - [ ] Parent exploreNext.note updated in both parent meta.yaml files

@@ -1,4 +1,5 @@
 import { marked } from 'marked';
+import { expandQuizCards, wrapQuizDeck } from './quizCards';
 
 marked.setOptions({
   gfm: true,
@@ -6,5 +7,6 @@ marked.setOptions({
 });
 
 export function renderMarkdown(body: string): string {
-  return marked.parse(body) as string;
+  const html = marked.parse(expandQuizCards(body)) as string;
+  return wrapQuizDeck(html);
 }

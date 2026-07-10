@@ -926,6 +926,114 @@ a.grass-cell:focus-visible,
   background: color-mix(in srgb, var(--surface) 88%, var(--border));
 }
 
+/* Review quiz cards (:::quiz in note markdown) */
+.quiz-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.25rem 0 1.75rem;
+}
+
+.quiz-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.quiz-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+
+.quiz-card[open] {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.quiz-card__question {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  line-height: 1.5;
+  list-style: none;
+  user-select: none;
+}
+
+.quiz-card__question::-webkit-details-marker {
+  display: none;
+}
+
+.quiz-card__question::before {
+  content: '?';
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.quiz-card[open] .quiz-card__question::before {
+  content: '✓';
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.quiz-card__question::after {
+  content: '›';
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  transition: transform 0.15s ease;
+}
+
+.quiz-card[open] .quiz-card__question::after {
+  transform: rotate(90deg);
+}
+
+.quiz-card__answer {
+  padding: 0 1rem 1rem 2.65rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  border-top: 1px solid var(--border);
+  margin-top: 0;
+  padding-top: 0.85rem;
+}
+
+.quiz-card__answer > :first-child {
+  margin-top: 0;
+}
+
+.quiz-card__answer > :last-child {
+  margin-bottom: 0;
+}
+
+.quiz-card__answer p,
+.quiz-card__answer ul,
+.quiz-card__answer ol {
+  margin: 0.5rem 0;
+}
+
+.quiz-card__answer code {
+  background: var(--accent-soft);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
 .site-footer {
   border-top: 1px solid var(--border);
   margin-top: 3rem;

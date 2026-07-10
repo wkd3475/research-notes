@@ -1,0 +1,14 @@
+description: '단일 Aurora 클러스터 failover vs Global DB switchover/failover — 스토리지 레이어, API 상태, 타임라인, binlog 연계, 학습 5문제 답'
+pubDate: 2026-07-10
+tags:
+  - aurora
+  - global-database
+  - failover
+  - switchover
+  - aws
+  - storage
+draft: false
+exploredFrom: aurora-global-db-switchover-binlog
+exploreNext:
+  - label: 'JDBC failover 감지와 최소 다운타임'
+    reason: 'switchover 후 endpoint/DNS 변경을 드라이버가 어떻게 인지하고, 어떤 연결 설정이 앱 다운타임을 줄이는지'

@@ -47,6 +47,24 @@ title: 'Note title'
 
 ---
 
+## Review quiz
+
+*Click a card to reveal the answer.*
+
+:::quiz
+**Q1.** One key question from this study session?
+---
+Short answer (1–3 sentences). Markdown OK.
+:::
+
+:::quiz
+**Q2.** Another concept to compare or explain?
+---
+Answer here.
+:::
+
+---
+
 ## Memo
 
 <!-- Author voice only — user's closing note, not agent takeaways. -->
@@ -97,6 +115,24 @@ title: '노트 제목'
 ## 배운 것
 
 <!-- 원문 요약·정리는 에이전트가 작성 가능 -->
+
+---
+
+## 복습 퀴즈
+
+*카드를 클릭하면 답이 열립니다.*
+
+:::quiz
+**Q1.** 이번 공부에서 핵심이 되는 질문?
+---
+짧은 답 (1–3문장). 마크다운 사용 가능.
+:::
+
+:::quiz
+**Q2.** 비교하거나 이유를 설명해야 하는 개념?
+---
+답변.
+:::
 
 ---
 

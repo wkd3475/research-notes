@@ -1,10 +1,11 @@
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { dirname, relative, resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import type { Loader, LoaderContext } from 'astro/loaders';
 import { glob } from 'tinyglobby';
 import { parse as parseYaml } from 'yaml';
+import { renderMarkdown } from '../utils/renderMarkdown';
 
 function unquote(value: string): string {
   const trimmed = value.trim();
@@ -32,7 +33,7 @@ export function parseContentFile(raw: string): { title: string; body: string } {
 }
 
 async function syncNotes(context: LoaderContext) {
-  const { parseData, store, generateDigest, renderMarkdown, logger } = context;
+  const { parseData, store, generateDigest, logger } = context;
   const baseDir = fileURLToPath(new URL('./notes', import.meta.url));
   const rootDir = fileURLToPath(context.config.root);
 
@@ -72,9 +73,7 @@ async function syncNotes(context: LoaderContext) {
     });
 
     const digest = generateDigest(`${contentRaw}\n---\n${metaRaw}`);
-    const rendered = await renderMarkdown(body, {
-      fileURL: pathToFileURL(contentPath),
-    });
+    const rendered = renderMarkdown(body);
 
     store.set({
       id,
@@ -82,7 +81,7 @@ async function syncNotes(context: LoaderContext) {
       body,
       filePath: relative(rootDir, contentPath),
       digest,
-      rendered,
+      rendered: { html: rendered },
     });
   }
 
