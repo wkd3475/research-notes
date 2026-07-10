@@ -1,5 +1,5 @@
 description: 'Mac mini self-hosted GitHub Actions — ephemeral Tart VMs, golden images, and a Runner Manager orchestrator'
-pubDate: 2026-07-09
+pubDate: 2026-07-10
 tags:
   - github-actions
   - ci
