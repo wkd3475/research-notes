@@ -43,17 +43,21 @@ const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
   </head>
   <body>
     <header class="site-header">
-      <div class="container">
+      <div class="container site-header-inner">
         <a class="site-title" href={href('/', locale)}>{site.title}</a>
-        <nav class="site-nav">
-          <a href={href('/notes/', locale)}>{strings.notes}</a>
-          <a href={href('/reading-queue/', locale)}>{strings.readingQueue}</a>
-          <a href={`https://github.com/${site.githubUsername}/${site.githubRepo}`} target="_blank" rel="noopener">
-            GitHub
-          </a>
-          <ThemePicker locale={locale} />
-          <LangToggle locale={locale} translationId={translationId} />
-        </nav>
+        <div class="site-header-end">
+          <nav class="site-nav" aria-label={strings.siteNav}>
+            <a href={href('/notes/', locale)}>{strings.notes}</a>
+            <a href={href('/reading-queue/', locale)}>{strings.readingQueue}</a>
+            <a href={`https://github.com/${site.githubUsername}/${site.githubRepo}`} target="_blank" rel="noopener">
+              GitHub
+            </a>
+          </nav>
+          <div class="site-header-tools">
+            <ThemePicker locale={locale} />
+            <LangToggle locale={locale} translationId={translationId} />
+          </div>
+        </div>
       </div>
     </header>
 
