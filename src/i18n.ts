@@ -12,6 +12,7 @@ export const ui = {
     homeMetaDescription:
       'A study engine—not a polished archive. Record explorations with AI, read widely, build background knowledge.',
     home: 'Home',
+    siteNav: 'Site navigation',
     notes: 'Notes',
     readingQueue: 'Read & Research',
     recentNotes: 'Recent Notes',
@@ -86,6 +87,7 @@ export const ui = {
     homeMetaDescription:
       '정리된 지식 저장소가 아닌 공부 기록장. AI와 함께 탐색하고, 습관처럼 많이 읽으며 배경 지식 넓히기.',
     home: '홈',
+    siteNav: '사이트 메뉴',
     notes: '노트',
     readingQueue: '읽기·연구',
     recentNotes: '최근 노트',
