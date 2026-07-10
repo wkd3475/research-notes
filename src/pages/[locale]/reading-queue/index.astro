@@ -26,7 +26,7 @@ const [allNotes, allQueue] = await Promise.all([
 const items = filterReadingQueueByLocale(allQueue, locale).sort(
   (a, b) => b.data.savedAt.valueOf() - a.data.savedAt.valueOf(),
 );
-const nextResearch = collectNextResearchItems(allNotes, locale);
+const nextResearch = collectNextResearchItems(allNotes, locale, { pendingOnly: true });
 const isEmpty = items.length === 0 && nextResearch.length === 0;
 ---
 
