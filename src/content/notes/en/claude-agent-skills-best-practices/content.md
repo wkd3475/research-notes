@@ -2,7 +2,9 @@
 title: 'Claude Agent Skills — Best Practices'
 ---
 
-> Source: [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
+## References
+
+- [Skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
 
 ---
 

@@ -2,7 +2,9 @@
 title: 'Cassandra & Scylla — 1탄: Cassandra 기본'
 ---
 
-> 원문: [Cassandra & Scylla DB 시리즈 1탄 (quokkalover)](https://etloveguitar.tistory.com/m/161)
+## 레퍼런스
+
+- [Cassandra & Scylla DB 시리즈 1탄 (quokkalover)](https://etloveguitar.tistory.com/m/161)
 
 ---
 

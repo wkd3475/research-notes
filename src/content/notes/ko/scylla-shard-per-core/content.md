@@ -2,10 +2,11 @@
 title: 'Scylla — Shard-per-Core, 라우팅 & 노드 Ops'
 ---
 
-> 원문:
-> - [ScyllaDB Shard-per-Core Architecture (공식)](https://www.scylladb.com/product/technology/shard-per-core-architecture/)
-> - [Why ScyllaDB's Shard Per Core Architecture Matters (블로그)](https://www.scylladb.com/2024/10/21/why-scylladbs-shard-per-core-architecture-matters/)
-> - [ScyllaDB docs — tablets, repair, rebuild, RBNO](https://docs.scylladb.com/manual/stable/)
+## 레퍼런스
+
+- [ScyllaDB Shard-per-Core Architecture (공식)](https://www.scylladb.com/product/technology/shard-per-core-architecture/)
+- [Why ScyllaDB's Shard Per Core Architecture Matters (블로그)](https://www.scylladb.com/2024/10/21/why-scylladbs-shard-per-core-architecture-matters/)
+- [ScyllaDB docs — tablets, repair, rebuild, RBNO](https://docs.scylladb.com/manual/stable/)
 
 [Cassandra & Scylla 1탄 노트](/research-notes/ko/notes/cassandra-scylla-intro/)에서 이어짐. quokkalover 시리즈 3탄(Scylla가 빠른 이유)은 미작성이라 위 공식 글들로 대신 읽었다.
 

@@ -100,7 +100,7 @@ When the user reads a queued article and you create a study note:
 3. **Delete** both queue files:
    - `src/content/reading-queue/en/{queue-slug}.yaml`
    - `src/content/reading-queue/ko/{queue-slug}.yaml`
-4. In note `content.md`, link the source URL in the blockquote (`> Source:` / `> 원문:`)
+4. In note `content.md`, add source URLs under **References** / **레퍼런스** as a bullet list (see add-research-note skill)
 5. `npm run build` — queue page should no longer list the item
 
 `readingQueueFrom` records provenance in git history even after queue files are removed.

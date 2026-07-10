@@ -2,7 +2,9 @@
 title: 'Building Effective AI Agents — 아키텍처 패턴'
 ---
 
-> 원문: [Building Effective AI Agents (PDF)](https://resources.anthropic.com/hubfs/Building%20Effective%20AI%20Agents-%20Architecture%20Patterns%20and%20Implementation%20Frameworks.pdf)
+## 레퍼런스
+
+- [Building Effective AI Agents (PDF)](https://resources.anthropic.com/hubfs/Building%20Effective%20AI%20Agents-%20Architecture%20Patterns%20and%20Implementation%20Frameworks.pdf)
 
 ---
 

@@ -2,7 +2,9 @@
 title: 'Building Effective AI Agents — Architecture Patterns'
 ---
 
-> Source: [Building Effective AI Agents (PDF)](https://resources.anthropic.com/hubfs/Building%20Effective%20AI%20Agents-%20Architecture%20Patterns%20and%20Implementation%20Frameworks.pdf)
+## References
+
+- [Building Effective AI Agents (PDF)](https://resources.anthropic.com/hubfs/Building%20Effective%20AI%20Agents-%20Architecture%20Patterns%20and%20Implementation%20Frameworks.pdf)
 
 ---
 

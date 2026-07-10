@@ -2,7 +2,9 @@
 title: 'Claude Agent Skills — Skill 작성 모범 사례'
 ---
 
-> 원문: [Skill 작성 모범 사례](https://platform.claude.com/docs/ko/agents-and-tools/agent-skills/best-practices)
+## 레퍼런스
+
+- [Skill 작성 모범 사례](https://platform.claude.com/docs/ko/agents-and-tools/agent-skills/best-practices)
 
 ---
 

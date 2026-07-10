@@ -2,7 +2,13 @@
 title: 'MCP Gateway — RBAC, Per-User OAuth, Token Exchange, and Agent Identity'
 ---
 
-> Source: [Microsoft MCP Gateway](https://github.com/microsoft/mcp-gateway) · [MCP Authorization spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) · [RFC 8693 Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693) · [Cursor MCP docs](https://cursor.com/docs/mcp) · conversation study session (2026-07-09)
+## References
+
+- [Microsoft MCP Gateway](https://github.com/microsoft/mcp-gateway)
+- [MCP Authorization spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)
+- [RFC 8693 Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693)
+- [Cursor MCP docs](https://cursor.com/docs/mcp)
+- Conversation study session (2026-07-09)
 
 ---
 

@@ -2,7 +2,9 @@
 title: 'Cassandra & Scylla — Part 1: Cassandra Basics'
 ---
 
-> Source: [Cassandra & Scylla DB series — Part 1 (quokkalover)](https://etloveguitar.tistory.com/m/161)
+## References
+
+- [Cassandra & Scylla DB series — Part 1 (quokkalover)](https://etloveguitar.tistory.com/m/161)
 
 ---
 

@@ -2,10 +2,11 @@
 title: 'Scylla — Shard-per-Core, Routing & Node Ops'
 ---
 
-> Sources:
-> - [ScyllaDB Shard-per-Core Architecture (official)](https://www.scylladb.com/product/technology/shard-per-core-architecture/)
-> - [Why ScyllaDB's Shard Per Core Architecture Matters (blog)](https://www.scylladb.com/2024/10/21/why-scylladbs-shard-per-core-architecture-matters/)
-> - [ScyllaDB docs — tablets, repair, rebuild, RBNO](https://docs.scylladb.com/manual/stable/)
+## References
+
+- [ScyllaDB Shard-per-Core Architecture (official)](https://www.scylladb.com/product/technology/shard-per-core-architecture/)
+- [Why ScyllaDB's Shard Per Core Architecture Matters (blog)](https://www.scylladb.com/2024/10/21/why-scylladbs-shard-per-core-architecture-matters/)
+- [ScyllaDB docs — tablets, repair, rebuild, RBNO](https://docs.scylladb.com/manual/stable/)
 
 Continued from the [Cassandra & Scylla intro note](/research-notes/en/notes/cassandra-scylla-intro/). The quokkalover series part 3 (“why Scylla is fast”) was never published; these official pages filled that gap.
 

@@ -11,7 +11,9 @@ All notes exist as **pairs**: `en/{slug}/` + `ko/{slug}/` with the same slug. Ea
 title: 'Note title'
 ---
 
-> Source: [Title](https://example.com)
+## References
+
+- [Title](https://example.com)
 
 ---
 
@@ -96,7 +98,9 @@ exploreNext:
 title: '노트 제목'
 ---
 
-> 원문: [제목](https://example.com)
+## 레퍼런스
+
+- [제목](https://example.com)
 
 ---
 

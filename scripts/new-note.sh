@@ -61,7 +61,7 @@ fi
 
 make_content() {
   local title=$1
-  local source_label=$2
+  local refs_heading=$2
   local why=$3
   local felt=$4
   local learned=$5
@@ -72,7 +72,9 @@ make_content() {
 title: '${title}'
 ---
 
-> ${source_label}
+## ${refs_heading}
+
+- [Title](https://example.com)
 
 ---
 
@@ -112,10 +114,10 @@ exploreNext: []
 EOF
 }
 
-CONTENT_EN=$(make_content "$TITLE_EN" "Source:" "Why I looked this up" "What stood out" "What I learned" "Memo")
+CONTENT_EN=$(make_content "$TITLE_EN" "References" "Why I looked this up" "What stood out" "What I learned" "Memo")
 META_EN=$(make_meta "$DESC_EN")
 TITLE_KO="${DESC_KO:-$TITLE_EN}"
-CONTENT_KO=$(make_content "$TITLE_KO" "원문:" "왜 이 글을 찾아봤나" "읽으면서 느낀 점" "배운 것" "메모")
+CONTENT_KO=$(make_content "$TITLE_KO" "레퍼런스" "왜 이 글을 찾아봤나" "읽으면서 느낀 점" "배운 것" "메모")
 META_KO=$(make_meta "$DESC_KO")
 
 if [[ $DRY_RUN == true ]]; then

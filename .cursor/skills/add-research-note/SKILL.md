@@ -86,7 +86,7 @@ When the note is written from a saved reading-queue item:
 1. Create the note as usual (`en/{slug}/` + `ko/{slug}/`)
 2. Set `readingQueueFrom: {queue-slug}` in **both** `meta.yaml` files
 3. Delete both queue YAML files — see [reading-queue](../reading-queue/SKILL.md#complete-item-note-written)
-4. Put the article URL in the `> Source:` / `> 원문:` blockquote
+4. Put source URLs in a **References** / **레퍼런스** bullet list at the top of `content.md` (see [References format](#references-format))
 
 ## content.md
 
@@ -170,6 +170,36 @@ Answer in 1–3 sentences. Markdown OK (lists, tables, `code`).
 - Do **not** duplicate the quiz as a visible "Questions — answers" subsection elsewhere in the note
 
 **When studying with the user before writing the note:** if you posed study questions during the session, turn those into quiz cards (with the answers you already discussed).
+
+## References format
+
+Place linked sources at the top of `content.md` as a bullet list — not a blockquote, not comma-separated inline links.
+
+**English:**
+
+```md
+## References
+
+- [Title](https://example.com)
+- [Another doc](https://example.com/doc)
+
+---
+```
+
+**Korean:**
+
+```md
+## 레퍼런스
+
+- [제목](https://example.com)
+- [다른 문서](https://example.com/doc)
+
+---
+```
+
+- Use `## References` (EN) / `## 레퍼런스` (KO) — not `Source:` / `원문:` blockquotes
+- One link per `-` line; non-URL items (e.g. study sessions) may be plain bullets
+- Follow with `---` before the first body section
 
 **When the user gives little or nothing for a subjective section:**
 

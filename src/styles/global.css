@@ -857,6 +857,15 @@ a.grass-cell:focus-visible,
   max-width: var(--max-width);
 }
 
+.note-content > h2:first-child {
+  margin-top: 0;
+}
+
+.note-content > h2:first-child + ul {
+  margin-top: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
 .note-content h1 {
   font-size: 2rem;
   line-height: 1.25;

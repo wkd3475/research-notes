@@ -2,7 +2,23 @@
 title: 'Aurora cluster vs Global DB switchover — 내부 단계'
 ---
 
-> 원문: [High availability for Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraHighAvailability.html), [Failing over an Aurora DB cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-failover.html), [Using Aurora Global Database](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html), [Switchover or failover in Global Database](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database-disaster-recovery.html), [Introducing the Aurora Storage Engine (blog)](https://aws.amazon.com/blogs/database/introducing-the-aurora-storage-engine/), [Global Database deep dive DAT404 (re:Invent PDF)](https://d1.awsstatic.com/events/reinvent/2020/Deep_dive_on_Global_Database_for_Amazon_Aurora_DAT404.pdf), [Cross-Region DR PostgreSQL (blog)](https://aws.amazon.com/blogs/database/cross-region-disaster-recovery-using-amazon-aurora-global-database-for-amazon-aurora-postgresql/), [switchover-global-cluster CLI](https://docs.aws.amazon.com/cli/latest/reference/rds/switchover-global-cluster.html), [failover-db-cluster API](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_FailoverDBCluster.html), [FailoverGlobalCluster API](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_FailoverGlobalCluster.html), [Enhanced binlog](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Enhanced.binlog.html), [Cross-Region Aurora MySQL replicas](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Replication.CrossRegion.html), [Managed planned failovers (blog)](https://aws.amazon.com/blogs/database/managed-planned-failovers-with-amazon-aurora-global-database/), [Improving business continuity (blog)](https://aws.amazon.com/blogs/database/improving-business-continuity-with-amazon-aurora-global-database/), [Introducing Global Database Failover (blog)](https://aws.amazon.com/blogs/database/introducing-aurora-global-database-failover/)
+## 레퍼런스
+
+- [High availability for Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Concepts.AuroraHighAvailability.html)
+- [Failing over an Aurora DB cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-failover.html)
+- [Using Amazon Aurora Global Database](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html)
+- [Switchover or failover in Global Database](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database-disaster-recovery.html)
+- [Introducing the Aurora Storage Engine (blog)](https://aws.amazon.com/blogs/database/introducing-the-aurora-storage-engine/)
+- [Global Database deep dive DAT404 (re:Invent PDF)](https://d1.awsstatic.com/events/reinvent/2020/Deep_dive_on_Global_Database_for_Amazon_Aurora_DAT404.pdf)
+- [Cross-Region DR PostgreSQL (blog)](https://aws.amazon.com/blogs/database/cross-region-disaster-recovery-using-amazon-aurora-global-database-for-amazon-aurora-postgresql/)
+- [switchover-global-cluster CLI](https://docs.aws.amazon.com/cli/latest/reference/rds/switchover-global-cluster.html)
+- [FailoverDBCluster API](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_FailoverDBCluster.html)
+- [FailoverGlobalCluster API](https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_FailoverGlobalCluster.html)
+- [Enhanced binlog](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Enhanced.binlog.html)
+- [Cross-Region Aurora MySQL replicas](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/AuroraMySQL.Replication.CrossRegion.html)
+- [Managed planned failovers (blog)](https://aws.amazon.com/blogs/database/managed-planned-failovers-with-amazon-aurora-global-database/)
+- [Improving business continuity (blog)](https://aws.amazon.com/blogs/database/improving-business-continuity-with-amazon-aurora-global-database/)
+- [Introducing Global Database Failover (blog)](https://aws.amazon.com/blogs/database/introducing-aurora-global-database-failover/)
 
 ---
 

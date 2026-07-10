@@ -2,7 +2,13 @@
 title: 'MCP Gateway — RBAC, Per-User OAuth, Token Exchange, Agent Identity'
 ---
 
-> 원문: [Microsoft MCP Gateway](https://github.com/microsoft/mcp-gateway) · [MCP Authorization spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) · [RFC 8693 Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693) · [Cursor MCP docs](https://cursor.com/docs/mcp) · 대화형 학습 세션 (2026-07-09)
+## 레퍼런스
+
+- [Microsoft MCP Gateway](https://github.com/microsoft/mcp-gateway)
+- [MCP Authorization spec](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)
+- [RFC 8693 Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693)
+- [Cursor MCP docs](https://cursor.com/docs/mcp)
+- 대화형 학습 세션 (2026-07-09)
 
 ---
 
