@@ -12,5 +12,3 @@ exploreNext:
   - label: 'Aurora cluster vs Global DB switchover — internal steps'
     reason: 'Need to understand what Aurora does under the hood during promotion in a single cluster vs cross-Region Global Database switchover'
     note: aurora-cluster-vs-global-db-switchover-internal
-  - label: 'JDBC failover detection and minimal downtime'
-    reason: 'How the driver notices endpoint/DNS changes after switchover and what connection settings reduce application downtime'
