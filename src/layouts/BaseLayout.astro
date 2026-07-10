@@ -4,6 +4,7 @@ import ThemePicker from '../components/ThemePicker.astro';
 import LangToggle from '../components/LangToggle.astro';
 import { site, href } from '../config';
 import { DEFAULT_THEME } from '../themes';
+import { COLOR_MODE_STORAGE_KEY } from '../colorMode';
 import { type Locale, t } from '../i18n';
 
 interface Props {
@@ -27,11 +28,16 @@ const fullTitle = title === site.title ? title : `${title} · ${site.title}`;
     <meta name="description" content={description ?? strings.siteDescription} />
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
-    <script is:inline define:vars={{ defaultTheme: DEFAULT_THEME, storageKey: 'research-notes-theme' }}>
+    <script is:inline define:vars={{ defaultTheme: DEFAULT_THEME, themeStorageKey: 'research-notes-theme', colorModeStorageKey: COLOR_MODE_STORAGE_KEY }}>
       try {
-        var saved = localStorage.getItem(storageKey);
-        if (saved) document.documentElement.setAttribute('data-theme', saved);
+        var savedTheme = localStorage.getItem(themeStorageKey);
+        if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
         else document.documentElement.setAttribute('data-theme', defaultTheme);
+
+        var savedColorMode = localStorage.getItem(colorModeStorageKey);
+        if (savedColorMode === 'light' || savedColorMode === 'dark') {
+          document.documentElement.setAttribute('data-color-mode', savedColorMode);
+        }
       } catch (e) {}
     </script>
     <link

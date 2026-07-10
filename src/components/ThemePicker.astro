@@ -1,5 +1,6 @@
 ---
 import { themes, DEFAULT_THEME } from '../themes';
+import { colorModes } from '../colorMode';
 import type { Locale } from '../i18n';
 import { t } from '../i18n';
 
@@ -9,6 +10,12 @@ interface Props {
 
 const { locale } = Astro.props;
 const strings = t(locale);
+
+const colorModeLabels: Record<(typeof colorModes)[number], string> = {
+  light: strings.colorModeLight,
+  dark: strings.colorModeDark,
+  system: strings.colorModeSystem,
+};
 ---
 
 <div class="theme-picker">
@@ -17,31 +24,55 @@ const strings = t(locale);
     class="theme-picker-toggle"
     aria-label={strings.themePicker}
     aria-expanded="false"
-    aria-haspopup="listbox"
+    aria-haspopup="dialog"
     id="theme-picker-toggle"
   >
     <span class="theme-picker-current" id="theme-picker-current" data-theme={DEFAULT_THEME}></span>
   </button>
-  <ul class="theme-picker-menu" id="theme-picker-menu" role="listbox" aria-label={strings.themePicker} hidden>
-    {
-      themes.map((theme) => (
-        <li role="option">
+  <div class="theme-picker-menu" id="theme-picker-menu" role="dialog" aria-label={strings.themePicker} hidden>
+    <p class="theme-picker-section-label">{strings.colorMode}</p>
+    <div class="color-mode-toggle" role="group" aria-label={strings.colorMode}>
+      {
+        colorModes.map((mode) => (
           <button
             type="button"
-            class="theme-picker-option"
-            data-theme={theme.id}
-            aria-label={theme.label}
-            title={theme.label}
+            class="color-mode-option"
+            data-color-mode={mode}
+            aria-pressed="false"
           >
-            <span class="theme-swatch" style={`background: ${theme.swatch}`}></span>
+            {colorModeLabels[mode]}
           </button>
-        </li>
-      ))
-    }
-  </ul>
+        ))
+      }
+    </div>
+    <p class="theme-picker-section-label">{strings.accentTheme}</p>
+    <ul class="theme-picker-swatches" role="listbox" aria-label={strings.accentTheme}>
+      {
+        themes.map((theme) => (
+          <li role="option">
+            <button
+              type="button"
+              class="theme-picker-option"
+              data-theme={theme.id}
+              aria-label={theme.label}
+              title={theme.label}
+            >
+              <span class="theme-swatch" style={`background: ${theme.swatch}`}></span>
+            </button>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
 </div>
 
 <script>
+  import {
+    applyColorMode,
+    isColorMode,
+    readStoredColorMode,
+    type ColorMode,
+  } from '../colorMode';
   import { DEFAULT_THEME, THEME_STORAGE_KEY, isThemeId } from '../themes';
 
   const toggle = document.getElementById('theme-picker-toggle');
@@ -58,12 +89,34 @@ const strings = t(locale);
     });
   };
 
-  const saved = localStorage.getItem(THEME_STORAGE_KEY);
-  if (saved && isThemeId(saved)) {
-    applyTheme(saved);
+  const syncColorModeUi = (mode: ColorMode) => {
+    menu?.querySelectorAll('.color-mode-option').forEach((btn) => {
+      const value = btn.getAttribute('data-color-mode');
+      const isActive = value === mode;
+      btn.classList.toggle('is-active', isActive);
+      btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+  };
+
+  const setColorMode = (mode: ColorMode) => {
+    applyColorMode(mode);
+    syncColorModeUi(mode);
+  };
+
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+  if (savedTheme && isThemeId(savedTheme)) {
+    applyTheme(savedTheme);
   } else {
     applyTheme(DEFAULT_THEME);
   }
+
+  setColorMode(readStoredColorMode());
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (readStoredColorMode() === 'system') {
+      applyColorMode('system');
+    }
+  });
 
   const closeMenu = () => {
     menu?.setAttribute('hidden', '');
@@ -81,11 +134,17 @@ const strings = t(locale);
     else closeMenu();
   });
 
+  menu?.querySelectorAll('.color-mode-option').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const mode = btn.getAttribute('data-color-mode');
+      if (mode && isColorMode(mode)) setColorMode(mode);
+    });
+  });
+
   menu?.querySelectorAll('.theme-picker-option').forEach((btn) => {
     btn.addEventListener('click', () => {
       const themeId = btn.getAttribute('data-theme');
       if (themeId) applyTheme(themeId);
-      closeMenu();
     });
   });
 
