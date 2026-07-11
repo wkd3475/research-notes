@@ -1,0 +1,16 @@
+---
+import { type Locale, t } from '../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const strings = t(locale);
+---
+
+<div class="scroll-to-top-wrap">
+  <a class="scroll-to-top" href="#note-top">
+    {strings.scrollToTop}
+  </a>
+</div>
