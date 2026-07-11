@@ -1,0 +1,7 @@
+label:
+  en: 'Discord Superdisk (hybrid storage for Scylla)'
+  ko: 'Discord Superdisk (Scylla 하이브리드 스토리지)'
+reason:
+  en: 'How Discord combined Local SSD + Persistent Disk for NVMe reads and cloud durability — ties to EBS/replace questions'
+  ko: 'Local SSD + Persistent Disk 하이브리드 RAID — EBS 재활용·replace 논의와 연결'
+note: discord-superdisk

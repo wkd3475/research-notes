@@ -10,3 +10,4 @@ exploreNext:
   - scylla-shard-per-core
   - cassandra-cluster-join
   - cassandra-node-replacement
+  - discord-superdisk
