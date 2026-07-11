@@ -95,7 +95,7 @@ When the user asks for a **study guide** first, then asks you to **read the mate
 2. Put **all guide URLs** in References / 레퍼런스 (one bullet per link).
 3. **What I learned / 배운 것** must be **exhaustive** relative to the guide — if a doc mentions a flag, state, or ops step, it belongs in the note unless [Scope and splitting](#scope-and-splitting) says otherwise.
 4. Turn guide **self-study questions** into [Review quiz](#review-quiz-format) cards (hidden answers).
-5. **Optional format — role-play Q&A:** when the user asks for a teacher/student or dialogue style, use [chat bubble blocks](#role-play-chat-format) in "What I learned" — **teacher = left bubble**, **student = right bubble** (chat-app layout). Keep tables and cheat sheets outside chat blocks for scanability.
+5. **Optional format — role-play Q&A:** when the user asks for a teacher/student or dialogue style, use [chat bubble blocks](#role-play-chat-format) in "What I learned" — **teacher = left bubble**, **student / gon = right bubble** (chat-app layout). Use **`gon`** for questions the user asked live; use **`student`** (label AI 학생 / AI Student) for AI-generated study questions. Keep tables and cheat sheets outside chat blocks for scanability.
 6. Subjective sections still follow [Author voice](#author-voice-subjective-sections) — do not invent feelings; role-play is only in the learning body.
 
 ### Phase 4 — Verify
@@ -232,12 +232,14 @@ Answer in 1–3 sentences. Markdown OK (lists, tables, `code`).
 
 ## Role-play chat format
 
-For teacher/student dialogue, use fenced `:::chat` blocks — the site renders them as **left (teacher) / right (student) chat bubbles**.
+For teacher/student dialogue, use fenced `:::chat` blocks — the site renders them as **left (teacher) / right (student or gon) chat bubbles**.
 
-**Roles:** `teacher` (left) · `student` (right). Optional display label after the role (recommended for KO: `선생님` / `학생`).
+**Roles:** `teacher` (left) · `student` (right, **AI-generated** study questions) · `gon` (right, **author's live questions** during the session — label **Gon**, distinct bubble color).
+
+Optional display label after the role (recommended for KO: `선생님` / `AI 학생` / `Gon`).
 
 ````md
-:::chat student Student
+:::chat student AI Student
 What's the first thing a new node does on boot?
 :::
 
@@ -245,18 +247,36 @@ What's the first thing a new node does on boot?
 Contact a **seed node** — the first gossip contact point.
 :::
 
+:::chat gon Gon
+Is streaming just in-memory? Do I need rebuild for disk?
+:::
+
+:::chat teacher Teacher
+No — bootstrap streaming writes SSTables to **disk**.
+:::
+
 | Reference table | stays outside chat blocks |
 |---|---|
 :::
 
-:::chat student 학생
+:::chat student AI 학생
 부팅하면 제일 먼저 뭐 하나요?
 :::
 
 :::chat teacher 선생님
 **seed 노드**에 연락한다.
 :::
+
+:::chat gon Gon
+신규 DC 추가할 때도 자동으로 streaming 되나요?
+:::
+
+:::chat teacher 선생님
+아니 — 신규 DC는 `nodetool rebuild`로 **수동** 복제한다.
+:::
 ````
+
+**Gon vs AI student:** Mark questions the **user actually asked** during study as `:::chat gon Gon`. Questions invented for the role-play narrative stay `:::chat student AI 학생` (KO) / `:::chat student AI Student` (EN).
 
 **Rules:**
 
