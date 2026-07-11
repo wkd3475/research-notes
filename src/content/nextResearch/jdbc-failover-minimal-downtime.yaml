@@ -4,3 +4,4 @@ label:
 reason:
   en: 'How the driver notices endpoint/DNS changes after switchover and what connection settings reduce application downtime'
   ko: 'switchover 후 endpoint/DNS 변경을 드라이버가 어떻게 인지하고, 어떤 연결 설정이 앱 다운타임을 줄이는지'
+note: jdbc-failover-minimal-downtime
