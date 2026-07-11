@@ -200,7 +200,7 @@ nodetool status    # UJ → UN
 nodetool netstats  # Mode: JOINING, 소스별 %·용량
 ```
 
-Scylla vnode 장점도 알아 두면 좋아 — stream을 **여러 노드에서 병렬**로 받을 수 있어서(옛 one-token-per-node보다) rebuild/bootstrap이 빨라질 수 있어.
+Scylla vnode 장점도 알아 두면 좋아 — stream을 **여러 노드에서 병렬**로 받을 수 있어서(옛 one-token-per-node보다) bootstrap이나 rebuild처럼 streaming을 쓰는 작업이 빨라질 수 있어.
 :::
 
 :::chat student 학생
@@ -217,6 +217,31 @@ streaming 자체를 건너뛸 수 있나요?
 
 :::chat teacher 선생님
 가능은 해. `auto_bootstrap: false`면 데이터 복사 없이 링에만 들어가. **백업 복구**, **새 DC**처럼 데이터를 다른 경로로 넣을 때야. 기본값은 `true`(yaml에 안 보여도 켜져 있음). 일반 scale-out에선 함부로 끄지 않는 게 좋아.
+:::
+
+:::chat student 학생
+streaming은 메모리만 채우는 건가요? 디스크에 넣으려면 rebuild를 따로 돌려야 하나요?
+:::
+
+:::chat teacher 선생님
+아니야 — bootstrap streaming은 메모리만이 아니라 **디스크에 SSTable을 써**. JOINING 중 peer가 SSTable을 내면 조인 노드가 로컬 데이터 디렉터리에 받아 적어. `nodetool netstats`에 파일 수·GB가 보이면 디스크로 쓰이는 중이야. status가 **UN**으로 바뀌면 담당 구간 데이터가 디스크에 갖춰진 상태고 읽기·쓰기도 가능해. 일반 scale-out(`auto_bootstrap: true`)이면 **별도 `nodetool rebuild`는 필요 없어**.
+:::
+
+:::chat student 학생
+그럼 `nodetool rebuild`랑 bootstrap streaming은 같은 거예요?
+:::
+
+:::chat teacher 선생님
+**전송 방식**은 같아 — 둘 다 SSTable streaming이지. **시작 조건**이랑 **쓰는 상황**이 달라.
+
+| | Bootstrap streaming | `nodetool rebuild` |
+| --- | --- | --- |
+| 시작 | 조인 시 자동 (`auto_bootstrap: true`) | 수동으로 `nodetool rebuild` |
+| 언제 | 링에 들어가는 **새 노드** | 이미 **UN**인 노드 — 새 DC, 빠진 구간 보충 등 |
+| 일반 scale-out | 이게 정석 | 특수한 경우에만 |
+| `auto_bootstrap: false` 조인 | 생략 — 데이터는 다른 경로 | 그다음에 돌리는 경우가 많음 |
+
+기존 DC에 노드 하나 추가할 땐 bootstrap streaming만으로 충분해. rebuild는 이미 떠 있는 노드가 한 번도 못 받은 구간을 나중에 채울 때 쓰는 **별도 유지보수 작업**이야.
 :::
 
 ---
@@ -368,6 +393,12 @@ ring join = token 배정·링 진입. bootstrap streaming = 담당 구간 SSTabl
 **Q5.** bootstrap이 막히는 설정 실수 두 가지는?
 ---
 (1) **조인 노드를 `seeds`에 넣음** — seed는 bootstrap 불가. (2) **`cluster_name` 불일치**나 seed/listen 주소 unreachable로 gossip 실패.
+:::
+
+:::quiz
+**Q6.** Bootstrap streaming은 메모리만 채우나? UN이 되면 rebuild를 더 돌려야 하나?
+---
+아니다. bootstrap streaming은 SSTable을 **디스크**에 쓴다. **UN**이면 담당 구간이 디스크에 준비된 상태다. 일반 scale-out(`auto_bootstrap: true`)에는 **별도 rebuild 불필요**. `nodetool rebuild`는 이미 UN인 노드가 빠진 구간을 채울 때 쓰는 별도 작업이며, 전송 방식만 bootstrap streaming과 같다.
 :::
 
 ## 메모

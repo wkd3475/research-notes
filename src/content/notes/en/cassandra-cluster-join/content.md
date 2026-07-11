@@ -200,7 +200,7 @@ nodetool status    # UJ → UN
 nodetool netstats  # Mode: JOINING, per-source % and bytes
 ```
 
-Bonus: with vnodes, Scylla can stream from **many** nodes in parallel (not only immediate ring neighbors), so rebuild/bootstrap can be faster than old one-token-per-node layouts.
+Bonus: with vnodes, Scylla can stream from **many** nodes in parallel (not only immediate ring neighbors), so streaming-heavy work like bootstrap or rebuild can run faster than old one-token-per-node layouts.
 :::
 
 :::chat student Student
@@ -217,6 +217,31 @@ Can I skip streaming?
 
 :::chat teacher Teacher
 You can, but only in specific cases. `auto_bootstrap: false` joins the ring **without** copying data — for **backup restore** or **new datacenter** scenarios where you'll load data another way. Default is `true` (hidden in yaml but on by default). Don't flip this casually in production scale-out.
+:::
+
+:::chat student Student
+Is streaming just in-memory? Do I need a separate rebuild to get data on disk?
+:::
+
+:::chat teacher Teacher
+No — bootstrap streaming writes SSTables to **disk**, not RAM only. While the node is JOINING, peers send SSTables and the joiner writes them into its local data directories. The file counts and GB in `nodetool netstats` are disk progress, not a cache. When status flips **UN**, owned ranges are on disk and the node can serve reads and writes. With normal scale-out (`auto_bootstrap: true`), you do **not** need a separate `nodetool rebuild`.
+:::
+
+:::chat student Student
+So is `nodetool rebuild` the same as bootstrap streaming?
+:::
+
+:::chat teacher Teacher
+Same **transport** — both use SSTable streaming. Different **trigger** and **when you'd run it**:
+
+| | Bootstrap streaming | `nodetool rebuild` |
+| --- | --- | --- |
+| Trigger | Automatic on join (`auto_bootstrap: true`) | Manual `nodetool rebuild` |
+| When | **New** node entering the ring | **Already-UN** node — new DC, filling missed ranges |
+| Normal scale-out | Default path | Special cases only |
+| `auto_bootstrap: false` join | Skipped — data loaded another way | Often the follow-up step |
+
+For "add one node to an existing DC," bootstrap streaming is enough. Rebuild is a **separate maintenance op** you run on a live node that still lacks ranges it never received.
 :::
 
 ---
@@ -368,6 +393,12 @@ Range movement leaves **stale data** on nodes that lost ownership — the system
 **Q5.** Name two configuration mistakes that prevent a new node from bootstrapping.
 ---
 (1) Listing the **joining node itself** in `seeds` — seeds cannot bootstrap. (2) **`cluster_name` mismatch** or unreachable seed/listen addresses so gossip never starts.
+:::
+
+:::quiz
+**Q6.** Does bootstrap streaming only fill memory? After UN, do you still need rebuild?
+---
+No. Bootstrap streaming writes SSTables to **disk**. **UN** means owned ranges are on disk and ready. Normal scale-out (`auto_bootstrap: true`) needs **no extra rebuild**. `nodetool rebuild` is a separate op for an already-UN node filling ranges it never got — same streaming transport, different trigger.
 :::
 
 ## Memo
