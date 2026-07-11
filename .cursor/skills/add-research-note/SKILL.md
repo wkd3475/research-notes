@@ -71,8 +71,37 @@ exploreNext:
 | Note from reading queue | [From reading queue](#from-reading-queue) |
 | Fill existing template | Edit `content.md` / `meta.yaml` as needed |
 | Template only | See [templates.md](templates.md) |
+| Study guide → full note | [Deep study note from guide](#deep-study-note-from-guide) |
 
-## Scope and splitting
+## Deep study note from guide
+
+When the user asks for a **study guide** first, then asks you to **read the materials and write the note** (or combines both in one request):
+
+### Phase 1 — Guide (if not already given)
+
+1. Read the **parent note** and any `exploreNext` / registry `reason` for context already covered.
+2. Return a guide with: **reading order** (URLs), **core concepts**, **self-study questions (3–5)**, **follow-up topics**.
+3. Order sources: **work-relevant ops docs first** (e.g. Scylla procedures), then **architecture/mechanism**, then **supplementary** articles.
+
+### Phase 2 — Read everything before drafting
+
+1. **Fetch and read every URL** listed in the guide (official docs, wiki, ops articles) — do not summarize from memory alone.
+2. Cross-check against the parent note so you **extend** prior knowledge instead of repeating Part 1 basics.
+3. Build a mental **coverage checklist** from the sources: discovery → gossip → token allocation → streaming → post-join cleanup → config pitfalls → resume/failure flags.
+
+### Phase 3 — Write the note
+
+1. Follow [New note](#new-note) or [Linked note](#linked-note) as usual.
+2. Put **all guide URLs** in References / 레퍼런스 (one bullet per link).
+3. **What I learned / 배운 것** must be **exhaustive** relative to the guide — if a doc mentions a flag, state, or ops step, it belongs in the note unless [Scope and splitting](#scope-and-splitting) says otherwise.
+4. Turn guide **self-study questions** into [Review quiz](#review-quiz-format) cards (hidden answers).
+5. **Optional format — role-play Q&A:** when the user asks for a teacher/student or dialogue style, structure "What I learned" as acts/scenes with **Student/학생** questions and **Teacher/선생님** answers. Keep tables and cheat sheets after the dialogue for scanability. Meaning and coverage stay the same as a flat note.
+6. Subjective sections still follow [Author voice](#author-voice-subjective-sections) — do not invent feelings; role-play is only in the learning body.
+
+### Phase 4 — Verify
+
+Same as New note: humanize KO, `npm run build`, update registry `note:` if linked follow-up.
+
 
 **One note = one coherent topic.** The title should match what the body actually covers.
 
@@ -265,6 +294,7 @@ Place linked sources at the top of `content.md` as a bullet list — not a block
 - [ ] readingQueueFrom set + queue YAML removed (if from reading queue)
 - [ ] npm run build passes
 - [ ] Both locale URLs shared
+- [ ] Deep-study path: all guide URLs fetched; guide quiz → `:::quiz` cards (if applicable)
 ```
 
 ## References
