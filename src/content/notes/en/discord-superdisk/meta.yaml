@@ -1,0 +1,14 @@
+description: 'Discord Superdisk — RAID0 Local SSD + RAID1 Persistent Disk (write-mostly) for Scylla; vs EBS/replace (role-play Q&A)'
+pubDate: 2026-07-11
+tags:
+  - scylla
+  - cassandra
+  - discord
+  - storage
+  - gcp
+  - operations
+draft: false
+exploredFrom: cassandra-scylla-intro
+exploreNext:
+  - scylla-use-cases
+  - cassandra-node-replacement
