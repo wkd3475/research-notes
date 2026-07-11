@@ -1,0 +1,6 @@
+label:
+  en: 'Global DB switchover DR runbook (end-to-end)'
+  ko: 'Global DB switchover DR 런북 (엔드투엔드)'
+reason:
+  en: 'Integrate internal steps, JDBC settings, networking, and DNS validation into one procedure'
+  ko: '내부 단계·JDBC 설정·네트워크·DNS 검증을 하나의 절차로 통합'

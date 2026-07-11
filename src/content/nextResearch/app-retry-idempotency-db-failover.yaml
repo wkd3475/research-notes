@@ -1,0 +1,6 @@
+label:
+  en: 'App-level retry and idempotency after DB failover'
+  ko: 'DB failover 후 앱 재시도·멱등성 패턴'
+reason:
+  en: 'FailoverSuccessSQLException vs in-flight transactions — what the app must retry'
+  ko: 'FailoverSuccessSQLException vs 진행 중 트랜잭션 — 앱이 재시도해야 하는 범위'

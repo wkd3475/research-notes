@@ -1,0 +1,15 @@
+description: 'Aurora switchover 후 JDBC failover 감지 — DNS vs topology cache, AWS JDBC Wrapper, 풀 timeout, HikariCP, RDS Proxy, Global DB endpoint, 학습 5문제'
+pubDate: 2026-07-11
+tags:
+  - aurora
+  - jdbc
+  - failover
+  - switchover
+  - aws
+  - connection-pool
+draft: false
+exploredFrom: aurora-cluster-vs-global-db-switchover-internal
+exploreNext:
+  - rds-proxy-aurora-failover
+  - app-retry-idempotency-db-failover
+  - aurora-global-db-dr-runbook
