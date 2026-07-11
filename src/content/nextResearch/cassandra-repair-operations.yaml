@@ -1,0 +1,6 @@
+label:
+  en: 'nodetool repair operations'
+  ko: 'nodetool repair 운영'
+reason:
+  en: 'When replace needs post-repair, and how to run periodic anti-entropy safely'
+  ko: 'replace 후 repair 판단과 정기 anti-entropy 운영'

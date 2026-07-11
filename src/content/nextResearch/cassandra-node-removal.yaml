@@ -1,0 +1,6 @@
+label:
+  en: 'Node removal runbook (decommission vs removenode)'
+  ko: '노드 제거 runbook (decommission vs removenode)'
+reason:
+  en: 'Planned scale-down vs permanently dead nodes — the flip side of replace'
+  ko: '계획적 축소와 영구 다운 노드 처리 — replace의 반대편'

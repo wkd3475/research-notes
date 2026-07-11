@@ -1,0 +1,14 @@
+description: 'Node replacement runbook — replace vs bootstrap/decommission/removenode, replace_node_first_boot, hibernate state, repair vs RBNO (role-play Q&A)'
+pubDate: 2026-07-11
+tags:
+  - scylla
+  - cassandra
+  - nosql
+  - database
+  - operations
+draft: false
+exploredFrom: cassandra-cluster-join
+exploreNext:
+  - cassandra-node-removal
+  - cassandra-repair-operations
+  - scylla-client-best-practices
