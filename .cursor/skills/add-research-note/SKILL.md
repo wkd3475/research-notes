@@ -262,6 +262,7 @@ Contact a **seed node** — the first gossip contact point.
 
 - One message per block; markdown inside (lists, tables, code) is OK
 - Do **not** use `**Student:**` / `**Teacher:**` bold prefixes — the label comes from the block header
+- **Teacher tone:** when the user asks for a warm/kind teacher (다정한 선생님), open with brief encouragement ("좋은 질문이야", "잘 짚었어"), soften imperatives ("~해 줘" not "~해라"), and acknowledge confusion — technical content unchanged
 - Tables, pipeline cheat sheets, and section headings stay **between** chat blocks, not inside dialogue
 - Consecutive blocks in one act are wrapped in a `.chat-thread` container automatically
 
