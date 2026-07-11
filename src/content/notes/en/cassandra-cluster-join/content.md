@@ -12,6 +12,8 @@ title: 'Cassandra & Scylla — Part 2: Cluster Join on Boot'
 - [Internode communications (gossip)](https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/architecture/archGossipAbout.html)
 - [Adding nodes to an existing cluster (DataStax)](https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/operations/opsAddNodeToCluster.html)
 - [Adding, replacing, moving and removing nodes (Apache Cassandra 5.x)](https://cassandra.apache.org/doc/latest/cassandra/managing/operating/topo_changes.html)
+- [Nodetool cleanup (ScyllaDB)](https://docs.scylladb.com/manual/stable/operating-scylla/nodetool-commands/cleanup.html)
+- [Data resurrection without cleanups (ScyllaDB Forum)](https://forum.scylladb.com/t/new-data-resurrection-without-cleanups/862)
 
 ---
 
@@ -242,6 +244,29 @@ You can **postpone** to low-traffic hours — that's fine. But finish cleanup **
 :::
 
 :::chat student Student
+What exactly is data resurrection? Why can it happen if we skip cleanup?
+:::
+
+:::chat teacher Teacher
+Good follow-up. **Data resurrection** means data that should have stayed deleted comes back. Preventing that is cleanup's **primary** job — freeing disk is secondary.
+
+Walk through an example:
+
+1. Write key `W1` — originally owned by node **N1**.
+2. New node **Nx** bootstraps; `W1` **streams** to Nx. **Nx** is now the official owner, but **N1 still has `W1` on disk** (no auto-delete).
+3. Later you **delete** `W1` — a **tombstone** lands on Nx.
+4. After **gc_grace**, the tombstone is **GC'd** — the cluster treats `W1` as gone.
+5. You **decommission/remove Nx** — ownership of `W1`'s range returns to **N1**.
+6. **N1 still holds the old live `W1` value**; the tombstone is already gone.
+
+On a read, N1's stale copy can win as the "latest" — deleted `W1` **resurrects**.
+
+**Cleanup** after step 2 removes keys N1 no longer owns, blocking step 6. Order matters: **add node → cleanup completes → then decommission/removal**.
+
+Note: Scylla ops discussions allow bootstrap + decommission of **old** nodes first, then cleanup later — but **never** decommission a **newly bootstrapped** node before cleanup, and don't delay cleanup indefinitely.
+:::
+
+:::chat student Student
 Any prerequisites before I even start?
 :::
 
@@ -336,7 +361,7 @@ Ring join = token assignment and entering the ring. Bootstrap streaming = copyin
 :::quiz
 **Q4.** Why run `nodetool cleanup` on old nodes after the new node reaches UN?
 ---
-Range movement leaves **stale data** on nodes that lost ownership. The system **won't delete it automatically**. Cleanup removes those keys. Skipping cleanup before decommission can cause **data resurrection**.
+Range movement leaves **stale data** on nodes that lost ownership — the system **won't delete it automatically**. Cleanup removes those keys. Without it, old live values can linger; combined with later deletes, tombstone GC, and node removal, **data resurrection** (deleted rows reappearing) becomes possible. Finish cleanup before decommission.
 :::
 
 :::quiz
