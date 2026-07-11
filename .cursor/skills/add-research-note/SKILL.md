@@ -95,7 +95,7 @@ When the user asks for a **study guide** first, then asks you to **read the mate
 2. Put **all guide URLs** in References / 레퍼런스 (one bullet per link).
 3. **What I learned / 배운 것** must be **exhaustive** relative to the guide — if a doc mentions a flag, state, or ops step, it belongs in the note unless [Scope and splitting](#scope-and-splitting) says otherwise.
 4. Turn guide **self-study questions** into [Review quiz](#review-quiz-format) cards (hidden answers).
-5. **Optional format — role-play Q&A:** when the user asks for a teacher/student or dialogue style, structure "What I learned" as acts/scenes with **Student/학생** questions and **Teacher/선생님** answers. Keep tables and cheat sheets after the dialogue for scanability. Meaning and coverage stay the same as a flat note.
+5. **Optional format — role-play Q&A:** when the user asks for a teacher/student or dialogue style, use [chat bubble blocks](#role-play-chat-format) in "What I learned" — **teacher = left bubble**, **student = right bubble** (chat-app layout). Keep tables and cheat sheets outside chat blocks for scanability.
 6. Subjective sections still follow [Author voice](#author-voice-subjective-sections) — do not invent feelings; role-play is only in the learning body.
 
 ### Phase 4 — Verify
@@ -229,6 +229,41 @@ Answer in 1–3 sentences. Markdown OK (lists, tables, `code`).
 - Do **not** duplicate the quiz as a visible "Questions — answers" subsection elsewhere in the note
 
 **When studying with the user before writing the note:** if you posed study questions during the session, turn those into quiz cards (with the answers you already discussed).
+
+## Role-play chat format
+
+For teacher/student dialogue, use fenced `:::chat` blocks — the site renders them as **left (teacher) / right (student) chat bubbles**.
+
+**Roles:** `teacher` (left) · `student` (right). Optional display label after the role (recommended for KO: `선생님` / `학생`).
+
+````md
+:::chat student Student
+What's the first thing a new node does on boot?
+:::
+
+:::chat teacher Teacher
+Contact a **seed node** — the first gossip contact point.
+:::
+
+| Reference table | stays outside chat blocks |
+|---|---|
+:::
+
+:::chat student 학생
+부팅하면 제일 먼저 뭐 하나요?
+:::
+
+:::chat teacher 선생님
+**seed 노드**에 연락한다.
+:::
+````
+
+**Rules:**
+
+- One message per block; markdown inside (lists, tables, code) is OK
+- Do **not** use `**Student:**` / `**Teacher:**` bold prefixes — the label comes from the block header
+- Tables, pipeline cheat sheets, and section headings stay **between** chat blocks, not inside dialogue
+- Consecutive blocks in one act are wrapped in a `.chat-thread` container automatically
 
 ## References format
 
