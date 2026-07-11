@@ -4,6 +4,7 @@ import ExploreNextLinks from '../components/ExploreNextLinks.astro';
 import NoteAdjacentNav from '../components/NoteAdjacentNav.astro';
 import NoteHistory from '../components/NoteHistory.astro';
 import PreviousResearchLinks from '../components/PreviousResearchLinks.astro';
+import ScrollToTop from '../components/ScrollToTop.astro';
 import TagList from '../components/TagList.astro';
 import { href } from '../config';
 import type { ExploreNextItem } from '../content.config';
@@ -54,7 +55,7 @@ const adjacentNotes = getAdjacentNotes(allNotes, translationId, locale);
   locale={locale}
   translationId={translationId}
 >
-  <article class="note-content">
+  <article class="note-content" id="note-top">
     <a class="back-link" href={href('/notes/', locale)}>{strings.backToNotes}</a>
 
     {referrerNotes.length > 0 && (
@@ -92,5 +93,6 @@ const adjacentNotes = getAdjacentNotes(allNotes, translationId, locale);
       <ExploreNextLinks items={exploreNext} locale={locale} fromTitle={title} />
     )}
     <NoteAdjacentNav adjacent={adjacentNotes} locale={locale} />
+    <ScrollToTop locale={locale} />
   </article>
 </BaseLayout>
