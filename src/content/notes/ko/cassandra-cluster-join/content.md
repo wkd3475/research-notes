@@ -12,6 +12,8 @@ title: 'Cassandra & Scylla — 2탄: 부팅 시 클러스터 조인'
 - [Internode communications (gossip)](https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/architecture/archGossipAbout.html)
 - [Adding nodes to an existing cluster (DataStax)](https://docs.datastax.com/en/cassandra-oss/3.x/cassandra/operations/opsAddNodeToCluster.html)
 - [Adding, replacing, moving and removing nodes (Apache Cassandra 5.x)](https://cassandra.apache.org/doc/latest/cassandra/managing/operating/topo_changes.html)
+- [Nodetool cleanup (ScyllaDB)](https://docs.scylladb.com/manual/stable/operating-scylla/nodetool-commands/cleanup.html)
+- [Data resurrection without cleanups (ScyllaDB Forum)](https://forum.scylladb.com/t/new-data-resurrection-without-cleanups/862)
 
 ---
 
@@ -242,6 +244,29 @@ cleanup 부담이 큰데 미뤄도 되나요?
 :::
 
 :::chat student 학생
+data resurrection이 정확히 뭐예요? cleanup 안 하면 왜 그게 생길 수 있어요?
+:::
+
+:::chat teacher 선생님
+핵심만 짚어 볼게. **한때 삭제됐어야 할 데이터가 다시 살아나는 것**이야. cleanup은 디스크만 비우는 게 아니라, 이걸 막는 게 **1차 목적**이야.
+
+예를 들어 보자.
+
+1. 키 `W1`을 쓰면 원래 노드 **N1**이 담당한다.
+2. 새 노드 **Nx**가 bootstrap되면 `W1`이 Nx로 **스트리밍**된다. 이제 **공식 소유자는 Nx**인데, N1 디스크에는 `W1`이 **그대로 남아 있어**. (자동 삭제 안 함)
+3. 나중에 `W1`을 **삭제**하면 Nx 쪽에 **tombstone**이 생긴다.
+4. 시간이 지나 tombstone이 **gc_grace 이후 GC**되면, 클러스터 입장에선 `W1`은 없는 것처럼 보인다.
+5. 그다음 Nx를 decommission/removal하면 `W1` 구간 소유가 다시 **N1**으로 돌아온다.
+6. 그런데 N1에는 옛날 **살아 있는 `W1` 값**이 그대로 있고, tombstone은 이미 사라졌어.
+
+읽기 때 N1의 stale 데이터가 **최신처럼** 잡히면서 — 삭제됐던 `W1`이 **부활(data resurrection)** 하는 거야.
+
+**cleanup**은 2번 직후 N1에서 더 이상 안 가진 키를 지워서, 6번 같은 상황을 원천 차단해. 그래서 **노드 추가 후 → cleanup 완료 → 그다음 decommission/removal** 순서가 중요해.
+
+참고로 bootstrap 직후 **기존 노드** decommission을 먼저 하고 cleanup은 나중에 돌리는 운영도 Scylla 커뮤니티에서 논의돼. 다만 **방금 bootstrap한 신규 노드를 빼기 전**에는 cleanup이 꼭 필요하고, cleanup 자체도 너무 오래 미루진 말 것.
+:::
+
+:::chat student 학생
 시작 전에 확인할 것은?
 :::
 
@@ -336,7 +361,7 @@ ring join = token 배정·링 진입. bootstrap streaming = 담당 구간 SSTabl
 :::quiz
 **Q4.** 새 노드가 UN 된 뒤 기존 노드에 `nodetool cleanup`을 돌리는 이유는?
 ---
-구간이 옮겨가도 **이전 소유 데이터가 자동 삭제되지 않는다**. cleanup이 그 키를 지운다. decommission 전에 안 하면 **data resurrection** 위험이 있다.
+구간이 옮겨가도 **이전 소유 데이터가 자동 삭제되지 않는다**. cleanup이 그 키를 지운다. 안 하면 옛 노드에 stale 데이터가 남고, 이후 삭제·tombstone GC·노드 제거가 겹치면 **data resurrection**(삭제됐던 데이터 재출현)이 날 수 있다. decommission 전에 cleanup을 끝내야 한다.
 :::
 
 :::quiz
