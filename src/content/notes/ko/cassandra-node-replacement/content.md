@@ -15,7 +15,6 @@ title: 'Cassandra & Scylla — 3탄: 노드 교체 절차'
 - [nodetool decommission (ScyllaDB)](https://docs.scylladb.com/manual/stable/operating-scylla/nodetool-commands/decommission.html)
 - [Bootstrapping Apache Cassandra Nodes (The Last Pickle)](http://thelastpickle.com/blog/2017/05/23/auto-bootstrapping-part1.html)
 - [Replace a dead node (DataStax DSE)](https://docs.datastax.com/en/dse/6.9/managing/operations/replace-node.html)
-- [Replace nodes (ScyllaDB Operator)](https://operator.docs.scylladb.com/stable/operate/replace-nodes.html)
 
 ---
 
@@ -64,6 +63,14 @@ title: 'Cassandra & Scylla — 3탄: 노드 교체 절차'
 2탄 = **scale-out**: gossip으로 기존 token 파악 → **새 무작위** token → stream → **기존 노드 cleanup**.
 
 replace = **같은 자리**: 새 하드웨어가 **죽은 노드 token**을 이어받음 → stream/RBNO → **다른 노드 cleanup 없음**(소유권이 옮겨간 게 아니라 재할당).
+:::
+
+:::chat gon Gon
+회사에서 Scylla Operator로 K8s 운영 중인데, 이 노트 그대로 적용하면 되나요?
+:::
+
+:::chat teacher 선생님
+**Scylla 엔진** 동작(Host ID replace, token 상속, streaming/RBNO)은 같아. 달라지는 건 **control plane** — yaml 손대고 `systemctl` 치는 대신 Service 라벨을 붙이는 식이야. K8s runbook은 **4탄**(`scylla-operator-node-ops`)을 보면 돼.
 :::
 
 ---
@@ -245,7 +252,7 @@ replace가 안 되거나 클러스터를 줄이고 싶으면요?
 
 ---
 
-### 8막 — 특수 케이스
+### 8막 — 특수 케이스 (VM / bare metal)
 
 **죽은 노드가 seed였을 때**
 
@@ -259,13 +266,11 @@ replace가 안 되거나 클러스터를 줄이고 싶으면요?
 - RAID 재구성, yaml에 `replace_node_first_boot: <옛-Host-ID>` 추가 후 Scylla 기동 ([Scylla replace 문서](https://docs.scylladb.com/manual/stable/operating-scylla/procedures/cluster-management/replace-dead-node.html)).
 - 재시작 후 public/private IP가 바뀔 수 있음 — `listen_address` / `broadcast_address` 갱신.
 
-**Kubernetes(Scylla Operator)**
-
-- 실패한 member Service에 `scylla/replace=""` 라벨 → Operator가 `--replace-node-first-boot`로 새 pod 프로비저닝 ([Operator 문서](https://operator.docs.scylladb.com/stable/operate/replace-nodes.html)).
+**Kubernetes(Scylla Operator)** — **4탄**(`scylla-operator-node-ops`)에서 다룸. replace 의미는 같고, 트리거만 Service 라벨 + Operator reconciliation.
 
 ---
 
-### Runbook 한눈에
+### Runbook 한눈에 (VM / bare metal)
 
 ```
 사전: quorum OK, 대상 DN, 버전 일치, Host ID 확보, 새 data dir 비움
@@ -331,4 +336,4 @@ replace가 안 되거나 클러스터를 줄이고 싶으면요?
 
 ## 메모
 
-Cassandra/Scylla 트랙 3탄. 2탄 부팅·조인 다음 노드 교체 runbook.
+Cassandra/Scylla 트랙 3탄. VM/bare-metal 노드 교체 runbook. K8s Operator 운영은 4탄.

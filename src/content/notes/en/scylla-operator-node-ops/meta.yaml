@@ -1,0 +1,13 @@
+description: 'Scylla Operator on K8s — replace via Service label, scale via ScyllaCluster members, forbidden nodetool, automatic cleanup (role-play Q&A)'
+pubDate: 2026-07-11
+tags:
+  - scylla
+  - cassandra
+  - kubernetes
+  - operator
+  - operations
+draft: false
+exploredFrom: cassandra-node-replacement
+exploreNext:
+  - cassandra-repair-operations
+  - scylla-client-best-practices
