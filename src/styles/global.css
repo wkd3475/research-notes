@@ -1154,6 +1154,11 @@ a.grass-cell:focus-visible,
   align-items: flex-end;
 }
 
+.chat-bubble--gon {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
 .chat-bubble__label {
   font-size: 0.72rem;
   font-weight: 600;
@@ -1200,6 +1205,36 @@ a.grass-cell:focus-visible,
   background: color-mix(in srgb, var(--accent-soft) 88%, var(--surface));
   border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
   border-bottom-right-radius: 0.3rem;
+}
+
+.chat-bubble--gon .chat-bubble__label {
+  color: color-mix(in srgb, #c2410c 70%, var(--text-muted));
+}
+
+.chat-bubble--gon .chat-bubble__body {
+  background: color-mix(in srgb, #fed7aa 75%, var(--surface));
+  border: 1px solid color-mix(in srgb, #ea580c 32%, var(--border));
+  border-bottom-right-radius: 0.3rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-color-mode='light']) .chat-bubble--gon .chat-bubble__label {
+    color: color-mix(in srgb, #fb923c 78%, var(--text-muted));
+  }
+
+  html:not([data-color-mode='light']) .chat-bubble--gon .chat-bubble__body {
+    background: color-mix(in srgb, #7c2d12 48%, var(--surface));
+    border: 1px solid color-mix(in srgb, #ea580c 42%, var(--border));
+  }
+}
+
+html[data-color-mode='dark'] .chat-bubble--gon .chat-bubble__label {
+  color: color-mix(in srgb, #fb923c 78%, var(--text-muted));
+}
+
+html[data-color-mode='dark'] .chat-bubble--gon .chat-bubble__body {
+  background: color-mix(in srgb, #7c2d12 48%, var(--surface));
+  border: 1px solid color-mix(in srgb, #ea580c 42%, var(--border));
 }
 
 /* Review quiz cards (:::quiz in note markdown) */

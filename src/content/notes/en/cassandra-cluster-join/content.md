@@ -37,7 +37,7 @@ Asked for a role-play Q&A walkthrough so the mechanics stick better than a flat 
 
 ### Act 1 — The new node wakes up
 
-:::chat student Student
+:::chat student AI Student
 A new machine just finished `scylla.yaml`. I hit `systemctl start scylla-server`. What's the *first* thing it tries to do?
 :::
 
@@ -45,7 +45,7 @@ A new machine just finished `scylla.yaml`. I hit `systemctl start scylla-server`
 Good start! The very first step is reaching out to a **seed node**. Seeds are just IPs in `seeds` (Cassandra: `seed_provider`). They're **not** leaders, coordinators, or special data holders — only the **first gossip contact point** when a node doesn't yet know the ring.
 :::
 
-:::chat student Student
+:::chat student AI Student
 So if every seed is down, we're stuck?
 :::
 
@@ -53,7 +53,7 @@ So if every seed is down, we're stuck?
 Great question — that's worth worrying about. For a **brand-new joiner**, yes, it may not bootstrap gossip. But for a node **already in the cluster**, it's less scary: by default it remembers peers from previous runs, so it can often rejoin without seeds. Seeds matter most on **first startup**.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Can the joining node be its own seed?
 :::
 
@@ -61,7 +61,7 @@ Can the joining node be its own seed?
 Ah, easy mistake — but **no**. The docs are clear: **seed nodes cannot bootstrap.** Put existing healthy nodes in `seeds`; never list the joining node there. And don't make *every* node a seed — that just adds gossip overhead. Rule of thumb: **~2–3 seeds per datacenter**, same list on **all** nodes.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Multi-DC — anything special?
 :::
 
@@ -79,7 +79,7 @@ For multi-DC, just one extra thing to remember: include **at least one seed per 
 
 ### Act 2 — Gossip: learning who's on the ring
 
-:::chat student Student
+:::chat student AI Student
 It reached a seed. Then what?
 :::
 
@@ -91,7 +91,7 @@ Nice — it connected! Next up, **Gossip** kicks in. It's a P2P epidemic protoco
 - **Every node's tokens** (via `application_state::TOKENS`)
 :::
 
-:::chat student Student
+:::chat student AI Student
 So discovery isn't a one-shot RPC — the joiner keeps gossiping?
 :::
 
@@ -99,7 +99,7 @@ So discovery isn't a one-shot RPC — the joiner keeps gossiping?
 Exactly — it's not a one-shot thing. Seeds give the **initial** topology snapshot; then the joiner participates like everyone else. Eventually all nodes know all nodes.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Why must every node share the **same** seed list?
 :::
 
@@ -113,7 +113,7 @@ Important one. Inconsistent seed lists → gossip partitions / split-brain risk,
 
 ### Act 3 — Token assignment (the part I was worried about)
 
-:::chat student Student
+:::chat student AI Student
 Part 1 said vnode means no manual `initial_token`. How does the joiner actually pick tokens?
 :::
 
@@ -127,7 +127,7 @@ You remembered Part 1 well! Read `num_tokens` from config (Scylla/Cassandra defa
 No central allocator — each node chooses independently, yet ranges tend to balance because many random cuts make slice sizes similar.
 :::
 
-:::chat student Student
+:::chat student AI Student
 What if I want a beefier machine to hold more data?
 :::
 
@@ -135,7 +135,7 @@ What if I want a beefier machine to hold more data?
 Sure — give it more tokens. e.g. **512** vs 256 on smaller boxes. `num_tokens` is the knob for proportional ownership when hardware differs.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Could two nodes collide on the same token?
 :::
 
@@ -143,7 +143,7 @@ Could two nodes collide on the same token?
 Don't worry — that's handled. The joiner checks existing tokens first and skips duplicates. Collisions are avoided at join time.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Any smarter allocation than pure random?
 :::
 
@@ -151,7 +151,7 @@ Any smarter allocation than pure random?
 There is! Cassandra **3.0+** optional JVM flag: `-Dcassandra.allocate_tokens_for_keyspace=<keyspace>` — picks tokens using **load** of existing vnodes in that keyspace (better balance with fewer tokens). Default remains random.
 :::
 
-:::chat student Student
+:::chat student AI Student
 When would I still use `initial_token`?
 :::
 
@@ -165,7 +165,7 @@ A manual comma-separated list in `cassandra.yaml` — skips auto allocation. Use
 
 ### Act 4 — Bootstrap streaming: filling the shelves
 
-:::chat student Student
+:::chat student AI Student
 Tokens are chosen. Does the node serve traffic immediately?
 :::
 
@@ -180,7 +180,7 @@ Not yet — this is where people often get confused. **Bootstrap** has two phase
 Until streaming finishes, the node is **UJ (Up Joining)** in `nodetool status`.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Where does data come from?
 :::
 
@@ -188,7 +188,7 @@ Where does data come from?
 For each new range, the joiner streams from **current replicas**. Default: **primary replica** per range — guarantees consistency with cluster state. If a required replica is down, bootstrap **fails** unless you override with `-Dcassandra.consistent.rangemovement=false` (may miss data — be careful with that).
 :::
 
-:::chat student Student
+:::chat student AI Student
 How do I watch progress?
 :::
 
@@ -203,7 +203,7 @@ nodetool netstats  # Mode: JOINING, per-source % and bytes
 Bonus: with vnodes, Scylla can stream from **many** nodes in parallel (not only immediate ring neighbors), so streaming-heavy work like bootstrap or rebuild can run faster than old one-token-per-node layouts.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Bootstrap died halfway. Start over?
 :::
 
@@ -211,7 +211,7 @@ Bootstrap died halfway. Start over?
 You don't have to start from scratch. Cassandra **2.2+**: `nodetool bootstrap resume`, or often just **restart** the node. Fresh start: JVM flag `-Dcassandra.reset_bootstrap_progress=true`. Older versions: wipe data and re-bootstrap.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Can I skip streaming?
 :::
 
@@ -219,7 +219,7 @@ Can I skip streaming?
 You can, but only in specific cases. `auto_bootstrap: false` joins the ring **without** copying data — for **backup restore** or **new datacenter** scenarios where you'll load data another way. Default is `true` (hidden in yaml but on by default). Don't flip this casually in production scale-out.
 :::
 
-:::chat student Student
+:::chat gon Gon
 Is streaming just in-memory? Do I need a separate rebuild to get data on disk?
 :::
 
@@ -227,7 +227,7 @@ Is streaming just in-memory? Do I need a separate rebuild to get data on disk?
 No — bootstrap streaming writes SSTables to **disk**, not RAM only. While the node is JOINING, peers send SSTables and the joiner writes them into its local data directories. The file counts and GB in `nodetool netstats` are disk progress, not a cache. When status flips **UN**, owned ranges are on disk and the node can serve reads and writes. With normal scale-out (`auto_bootstrap: true`), you do **not** need a separate `nodetool rebuild`.
 :::
 
-:::chat student Student
+:::chat gon Gon
 So is `nodetool rebuild` the same as bootstrap streaming?
 :::
 
@@ -244,11 +244,28 @@ Same **transport** — both use SSTable streaming. Different **trigger** and **w
 For "add one node to an existing DC," bootstrap streaming is enough. Rebuild is a **separate maintenance op** you run on a live node that still lacks ranges it never received.
 :::
 
+:::chat gon Gon
+When adding a new datacenter, does data replicate automatically via streaming?
+:::
+
+:::chat teacher Teacher
+No — a new DC follows a different path than same-DC scale-out. Bootstrap streaming pulls from **replicas in the same DC** only. A brand-new DC has no local data, so joining the ring copies little or nothing during bootstrap.
+
+The Scylla procedure splits like this:
+
+1. Start new-DC nodes → join the ring (reach **UN**)
+2. `ALTER KEYSPACE` to set replication for the new DC
+3. On **each** new-DC node, run `nodetool rebuild <existing_DC>` **manually**
+4. Run cluster repair
+
+You don't have to force `auto_bootstrap: false` — cross-DC data won't arrive via bootstrap anyway. **`nodetool rebuild` is what fills the new DC.**
+:::
+
 ---
 
 ### Act 5 — UN at last, and the cleanup trap
 
-:::chat student Student
+:::chat student AI Student
 `nodetool status` shows **UN**. We're done?
 :::
 
@@ -256,7 +273,7 @@ For "add one node to an existing DC," bootstrap streaming is enough. Rebuild is 
 Almost there! **Run `nodetool cleanup` on every old node** (not the new one). When ranges moved, Cassandra/Scylla **do not auto-delete** data the old node no longer owns — it's a safety measure. Without cleanup, stale data still counts toward disk load and can cause confusion later.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Cleanup sounds expensive. Can I skip it?
 :::
 
@@ -268,7 +285,7 @@ You can **postpone** to low-traffic hours — that's fine. But finish cleanup **
 3. Don't decommission until cleanup succeeded
 :::
 
-:::chat student Student
+:::chat gon Gon
 What exactly is data resurrection? Why can it happen if we skip cleanup?
 :::
 
@@ -291,7 +308,7 @@ On a read, N1's stale copy can win as the "latest" — deleted `W1` **resurrects
 Note: Scylla ops discussions allow bootstrap + decommission of **old** nodes first, then cleanup later — but **never** decommission a **newly bootstrapped** node before cleanup, and don't delay cleanup indefinitely.
 :::
 
-:::chat student Student
+:::chat student AI Student
 Any prerequisites before I even start?
 :::
 
