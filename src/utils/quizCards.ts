@@ -17,7 +17,7 @@ export function expandQuizCards(markdown: string): string {
     const answerHtml = answer ? (marked.parse(answer) as string) : '';
 
     return `<details class="quiz-card">
-<summary class="quiz-card__question">${questionHtml}</summary>
+<summary class="quiz-card__question"><span class="quiz-card__question-text">${questionHtml}</span></summary>
 <div class="quiz-card__answer">${answerHtml}</div>
 </details>`;
   });
