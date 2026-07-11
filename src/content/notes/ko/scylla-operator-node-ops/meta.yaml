@@ -1,0 +1,13 @@
+description: 'Scylla Operator K8s 노드 운영 — Service 라벨 replace, ScyllaCluster scale, 금지 nodetool, 자동 cleanup (역할 놀이 Q&A)'
+pubDate: 2026-07-11
+tags:
+  - scylla
+  - cassandra
+  - kubernetes
+  - operator
+  - operations
+draft: false
+exploredFrom: cassandra-node-replacement
+exploreNext:
+  - cassandra-repair-operations
+  - scylla-client-best-practices

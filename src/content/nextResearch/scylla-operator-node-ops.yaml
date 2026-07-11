@@ -1,0 +1,7 @@
+label:
+  en: 'Scylla Operator node ops on Kubernetes'
+  ko: 'Scylla Operator K8s 노드 운영'
+reason:
+  en: 'Replace, scale, and forbidden nodetool commands when the Operator is the control plane'
+  ko: 'Operator가 control plane일 때 replace·scale·금지 nodetool 명령'
+note: scylla-operator-node-ops

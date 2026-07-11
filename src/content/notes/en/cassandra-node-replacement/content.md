@@ -15,7 +15,6 @@ title: 'Cassandra & Scylla — Part 3: Node Replacement'
 - [nodetool decommission (ScyllaDB)](https://docs.scylladb.com/manual/stable/operating-scylla/nodetool-commands/decommission.html)
 - [Bootstrapping Apache Cassandra Nodes (The Last Pickle)](http://thelastpickle.com/blog/2017/05/23/auto-bootstrapping-part1.html)
 - [Replace a dead node (DataStax DSE)](https://docs.datastax.com/en/dse/6.9/managing/operations/replace-node.html)
-- [Replace nodes (ScyllaDB Operator)](https://operator.docs.scylladb.com/stable/operate/replace-nodes.html)
 
 ---
 
@@ -64,6 +63,14 @@ How is replace different from Part 2 add-node bootstrap?
 Part 2 = **scale out**: gossip learns existing tokens → pick **new random** tokens → stream → **cleanup on old nodes**.
 
 Replace = **same seat**: new hardware takes the **dead node's tokens** → stream/RBNO from surviving replicas → **no cleanup on other nodes** (ownership didn't move away, it was reassigned).
+:::
+
+:::chat gon Gon
+We run Scylla on Kubernetes with the Operator — is this note still the right model?
+:::
+
+:::chat teacher Teacher
+The **Scylla engine** is the same (Host ID replace, token inheritance, streaming/RBNO). What changes is the **control plane** — you label a Service instead of editing `scylla.yaml` by hand. See **Part 4** (`scylla-operator-node-ops`) for the K8s runbook.
 :::
 
 ---
@@ -245,7 +252,7 @@ Never use `removenode` on a **live reachable** node — use `decommission` inste
 
 ---
 
-### Act 8 — Special cases
+### Act 8 — Special cases (VM / bare metal)
 
 **Dead seed node**
 
@@ -259,13 +266,11 @@ Never use `removenode` on a **live reachable** node — use `decommission` inste
 - Re-run RAID setup, append `replace_node_first_boot: <old-host-id>` to yaml, start Scylla ([Scylla replace doc](https://docs.scylladb.com/manual/stable/operating-scylla/procedures/cluster-management/replace-dead-node.html)).
 - Public/private IP may change after restart — update `listen_address` / `broadcast_address` if needed.
 
-**Kubernetes (Scylla Operator)**
-
-- Label the failed member Service with `scylla/replace=""` — Operator provisions a fresh pod with `--replace-node-first-boot` ([Operator doc](https://operator.docs.scylladb.com/stable/operate/replace-nodes.html)).
+**Kubernetes (Scylla Operator)** — covered in **Part 4** (`scylla-operator-node-ops`). Same replace semantics; different trigger (Service label + Operator reconciliation).
 
 ---
 
-### Runbook at a glance
+### Runbook at a glance (VM / bare metal)
 
 ```
 Pre-check: quorum OK, target DN, version match, Host ID noted, new data dir empty
@@ -331,4 +336,4 @@ A **different IP** replacement can **receive writes during bootstrap** (CASSANDR
 
 ## Memo
 
-Part 3 of the Cassandra/Scylla track — node replacement runbook after Part 2 boot join mechanics.
+Part 3 of the Cassandra/Scylla track — VM/bare-metal node replacement runbook. K8s Operator ops are in Part 4.
