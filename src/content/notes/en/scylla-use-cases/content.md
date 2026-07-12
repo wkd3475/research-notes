@@ -15,6 +15,7 @@ title: 'When Scylla Is the Right Fit (Use Cases)'
 - [Time-Based Anti-Patterns for Caching Time-Series Data](https://www.scylladb.com/2019/09/05/time-based-anti-patterns-for-caching-time-series-data/)
 - [DynamoDB: When to Migrate](https://www.scylladb.com/2023/12/04/dynamodb-when-to-move-out/)
 - [ScyllaDB Getting Started](https://docs.scylladb.com/manual/stable/getting-started/)
+- [CQL Collections (ScyllaDB Docs)](https://docs.scylladb.com/manual/stable/cql/types.html#collections)
 
 ---
 
@@ -167,6 +168,94 @@ Scylla's calculator uses **min 10K OPS / 1TB** as a hint — below that, explore
 
 ---
 
+### Act 3 supplement — Collections explained
+
+:::chat gon Gon
+The anti-pattern table mentions collections — can you explain what a collection is?
+:::
+
+:::chat teacher Teacher
+In CQL/Scylla, a **collection** is a **composite column type** inside **one cell** of one row — not separate rows. Three kinds ([CQL docs](https://docs.scylladb.com/manual/stable/cql/types.html#collections)):
+
+| Type | Meaning | Example |
+|------|---------|---------|
+| **list** | Ordered values (duplicates OK) | `scores list<int>` → `[3, 9, 4]` |
+| **set** | Sorted **unique** values | `tags set<text>` → `{'kitten','cat'}` |
+| **map** | Unique keys → values | `favs map<text,text>` → `{'fruit':'Banana'}` |
+
+**Where it lives:**
+
+```
+partition key = user_id
+row
+  ├─ name: "Alice"
+  └─ tags: set<text>   ← one column, one storage unit
+```
+
+Key property: reading **one element** still loads the **whole collection** (no per-element paging inside the cell). Good for **small denormalized extras** — phone numbers, a few labels — not for unbounded streams.
+:::
+
+:::chat student AI Student
+What's the difference between frozen and non-frozen collections?
+:::
+
+:::chat teacher Teacher
+| | **non-frozen** (default) | **frozen** |
+|--|--------------------------|------------|
+| Updates | Add/remove elements (`tags = tags + {'vip'}`) | **Replace whole value only** |
+| Use | Small sets that change occasionally | One-shot blobs, PK, nested collections |
+| Cost on append | **read → merge → write**, cost ∝ collection size | Overwrite-oriented |
+
+```sql
+-- non-frozen: append
+UPDATE users SET tags = tags + {'vip'} WHERE id = 'alice';
+
+-- frozen: whole value
+UPDATE users SET profile = {name: 'Bob', age: 30} WHERE id = 'bob';
+```
+
+PK or collection-inside-collection **must** be `frozen<...>`.
+:::
+
+:::chat teacher Teacher
+**Good fit:** bounded count, read together with the row — user tags, a few phone numbers, small option maps.
+
+**Anti-pattern** ([modeling mistakes](https://www.scylladb.com/2023/09/11/nosql-data-modeling-mistakes-that-hurt-performance/)) — appending events into a map:
+
+```sql
+-- Bad: sensor events in one map cell
+CREATE TABLE sensors (
+  sensor_id uuid PRIMARY KEY,
+  events map<timestamp, frozen<map<text, int>>>
+);
+```
+
+Each append: read entire collection → merge (sorted vector internally) → write. **O(n)** per ingest → throughput falls, p99 rises.
+
+**Prefer set over list** when possible — list index updates can trigger read-before-write and retries aren't always idempotent ([CQL lists](https://docs.scylladb.com/manual/stable/cql/types.html#lists)).
+
+**Fix — rows with clustering key:**
+
+```sql
+CREATE TABLE sensors (
+  sensor_id uuid,
+  record_time timestamp,
+  events frozen<map<text, int>>,
+  PRIMARY KEY (sensor_id, record_time)
+);
+```
+
+Append = **INSERT new row** (LSM-friendly). Range read = clustering query. Wipe partition = `DELETE WHERE sensor_id = ?`.
+
+| Collection is for… | Collection is not for… |
+|--------------------|-------------------------|
+| Small bounded sets/maps in one row | Time-series, logs, message streams |
+| Metadata read with the parent row | Unbounded append storage |
+| **set** over **list** when you can | High-volume per-element growth in one cell |
+:::
+
+---
+
 ### Act 4 — Discord as a reference use case
 
 :::chat student AI Student
@@ -276,6 +365,12 @@ If none of these are load-bearing, migration is mostly data model + driver — o
 **Q5.** OLAP and OLTP on one Scylla cluster — what happens and what are the options?
 ---
 Analytics consumes CPU/IO; **OLTP P99 spikes** while the job runs ([monitoring graphs in Scylla blog](https://www.scylladb.com/2026/01/28/can-database-workloads-coexist/)). Options: **separate cluster/DC**, **off-peak analytics**, or **Workload Prioritization** (service levels with shares).
+:::
+
+:::quiz
+**Q6.** When is a CQL collection appropriate vs when should you use clustering-key rows instead?
+---
+**Appropriate:** small bounded data in one row (tags, a few phones, small maps), read with the parent. **Use rows instead:** unbounded append (IoT events, logs) — append to non-frozen collections is O(n) merge per write; INSERT by `(pk, clustering_key)` matches LSM and avoids giant cells.
 :::
 
 ## Memo
