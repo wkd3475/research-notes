@@ -313,4 +313,4 @@ Client times out and **retries** while server still processes the first attempt 
 
 ## Memo
 
-Cassandra/Scylla track — client layer after use-case fit. Next: repair ops and app retry/idempotency under failures.
+Cassandra/Scylla track — client layer after use-case fit. Next: partition key internals (separate note), then repair ops.
