@@ -1,0 +1,7 @@
+description: 'Scylla 적합·부적합 워크로드 — 처리량·지연·모델링·Discord 사례·DynamoDB 기준 (역할 놀이 Q&A)'
+pubDate: 2026-07-12
+tags: ["scylla", "cassandra", "use-cases", "workload", "dynamodb"]
+exploredFrom: discord-superdisk
+exploreNext:
+  - scylla-client-best-practices
+  - cassandra-repair-operations
