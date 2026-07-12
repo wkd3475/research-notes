@@ -3,7 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import NoteCard from '../../../components/NoteCard.astro';
 import { href } from '../../../config';
 import { locales, t, isLocale, parseNoteId } from '../../../i18n';
-import { filterNotesByLocale } from '../../../utils/notes';
+import { filterNotesByLocale, sortNotesByWrittenOrder } from '../../../utils/notes';
 import {
   findNextMonthWithNotes,
   findPreviousMonthWithNotes,
@@ -46,9 +46,9 @@ const monthsWithNotes = getMonthsWithNotes(allNotesCollection);
 const currentYearMonth = getCurrentYearMonth();
 const earliestMonth = getEarliestMonthWithNotes(allNotesCollection) ?? currentYearMonth;
 
-const allNotes = allNotesCollection
-  .filter((note) => formatDateKey(note.data.pubDate).startsWith(`${yearMonth}-`))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const allNotes = sortNotesByWrittenOrder(
+  allNotesCollection.filter((note) => formatDateKey(note.data.pubDate).startsWith(`${yearMonth}-`)),
+);
 
 const notesByDate = new Map<string, typeof allNotes>();
 

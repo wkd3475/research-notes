@@ -1,7 +1,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { href } from '../config';
 import { type Locale, parseNoteId } from '../i18n';
-import { filterNotesByLocale } from './notes';
+import { filterNotesByLocale, sortNotesByWrittenOrder } from './notes';
 import { filterReadingQueueByLocale } from './readingQueue';
 
 export type NoteEntry = CollectionEntry<'notes'>;
@@ -46,9 +46,9 @@ export function filterNotesByTag(
   locale: Locale,
   tag: string,
 ): NoteEntry[] {
-  return filterNotesByLocale(notes, locale)
-    .filter((note) => note.data.tags.includes(tag))
-    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return sortNotesByWrittenOrder(
+    filterNotesByLocale(notes, locale).filter((note) => note.data.tags.includes(tag)),
+  );
 }
 
 export function filterQueueByTag(

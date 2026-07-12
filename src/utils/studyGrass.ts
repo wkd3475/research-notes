@@ -1,6 +1,7 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '../i18n';
 import { DISPLAY_TIMEZONE, dateFromCalendarKey, toDateKey } from './dates';
+import { sortNotesByWrittenOrder } from './notes';
 
 export const STUDY_TIMEZONE = DISPLAY_TIMEZONE;
 
@@ -60,7 +61,7 @@ export function formatDateLabel(key: string, locale: Locale = 'en'): string {
 export function groupNotesByDate(notes: CollectionEntry<'notes'>[]): Map<string, DayNote[]> {
   const map = new Map<string, DayNote[]>();
 
-  for (const note of notes) {
+  for (const note of sortNotesByWrittenOrder(notes)) {
     const key = formatDateKey(note.data.pubDate);
     const existing = map.get(key) ?? [];
     existing.push({ id: note.id, title: note.data.title });
