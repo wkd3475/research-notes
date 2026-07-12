@@ -3,7 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import NoteCard from '../../../components/NoteCard.astro';
 import { href } from '../../../config';
 import { locales, t, isLocale, parseNoteId } from '../../../i18n';
-import { filterNotesByLocale } from '../../../utils/notes';
+import { filterNotesByLocale, sortNotesByWrittenOrder } from '../../../utils/notes';
 import { getCollection } from 'astro:content';
 
 export function getStaticPaths() {
@@ -17,9 +17,7 @@ if (!localeParam || !isLocale(localeParam)) {
 const locale = localeParam;
 const strings = t(locale);
 
-const notes = filterNotesByLocale(await getCollection('notes'), locale).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+const notes = sortNotesByWrittenOrder(filterNotesByLocale(await getCollection('notes'), locale));
 ---
 
 <BaseLayout title={strings.notes} description={strings.notesPageDesc} locale={locale}>

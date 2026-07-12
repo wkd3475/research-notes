@@ -1,5 +1,36 @@
 import type { CollectionEntry } from 'astro:content';
 import { type Locale, parseNoteId } from '../i18n';
+import { getFirstWrittenDate, getNoteRevisions, noteContentPath } from './noteHistory';
+
+type NoteEntry = CollectionEntry<'notes'>;
+
+const writtenAtCache = new Map<string, number>();
+
+function getNoteWrittenAt(note: NoteEntry): number {
+  const cached = writtenAtCache.get(note.id);
+  if (cached !== undefined) return cached;
+
+  const { locale, translationId } = parseNoteId(note.id);
+  const revisions = getNoteRevisions(noteContentPath(locale, translationId));
+  const writtenAt = getFirstWrittenDate(note.data.pubDate, revisions).valueOf();
+  writtenAtCache.set(note.id, writtenAt);
+  return writtenAt;
+}
+
+/** Newest first: pubDate, then first git commit time, then slug. */
+export function compareNotesByWrittenOrder(a: NoteEntry, b: NoteEntry): number {
+  const pubDateDiff = b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+  if (pubDateDiff !== 0) return pubDateDiff;
+
+  const writtenDiff = getNoteWrittenAt(b) - getNoteWrittenAt(a);
+  if (writtenDiff !== 0) return writtenDiff;
+
+  return parseNoteId(a.id).translationId.localeCompare(parseNoteId(b.id).translationId);
+}
+
+export function sortNotesByWrittenOrder(notes: NoteEntry[]): NoteEntry[] {
+  return [...notes].sort(compareNotesByWrittenOrder);
+}
 
 export type ReferrerNote = {
   translationId: string;
@@ -100,9 +131,7 @@ export function getAdjacentNotes(
   translationId: string,
   locale: Locale,
 ): AdjacentNotes {
-  const sorted = filterNotesByLocale(notes, locale).sort(
-    (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
-  );
+  const sorted = sortNotesByWrittenOrder(filterNotesByLocale(notes, locale));
 
   const index = sorted.findIndex((note) => parseNoteId(note.id).translationId === translationId);
   if (index === -1) {
