@@ -56,7 +56,7 @@ use case 목록 전에, Scylla가 **어떤 워크로드를 전제**로 하나요
 Scylla sweet spot은 **고처리량 + 예측 가능한 초저지연**이다. 아무 NoSQL이나 쓰라는 뜻은 아니다.
 :::
 
-:::chat gon Gon
+:::chat student AI 학생
 대략 OPS 몇부터 안 하면 오버킬인가요?
 :::
 
@@ -147,7 +147,7 @@ Scylla가 *부적합*이거나 오버킬인 경우는?
 - Lambda 수천 개 + DynamoDB + AWS 전용 기능(TransactWrite, 고객별 throughput 과금) → DB 절감보다 이전 비용이 클 수 있음
 :::
 
-:::chat gon Gon
+:::chat student AI 학생
 우리 워크로드 OPS, read/write 비율, 총 데이터량 — 10K 넘나? storage-bound인가요?
 :::
 
@@ -191,7 +191,7 @@ Discord가 "good fit"에 어떻게 대응하나요? Superdisk RAID는 빼고요.
 **우리 입장:** 초대형 scale의 partition-key OLTP에는 Scylla가 맞지만, 극단적 skew는 **앱 레이어 방패**와 읽기 지연용 스토리지 튜닝(Superdisk)이 같이 필요하다. DB 선택만으로 아키텍처가 끝나지는 않는다.
 :::
 
-:::chat gon Gon
+:::chat student AI 학생
 쿼리가 전부 partition key로 좁혀지나요, JOIN·ad-hoc 분석이 필요한가요?
 :::
 
@@ -215,7 +215,7 @@ JOIN이나 ad-hoc SQL이 핵심이면 Scylla를 primary로 쓰기 어렵다. 프
 | 운영 | 3+ 노드·모델링 각오 | 테이블 단위 zero-ops 원함 |
 | 멀티 워크로드 | OLTP만, 또는 격리/우선순위 | OLAP+OLTP 한 클러스터, 통제 없음 |
 
-:::chat gon Gon
+:::chat student AI 학생
 데이터 중 몇 %가 자주 읽히나요? cold tier를 Scylla 밖으로 뺄 수 있나요?
 :::
 
@@ -225,7 +225,7 @@ Scylla는 **실제로 서빙하는 데이터**를 로컬 SSD에 둔다고 가정
 TTL, 16MB 넘는 blob은 S3로 빼는지(DynamoDB 400KB 한도 대비), archive 읽기를 저렴한 store로 우회할지도 같이 보면 된다.
 :::
 
-:::chat gon Gon
+:::chat student AI 학생
 Cassandra/DynamoDB에서 쓰는 기능 중 Scylla에 없는 게 있나요?
 :::
 
