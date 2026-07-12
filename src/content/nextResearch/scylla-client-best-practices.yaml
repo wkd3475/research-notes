@@ -4,3 +4,4 @@ label:
 reason:
   en: 'Shard-aware routing and modeling choices matter as much as server architecture'
   ko: '서버 아키텍처만큼 shard-aware 라우팅·모델링 선택이 중요해 보임'
+note: scylla-client-best-practices
