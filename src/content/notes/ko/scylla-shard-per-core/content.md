@@ -84,6 +84,14 @@ partition key → Murmur3 → token → 노드(ring) → 그 노드 안 shard
 
 운영에서는 **TokenAwarePolicy** + Scylla shard-aware 드라이버 + prepared statement가 사실상 표준.
 
+:::chat gon Gon
+Scylla partition key 내부 기전이 궁금해요 — Murmur3, token ring, replica, shard 라우팅까지. 여기에 다 넣기보다 별도 노트에서 자세히 보고 싶어요.
+:::
+
+:::chat teacher 선생님
+이 노트는 **노드 → shard**까지만 짧게 다뤘어요. **PK → Murmur3 → ring → replica set → shard** 전체는 [Partition Key 내부 기전](/research-notes/ko/notes/scylla-partition-key-internals/)에서 보면 됩니다.
+:::
+
 ### 노드가 늘면 재분배
 
 맞다. 노드 추가·제거 시 token 담당이 바뀌고, **bootstrap**, **decommission**, **replace** 등으로 데이터가 노드 간 이동한다.

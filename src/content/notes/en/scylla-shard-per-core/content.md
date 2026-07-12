@@ -84,6 +84,14 @@ On the node, the token range is subdivided among shards (Scylla blog: range cut 
 
 Use **TokenAwarePolicy** + Scylla shard-aware driver + prepared statements in production.
 
+:::chat gon Gon
+I'm curious how Scylla partition keys actually work internally — Murmur3, token ring, replicas, shard routing. I'd rather read the full path in a separate note than squeeze it here.
+:::
+
+:::chat teacher Teacher
+This note only sketches **node → shard** routing. The full **PK → Murmur3 → ring → replica set → shard** pipeline is in [Partition Key Internals](/research-notes/en/notes/scylla-partition-key-internals/).
+:::
+
 ### Nodes added → redistribution
 
 Yes: adding or removing nodes changes token ownership. Data moves between nodes via **bootstrap**, **decommission**, **replace**, etc.

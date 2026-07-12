@@ -1,0 +1,6 @@
+description: 'PK → Murmur3 token → vnode/tablet → replica set → per-node shard — full routing pipeline'
+pubDate: 2026-07-12
+tags: ["scylla", "cassandra", "partition-key", "token-ring", "replication"]
+exploredFrom: scylla-client-best-practices
+exploreNext:
+  - cassandra-repair-operations
