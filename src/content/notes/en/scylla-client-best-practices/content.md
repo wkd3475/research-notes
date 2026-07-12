@@ -65,6 +65,14 @@ Client-side job: compute the same routing key and send the query **directly to t
 Without all three on hot paths, you pay latency and load even on a perfectly tuned cluster.
 :::
 
+:::chat gon Gon
+I'm curious how Scylla partition keys actually work internally — Murmur3, token ring, replicas, shard routing. I'd rather read the full path in a separate note than squeeze it here.
+:::
+
+:::chat teacher Teacher
+Good call — this note stays on **client config**. The full **PK → token → replica set → shard** pipeline is in [Partition Key Internals](/research-notes/en/notes/scylla-partition-key-internals/).
+:::
+
 ---
 
 ### Act 2 — Shard-aware drivers & prepared statements
