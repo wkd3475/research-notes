@@ -1,0 +1,7 @@
+description: 'Feature store offline/online split, Feast integration, when Scylla fits online serving vs Redis/DynamoDB/overkill'
+pubDate: 2026-07-12
+tags: ["scylla", "feature-store", "ml", "use-cases", "feast"]
+exploredFrom: scylla-use-cases
+exploreNext:
+  - scylla-client-best-practices
+  - scylla-partition-key-internals

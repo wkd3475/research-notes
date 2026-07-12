@@ -1,0 +1,7 @@
+label:
+  en: 'Scylla as an online feature store (fit & pitfalls)'
+  ko: 'Scylla를 online feature store로 쓸 때 (적합성·함정)'
+reason:
+  en: 'Use-cases note mentions feature stores briefly — need feature-store basics and when Scylla fits the online tier'
+  ko: 'use case 노트에 feature store가 한 줄만 나옴 — 개념과 online tier에서 Scylla가 맞는지 깊게 보고 싶음'
+note: scylla-feature-store-fit

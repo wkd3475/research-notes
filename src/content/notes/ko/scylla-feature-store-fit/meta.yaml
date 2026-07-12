@@ -1,0 +1,7 @@
+description: 'Feature store 개념, offline/online 분리, Feast 연동, Scylla online store 적합·부적합'
+pubDate: 2026-07-12
+tags: ["scylla", "feature-store", "ml", "use-cases", "feast"]
+exploredFrom: scylla-use-cases
+exploreNext:
+  - scylla-client-best-practices
+  - scylla-partition-key-internals

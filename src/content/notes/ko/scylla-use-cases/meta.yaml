@@ -4,4 +4,5 @@ tags: ["scylla", "cassandra", "use-cases", "workload", "dynamodb"]
 exploredFrom: discord-superdisk
 exploreNext:
   - scylla-client-best-practices
+  - scylla-feature-store-fit
   - cassandra-repair-operations
