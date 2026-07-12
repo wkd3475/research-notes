@@ -9,5 +9,4 @@ tags:
   - storage
 draft: false
 exploredFrom: aurora-global-db-switchover-binlog
-exploreNext:
-  - jdbc-failover-minimal-downtime
+exploreNext: []

@@ -60,6 +60,7 @@ exploreNext:
 
 - **Edit label/reason once** in the registry → updates every note card and the reading queue
 - **IDs** = kebab-case; reuse the note slug when the topic becomes a note (`note:` field)
+- **Anti-cycle:** `exploreNext` = **unwritten** follow-ups only. When `note:` is set on a registry entry, remove that ID from every note's `exploreNext`. Use `exploredFrom` on the child for back-links.
 - Scaffold: `scripts/new-next-research.sh <id> --label-en "…" --label-ko "…" --reason-en "…" --reason-ko "…"`
 
 ## Quick routing
@@ -137,7 +138,7 @@ When writing a follow-up from a parent's **Next Research**:
 1. Create `en/{slug}/` and `ko/{slug}/` (content.md + meta.yaml each)
 2. Set `exploredFrom: {parent-slug}` in **both** `meta.yaml` files
 3. Set `note: {new-slug}` on the matching registry file in `src/content/nextResearch/{id}.yaml`
-4. Parent `meta.yaml` keeps the same registry ID — no per-locale label/reason edits needed
+4. **Remove that registry ID from `exploreNext`** in every note that still lists it (parent and any others) — once `note:` is set, navigation uses `exploredFrom` on the child; keeping the ID in `exploreNext` causes Next Research cycles
 5. `exploredFrom` and registry `note:` use translation ID only (no `en/` prefix)
 
 ## From reading queue
@@ -346,7 +347,7 @@ Place linked sources at the top of `content.md` as a bullet list — not a block
 - [ ] Review quiz: 3–5 `:::quiz` cards with hidden answers (EN + KO)
 - [ ] ko/{slug}/content.md humanized via humanize-korean (when body changed)
 - [ ] exploredFrom / exploreNext links in meta.yaml (if applicable)
-- [ ] Parent exploreNext.note updated in both parent meta.yaml files
+- [ ] Written follow-ups: registry `note:` set **and** that ID removed from all `exploreNext` lists (no cycles)
 - [ ] readingQueueFrom set + queue YAML removed (if from reading queue)
 - [ ] npm run build passes
 - [ ] Both locale URLs shared

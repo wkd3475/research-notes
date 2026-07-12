@@ -8,6 +8,4 @@ tags:
   - operations
 draft: false
 exploredFrom: cassandra-scylla-intro
-exploreNext:
-  - cassandra-node-replacement
-  - scylla-client-best-practices
+exploreNext: []

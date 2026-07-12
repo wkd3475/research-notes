@@ -9,7 +9,5 @@ tags:
 draft: false
 exploredFrom: cassandra-cluster-join
 exploreNext:
-  - scylla-operator-node-ops
   - cassandra-node-removal
   - cassandra-repair-operations
-  - scylla-client-best-practices

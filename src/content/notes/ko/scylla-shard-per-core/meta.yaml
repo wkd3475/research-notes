@@ -8,6 +8,4 @@ tags:
   - architecture
 draft: false
 exploredFrom: cassandra-scylla-intro
-exploreNext:
-  - scylla-use-cases
-  - scylla-client-best-practices
+exploreNext: []
