@@ -3,4 +3,5 @@ pubDate: 2026-07-12
 tags: ["scylla", "feature-store", "ml", "use-cases", "feast"]
 exploredFrom: scylla-use-cases
 exploreNext:
-  - cassandra-repair-operations
+  - scylla-client-best-practices
+  - scylla-partition-key-internals

@@ -9,4 +9,6 @@ tags:
   - operations
 draft: false
 exploredFrom: cassandra-scylla-intro
-exploreNext: []
+exploreNext:
+  - scylla-use-cases
+  - cassandra-node-replacement

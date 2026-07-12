@@ -8,4 +8,5 @@ tags:
   - cdc
   - aws
 draft: false
-exploreNext: []
+exploreNext:
+  - aurora-cluster-vs-global-db-switchover-internal

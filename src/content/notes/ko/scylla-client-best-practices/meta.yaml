@@ -3,4 +3,5 @@ pubDate: 2026-07-12
 tags: ["scylla", "cassandra", "driver", "data-modeling", "consistency"]
 exploredFrom: scylla-use-cases
 exploreNext:
+  - scylla-partition-key-internals
   - cassandra-repair-operations
