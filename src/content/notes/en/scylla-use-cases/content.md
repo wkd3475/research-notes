@@ -56,7 +56,7 @@ Three baked-in assumptions from [architecture docs](https://www.scylladb.com/pro
 Scylla's sweet spot is **throughput-heavy + predictable ultra-low latency**. Not "any NoSQL at any scale."
 :::
 
-:::chat gon Gon
+:::chat student AI Student
 Is there a rough OPS floor before Scylla is overkill?
 :::
 
@@ -147,7 +147,7 @@ When is Scylla the *wrong* choice or overkill?
 - Thousands of Lambdas + DynamoDB + AWS-only features (TransactWrite, throughput billing to customers) → migration cost can exceed DB savings
 :::
 
-:::chat gon Gon
+:::chat student AI Student
 Our workload: what's OPS, read/write ratio, total data — does it clear the 10K bar? Is it storage-bound?
 :::
 
@@ -191,7 +191,7 @@ How does Discord map to "good fit" — without re-explaining Superdisk RAID?
 **Takeaway for us:** Scylla fits **partition-key OLTP at huge scale**, but extreme skew needs an **app-layer shield** and storage tuned for read latency (Superdisk). Database choice ≠ full architecture.
 :::
 
-:::chat gon Gon
+:::chat student AI Student
 Do all queries narrow by partition key, or do we need JOINs and ad-hoc analytics?
 :::
 
@@ -215,7 +215,7 @@ Secondary analytics: separate pipeline (Spark, warehouse, or isolated Scylla DC)
 | Ops appetite | Run 3+ node clusters, model carefully | Want zero-ops table provisioning |
 | Multi-workload | OLTP only, or isolated / prioritized | OLAP + OLTP same cluster, uncontrolled |
 
-:::chat gon Gon
+:::chat student AI Student
 What % of data is read often? Can cold tier live outside Scylla?
 :::
 
@@ -225,7 +225,7 @@ Scylla assumes **local SSD for data you actually serve**. Overkill article examp
 Audit: retention TTL, S3 offload for blobs &gt;16MB (vs DynamoDB 400KB cap), and whether "archive reads" can hit a cheaper store.
 :::
 
-:::chat gon Gon
+:::chat student AI Student
 Any Cassandra/DynamoDB features we rely on that Scylla lacks?
 :::
 

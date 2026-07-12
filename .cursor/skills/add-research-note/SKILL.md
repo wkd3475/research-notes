@@ -95,7 +95,7 @@ When the user asks for a **study guide** first, then asks you to **read the mate
 2. Put **all guide URLs** in References / 레퍼런스 (one bullet per link).
 3. **What I learned / 배운 것** must be **exhaustive** relative to the guide — if a doc mentions a flag, state, or ops step, it belongs in the note unless [Scope and splitting](#scope-and-splitting) says otherwise.
 4. Turn guide **self-study questions** into [Review quiz](#review-quiz-format) cards (hidden answers).
-5. **Default format — 선생님 채팅 모드 (teacher chat):** unless the user asks for a different style, write "What I learned" / "배운 것" as [role-play Q&A](#role-play-chat-format) — **teacher = left bubble**, **student / gon = right bubble** (chat-app layout). Use **`gon`** for questions the user asked live; use **`student`** (label AI 학생 / AI Student) for AI-generated study questions. Keep tables and cheat sheets outside chat blocks for scanability.
+5. **Default format — 선생님 채팅 모드 (teacher chat):** unless the user asks for a different style, write "What I learned" / "배운 것" as [role-play Q&A](#role-play-chat-format) — **teacher = left bubble**, **student / gon = right bubble** (chat-app layout). Use **`gon`** only for questions the user asked live; use **`student`** (label AI 학생 / AI Student) for all agent-generated study questions (including study-guide recap prompts). Keep tables and cheat sheets outside chat blocks for scanability.
 6. Subjective sections still follow [Author voice](#author-voice-subjective-sections) — do not invent feelings; role-play is only in the learning body.
 
 ### Phase 4 — Verify
@@ -276,7 +276,7 @@ No — bootstrap streaming writes SSTables to **disk**.
 :::
 ````
 
-**Gon vs AI student:** Mark questions the **user actually asked** during study as `:::chat gon Gon`. Questions invented for the role-play narrative stay `:::chat student AI 학생` (KO) / `:::chat student AI Student` (EN).
+**Gon vs AI student:** Mark questions the **user actually asked** during study as `:::chat gon Gon`. Questions invented for the role-play narrative stay `:::chat student AI 학생` (KO) / `:::chat student AI Student` (EN). **Do not** promote study-guide self-study questions (or agent-generated recap prompts) to `gon` unless the user asked them verbatim in the session.
 
 **Rules:**
 
