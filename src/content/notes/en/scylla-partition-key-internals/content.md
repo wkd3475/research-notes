@@ -263,6 +263,68 @@ Tablets add **finer, autonomous rebalancing** — but the **partition key still 
 
 ---
 
+### Act 7 supplement — Hot partition & giant partition
+
+:::chat gon Gon
+What's a hot partition?
+:::
+
+:::chat teacher Teacher
+A **hot partition** is when reads/writes for **one partition key** spike far above the rest of the cluster.
+
+Because routing is fixed:
+
+```
+same PK  →  same token  →  same replica set  →  same CPU shard on each replica
+```
+
+| Symptom | Why |
+|---------|-----|
+| One node / **one core** pegged | That PK always lands on **one shard** |
+| Adding `--smp` cores doesn't help | Only **other** keys' ranges move — not this PK |
+| p99 latency spikes | QPS piles onto a single core |
+
+**Hot ≠ giant:** hot = **traffic** skew (QPS). Giant = **data volume** (GB / row count) on one PK. They can overlap but are different problems.
+
+**Fix = modeling**, not hardware: `time_bucket` in the PK ([use-case note](/research-notes/en/notes/scylla-use-cases/) — Discord), salt keys, split access patterns so load spreads across **many** partitions/tokens.
+:::
+
+:::chat gon Gon
+What if a partition grows so large it exceeds one shard's size?
+:::
+
+:::chat teacher Teacher
+First, separate three names ([shard-per-core note](/research-notes/en/notes/scylla-shard-per-core/)):
+
+| Term | What it is |
+|------|------------|
+| **CQL partition** | All rows sharing one PK — can grow **unbounded** if the schema allows it |
+| **Core shard** | Token **range** on one CPU core — ops don't size it in GB |
+| **Tablet** (~5 GB target) | Table split unit for rebalance — each PK still maps to **one** tablet deterministically |
+
+**There is no spillover:** one PK → one token → **one shard per replica**. Data does **not** auto-split across shards when the partition gets huge.
+
+What actually happens:
+
+| Effect | Detail |
+|--------|--------|
+| **Single-shard bottleneck** | All reads/writes for that PK stay on one core |
+| **Heavy reads** | Unpaged reads load the **whole partition** — memory & network pain ([client note](/research-notes/en/notes/scylla-client-best-practices/)) |
+| **Compaction / repair cost** | One giant blob slows background work on that shard |
+| **Monitoring alerts** | `system.large_partitions`, `system.large_rows`; `nodetool tablestats` |
+
+Tablet **split/merge** rebalances **tablets** across nodes/shards — it does **not** break one logical PK across multiple shards. A fat PK still fattens **one** tablet → **one** shard.
+
+**Prevention (same as hot keys):**
+
+- Bucket the PK: `(user_id, daily_bucket)`, `(channel_id, time_bucket)`
+- Don't append forever into **collections** — use clustering rows ([use-case supplement](/research-notes/en/notes/scylla-use-cases/))
+- Always **page** large reads
+- Watch large-partition metrics before prod traffic hits
+:::
+
+---
+
 ### End-to-end pipeline (cheat sheet)
 
 ```

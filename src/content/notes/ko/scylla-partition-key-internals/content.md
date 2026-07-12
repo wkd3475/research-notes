@@ -263,6 +263,68 @@ keyspace 모드는 `CREATE KEYSPACE` 때 `tablets = {'enabled': true|false}` —
 
 ---
 
+### 7막 보충 — Hot partition & 거대 partition
+
+:::chat gon Gon
+hot partition이 뭐예요?
+:::
+
+:::chat teacher 선생님
+**Hot partition**은 **partition key 하나**에 읽기/쓰기가 클러스터 나머지보다 훨씬 몰린 상태다.
+
+라우팅은 고정이다:
+
+```
+같은 PK  →  같은 token  →  같은 replica set  →  replica마다 같은 CPU shard
+```
+
+| 증상 | 이유 |
+|------|------|
+| 노드·**코어 하나**만 바쁨 | 그 PK는 항상 **shard 하나**만 담당 |
+| `--smp` 늘려도 안 풀림 | **다른** 키 range만 움직이고, 이 PK는 그대로 |
+| p99 튐 | QPS가 코어 하나에 쌓임 |
+
+**Hot ≠ 거대(giant):** hot은 **트래픽**(QPS) 편중, giant는 PK 하나에 **데이터 양**(GB·row 수)이 과한 것. 겹칠 수는 있어도 문제는 다르다.
+
+**해결은 모델링**이다. 하드웨어가 아니다. PK에 `time_bucket` 넣기([use case](/research-notes/ko/notes/scylla-use-cases/) — Discord), salt, 접근 패턴을 나눠 **여러** partition·token으로 흩뿌리기.
+:::
+
+:::chat gon Gon
+partition이 너무 커서 shard 크기를 넘으면 어떻게 되나요?
+:::
+
+:::chat teacher 선생님
+먼저 이름 세 개를 구분하자([shard-per-core](/research-notes/ko/notes/scylla-shard-per-core/)):
+
+| 용어 | 의미 |
+|------|------|
+| **CQL partition** | PK가 같은 row 묶음 — 스키마가 허용하면 **끝없이** 커질 수 있음 |
+| **Core shard** | CPU 코어 하나의 token **구간** — ops가 GB로 정하는 단위가 아님 |
+| **Tablet** (~5GB 목표) | 테이블 분산 단위 — PK → tablet 매핑은 여전히 **결정적·하나** |
+
+**자동 spill은 없다.** PK 하나 → token 하나 → replica마다 **shard 하나**. partition이 커져도 shard 여러 개로 쪼개지지 않는다.
+
+실제로 일어나는 일:
+
+| 현상 | 설명 |
+|------|------|
+| **shard 병목** | 그 PK read/write가 코어 하나에만 몰림 |
+| **무거운 읽기** | unpaged면 **partition 통째** 로드 — 메모리·네트워크 부담([클라이언트](/research-notes/ko/notes/scylla-client-best-practices/)) |
+| **compaction·repair 비용** | 한 덩어리가 크면 그 shard 백그라운드 작업도 무거움 |
+| **모니터링 경고** | `system.large_partitions`, `system.large_rows`; `nodetool tablestats` |
+
+tablet **split/merge**는 tablet을 노드·shard 사이로 옮기는 것이지, **논리 PK 하나를 shard 여러 개로 쪼개지는 않는다.** 비대한 PK는 **tablet 하나** → **shard 하나**만 비대해진다.
+
+**예방(hot key와 같음):**
+
+- PK bucket: `(user_id, daily_bucket)`, `(channel_id, time_bucket)`
+- **collection**에 무한 append 금지 — clustering row로([use case 보충](/research-notes/ko/notes/scylla-use-cases/))
+- 대량 읽기는 **paging**
+- 실부하 전에 large-partition 지표 확인
+:::
+
+---
+
 ### 전체 파이프라인 (치트시트)
 
 ```
