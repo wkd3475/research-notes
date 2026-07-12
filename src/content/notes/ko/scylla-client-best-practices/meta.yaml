@@ -1,0 +1,7 @@
+description: 'Scylla 클라이언트 베스트 프랙티스 — shard-aware 드라이버, prepared, query-first 모델링, LOCAL_QUORUM (역할 놀이 Q&A)'
+pubDate: 2026-07-12
+tags: ["scylla", "cassandra", "driver", "data-modeling", "consistency"]
+exploredFrom: scylla-use-cases
+exploreNext:
+  - cassandra-repair-operations
+  - app-retry-idempotency-db-failover
