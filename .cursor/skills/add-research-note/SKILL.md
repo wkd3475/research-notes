@@ -95,7 +95,7 @@ When the user asks for a **study guide** first, then asks you to **read the mate
 2. Put **all guide URLs** in References / 레퍼런스 (one bullet per link).
 3. **What I learned / 배운 것** must be **exhaustive** relative to the guide — if a doc mentions a flag, state, or ops step, it belongs in the note unless [Scope and splitting](#scope-and-splitting) says otherwise.
 4. Turn guide **self-study questions** into [Review quiz](#review-quiz-format) cards (hidden answers).
-5. **Optional format — role-play Q&A:** when the user asks for a teacher/student or dialogue style, use [chat bubble blocks](#role-play-chat-format) in "What I learned" — **teacher = left bubble**, **student / gon = right bubble** (chat-app layout). Use **`gon`** for questions the user asked live; use **`student`** (label AI 학생 / AI Student) for AI-generated study questions. Keep tables and cheat sheets outside chat blocks for scanability.
+5. **Default format — 선생님 채팅 모드 (teacher chat):** unless the user asks for a different style, write "What I learned" / "배운 것" as [role-play Q&A](#role-play-chat-format) — **teacher = left bubble**, **student / gon = right bubble** (chat-app layout). Use **`gon`** for questions the user asked live; use **`student`** (label AI 학생 / AI Student) for AI-generated study questions. Keep tables and cheat sheets outside chat blocks for scanability.
 6. Subjective sections still follow [Author voice](#author-voice-subjective-sections) — do not invent feelings; role-play is only in the learning body.
 
 ### Phase 4 — Verify
@@ -120,7 +120,7 @@ While planning or drafting, compare the proposed **title** to the **body**:
 2. **Primary language** — write **English first**, then Korean translation (same structure, same `pubDate`, same `exploreNext` / `exploredFrom`)
 3. **Check duplicates** — slug folder must not already exist in `en/` or `ko/`
 4. **Title–content fit** — before and while writing, apply [Scope and splitting](#scope-and-splitting). Trim or move material that does not belong under this title.
-5. **Body sections** — EN: "Why I looked this up", "What stood out", "What I learned", "Review quiz", "Memo". KO: "왜 이 글을 찾아봤나", "읽으면서 느낀 점", "배운 것", "복습 퀴즈", "메모". Subjective sections: see [Author voice](#author-voice-subjective-sections).
+5. **Body sections** — EN: "Why I looked this up", "What stood out", "What I learned", "Review quiz", "Memo". KO: "왜 이 글을 찾아봤나", "읽으면서 느낀 점", "배운 것", "복습 퀴즈", "메모". Subjective sections: see [Author voice](#author-voice-subjective-sections). **"What I learned" / "배운 것"** defaults to [선생님 채팅 모드](#role-play-chat-format) unless the user asks otherwise.
 6. **Review quiz** — after "What I learned" / "배운 것", add **3–5** recap questions from the study material. Answers must be hidden in clickable quiz cards — see [Review quiz format](#review-quiz-format). Do **not** put answers in plain visible headings.
 7. **Korean humanize** — after the KO draft, follow [humanize-korean](../humanize-korean/SKILL.md): read `references/quick-rules.md`, apply fast-mode 윤문 to `ko/{slug}/content.md` (genre: 블로그). Meaning must stay identical; only style and rhythm change.
 8. **pubDate** — `YYYY-MM-DD` in `meta.yaml` (study date; defaults to today KST)
@@ -232,7 +232,7 @@ Answer in 1–3 sentences. Markdown OK (lists, tables, `code`).
 
 ## Role-play chat format
 
-For teacher/student dialogue, use fenced `:::chat` blocks — the site renders them as **left (teacher) / right (student or gon) chat bubbles**.
+**Default for "What I learned" / "배운 것".** Unless the user requests plain prose or another format, use fenced `:::chat` blocks — the site renders them as **left (teacher) / right (student or gon) chat bubbles**.
 
 **Roles:** `teacher` (left) · `student` (right, **AI-generated** study questions) · `gon` (right, **author's live questions** during the session — label **Gon**, distinct bubble color).
 

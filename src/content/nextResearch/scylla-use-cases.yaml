@@ -4,3 +4,4 @@ label:
 reason:
   en: 'Know where it shines and where it is a bad match before committing at work'
   ko: '회사에서 쓰기 전에 잘 맞는 워크로드와 피해야 할 경우를 구분하고 싶음'
+note: scylla-use-cases
