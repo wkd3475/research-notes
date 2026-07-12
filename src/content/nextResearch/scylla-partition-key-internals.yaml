@@ -1,0 +1,6 @@
+label:
+  en: 'Partition key internals (token ring, replication, shard routing)'
+  ko: 'Partition key 내부 기전 (token ring, replication, shard 라우팅)'
+reason:
+  en: 'PK → Murmur3 token → replica placement → per-node shard — need the full path before modeling and tuning'
+  ko: 'PK → Murmur3 token → replica 배치 → 노드 내 shard까지 전 경로를 모델링·튜닝 전에 알고 싶음'

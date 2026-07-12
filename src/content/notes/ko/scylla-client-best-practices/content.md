@@ -313,4 +313,4 @@ ExecutionProfile(consistency_level=ConsistencyLevel.LOCAL_QUORUM)
 
 ## 메모
 
-Cassandra/Scylla 트랙 — use case 다음 클라이언트 층. 다음: repair 운영·장애 시 retry/idempotency.
+Cassandra/Scylla 트랙 — use case 다음 클라이언트 층. 다음: partition key 내부 기전(별도 노트), repair 운영.
