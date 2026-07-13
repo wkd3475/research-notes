@@ -1,0 +1,6 @@
+label:
+  en: 'Team Skill testing and CI'
+  ko: '팀 Skill 테스트·CI'
+reason:
+  en: 'Validating scripts, descriptions, and regressions before merge'
+  ko: 'merge 전 scripts·description·회귀 검증'

@@ -1,0 +1,6 @@
+label:
+  en: 'Claude Code internal plugin marketplace'
+  ko: 'Claude Code 내부 Plugin marketplace 운영'
+reason:
+  en: 'strictKnownMarketplaces, enabledPlugins, org-wide skill distribution'
+  ko: 'strictKnownMarketplaces·enabledPlugins·조직 배포'

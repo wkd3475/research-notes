@@ -1,0 +1,13 @@
+description: 'How teams accumulate, deploy, and govern shared Agent Skills across Cursor, Claude Code, and API surfaces'
+pubDate: 2026-07-13
+tags:
+  - claude
+  - agent-skills
+  - cursor
+  - ai
+  - team-practices
+exploreNext:
+  - agent-skills-team-testing
+  - claude-code-plugin-marketplace-ops
+  - mcp-enterprise-managed-auth
+exploredFrom: claude-agent-skills-best-practices
