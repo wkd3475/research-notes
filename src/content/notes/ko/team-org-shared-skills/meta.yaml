@@ -1,0 +1,13 @@
+description: '팀·조직이 Cursor·Claude Code·API 표면에 걸쳐 공용 Agent Skill을 쌓고 배포·운영하는 방법'
+pubDate: 2026-07-13
+tags:
+  - claude
+  - agent-skills
+  - cursor
+  - ai
+  - team-practices
+exploreNext:
+  - agent-skills-team-testing
+  - claude-code-plugin-marketplace-ops
+  - mcp-enterprise-managed-auth
+exploredFrom: claude-agent-skills-best-practices
