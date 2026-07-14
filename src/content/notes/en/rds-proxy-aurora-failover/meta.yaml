@@ -1,0 +1,14 @@
+description: 'RDS Proxy failover — static DNS/IP, idle connection preservation, session pinning, Global DB proxy redirect, vs AWS JDBC Wrapper'
+pubDate: 2026-07-14
+tags:
+  - aurora
+  - rds-proxy
+  - failover
+  - aws
+  - jdbc
+  - connection-pool
+draft: false
+exploredFrom: jdbc-failover-minimal-downtime
+exploreNext:
+  - app-retry-idempotency-db-failover
+  - aurora-global-db-dr-runbook

@@ -4,3 +4,4 @@ label:
 reason:
   en: 'How Proxy bypasses DNS, preserves idle connections, and compares to AWS JDBC Wrapper'
   ko: 'Proxy가 DNS를 우회하고 idle connection을 보존하는 방식, AWS JDBC Wrapper와 비교'
+note: rds-proxy-aurora-failover
