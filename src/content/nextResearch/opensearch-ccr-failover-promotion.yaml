@@ -1,0 +1,6 @@
+label:
+  en: 'OpenSearch CCR failover and follower promotion'
+  ko: 'OpenSearch CCR failover와 follower 승격'
+reason:
+  en: 'Detailed stop/promote sequence, lag handling, and reverse-direction bootstrap after a planned Region cutover'
+  ko: '계획된 리전 전환 후 stop/promote 순서, lag 처리, 반대 방향 bootstrap 절차를 더 깊게 본다'

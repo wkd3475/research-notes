@@ -1,0 +1,6 @@
+label:
+  en: 'OpenSearch snapshot restore RTO and sizing'
+  ko: 'OpenSearch snapshot restore RTO와 사이징'
+reason:
+  en: 'How restore time scales with index size, shard count, and UltraWarm, and what to restore first for logs vs search'
+  ko: '인덱스 크기·샤드 수·UltraWarm에 따라 restore 시간이 어떻게 늘고, 로그/검색 워크로드별 우선 복구 대상은 무엇인지'

@@ -1,0 +1,6 @@
+label:
+  en: 'Dual-ingest pipeline cutover for OpenSearch'
+  ko: 'OpenSearch dual-ingest 파이프라인 전환'
+reason:
+  en: 'When OpenSearch is derived from logs or CDC, dual-write and freeze/flip patterns can beat storage-level migration'
+  ko: 'OpenSearch가 로그·CDC 파생 데이터일 때 dual-write와 freeze/flip이 스토리지 마이그레이션보다 나을 수 있는지'
