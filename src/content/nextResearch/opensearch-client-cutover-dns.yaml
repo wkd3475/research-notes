@@ -1,0 +1,6 @@
+label:
+  en: 'OpenSearch client cutover and DNS strategy'
+  ko: 'OpenSearch 클라이언트 전환과 DNS 전략'
+reason:
+  en: 'Route 53 alias, VPC endpoint updates, and client reconnect behavior when domain endpoints change Regions'
+  ko: '리전 이동 시 도메인 endpoint 변경에 대해 Route 53 alias, VPC endpoint 갱신, 클라이언트 reconnect 동작을 정리한다'

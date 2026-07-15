@@ -1,0 +1,13 @@
+description: 'OpenSearch 도메인을 AWS 리전 간에 옮길 때 snapshot/restore, CCR, remote reindex, dual-ingest 옵션을 비교한다'
+pubDate: 2026-07-15
+tags:
+  - opensearch
+  - aws
+  - migration
+  - disaster-recovery
+draft: false
+exploreNext:
+  - opensearch-ccr-failover-promotion
+  - opensearch-snapshot-rto-sizing
+  - opensearch-client-cutover-dns
+  - opensearch-dual-ingest-cutover
