@@ -1,0 +1,10 @@
+description: 'PSync replica-style sync_reader vs SCAN+KSN scan_reader — consistency, source load, ElastiCache aws_psync vs fallback'
+pubDate: 2026-07-16
+tags: ["redis", "redis-shake", "psync", "scan", "keyspace-notifications", "elasticache", "migration"]
+draft: false
+exploredFrom: elasticache-global-datastore-vs-redis-shake
+exploreNext:
+  - redis-shake-aws-psync-ticket
+  - redis-shake-filter-function
+  - redis-dump-restore-large-keys
+  - redis-cross-account-region-move

@@ -1,0 +1,6 @@
+label:
+  en: 'redis-shake filter rules and Lua function transforms'
+  ko: 'redis-shake filter 규칙과 Lua function 변환'
+reason:
+  en: 'How to skip/rewrite keys during migration without double-writing at the app layer'
+  ko: '앱 이중 쓰기 없이 마이그레이션 중 키를 건너뛰거나 다시 쓰는 방법'

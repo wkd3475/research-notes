@@ -1,0 +1,6 @@
+label:
+  en: 'ElastiCache aws_psync ticket — renamed PSYNC ops'
+  ko: 'ElastiCache aws_psync 티켓 — 이름 바뀐 PSYNC 운영'
+reason:
+  en: 'Support ticket flow, ip:port@cmd mapping for cluster, when renamed PSYNC still fails'
+  ko: '지원 티켓 흐름, 클러스터 ip:port@cmd 매핑, renamed PSYNC가 실패하는 경우'
