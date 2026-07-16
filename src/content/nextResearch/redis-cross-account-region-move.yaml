@@ -1,0 +1,6 @@
+label:
+  en: 'Cross-account / cross-cloud Redis Region move patterns'
+  ko: '크로스 계정·크로스 클라우드 Redis Region 이전 패턴'
+reason:
+  en: 'Global Datastore is same-account only — what tools fit when source and target differ by account or vendor'
+  ko: 'Global Datastore는 동일 계정만 — 계정·벤더가 다를 때 쓸 수 있는 도구'
