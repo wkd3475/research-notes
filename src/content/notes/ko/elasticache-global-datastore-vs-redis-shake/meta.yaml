@@ -1,0 +1,8 @@
+description: '매니지드 교차 Region Redis 복제(Global Datastore)와 오픈소스 마이그레이션 도구(redis-shake) — 역할·한계·선택 기준'
+pubDate: 2026-07-16
+tags: ["redis", "elasticache", "global-datastore", "redis-shake", "migration", "aws"]
+draft: false
+exploreNext:
+  - elasticache-global-datastore-promote
+  - redis-shake-sync-vs-scan
+  - redis-cross-account-region-move

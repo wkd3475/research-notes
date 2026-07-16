@@ -1,0 +1,8 @@
+description: 'Managed cross-Region Redis replication (Global Datastore) vs open-source migration tool (redis-shake) — roles, limits, when to use which'
+pubDate: 2026-07-16
+tags: ["redis", "elasticache", "global-datastore", "redis-shake", "migration", "aws"]
+draft: false
+exploreNext:
+  - elasticache-global-datastore-promote
+  - redis-shake-sync-vs-scan
+  - redis-cross-account-region-move

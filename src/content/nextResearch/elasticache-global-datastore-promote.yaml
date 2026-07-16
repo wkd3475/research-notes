@@ -1,0 +1,6 @@
+label:
+  en: 'ElastiCache Global Datastore — promote secondary to primary'
+  ko: 'ElastiCache Global Datastore — secondary를 primary로 promote'
+reason:
+  en: 'Ops steps, RPO/RTO, and app endpoint cutover when promoting a secondary Region'
+  ko: 'secondary Region promote 시 운영 절차, RPO/RTO, 앱 endpoint 전환'

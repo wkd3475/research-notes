@@ -1,0 +1,6 @@
+label:
+  en: 'redis-shake sync_reader vs scan_reader'
+  ko: 'redis-shake sync_reader vs scan_reader'
+reason:
+  en: 'When PSync is unavailable (e.g. some managed Redis) and how SCAN + KSN differs from replica-style sync'
+  ko: 'PSync가 안 되는 매니지드 Redis에서 SCAN+KSN이 replica식 sync와 어떻게 다른지'
