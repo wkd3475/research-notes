@@ -1,0 +1,6 @@
+label:
+  en: 'DUMP/RESTORE and large-key pressure on managed Redis'
+  ko: '매니지드 Redis에서 DUMP/RESTORE와 대형 키 부하'
+reason:
+  en: 'scan_reader CPU cost, proto bulk limits, and how large values change the write path'
+  ko: 'scan_reader CPU 비용, proto bulk 한도, 큰 값이 write 경로를 어떻게 바꾸는지'
