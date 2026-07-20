@@ -1,0 +1,7 @@
+label:
+  en: 'Envoy hot restart'
+  ko: 'Envoy hot restart'
+reason:
+  en: 'How Envoy reloads binary/config without dropping listen sockets — drain, UDS, shared memory'
+  ko: 'listen 소켓을 유지한 채 바이너리/설정을 갈아끼우는 방법 — drain, UDS, shared memory'
+note: envoy-hot-restart

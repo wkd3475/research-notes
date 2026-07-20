@@ -1,0 +1,10 @@
+description: 'Lecture-style notes on Envoy counters/gauges/histograms, sinks, admin /stats, and hot-restart era shared memory history'
+pubDate: 2026-07-20
+tags: ["envoy", "architecture", "stats", "observability"]
+draft: false
+exploredFrom: envoy-hot-restart
+readingQueueFrom: matt-klein-envoy-stats
+exploreNext:
+  - envoy-filter-chain
+  - envoy-circuit-breakers-outlier
+  - envoy-proxy-insider

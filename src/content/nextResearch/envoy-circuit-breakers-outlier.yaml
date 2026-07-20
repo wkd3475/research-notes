@@ -1,0 +1,6 @@
+label:
+  en: 'Envoy circuit breakers vs outlier detection'
+  ko: 'Envoy circuit breaker vs outlier detection'
+reason:
+  en: 'Concurrency limits vs host ejection — how they interact under partial failure'
+  ko: '동시성 제한 vs 호스트 축출 — 부분 장애에서 둘이 어떻게 맞물리는지'

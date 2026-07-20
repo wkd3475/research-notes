@@ -1,0 +1,10 @@
+description: 'xDS(LDS/RDS/CDS/EDS/SDS), ADS, delta xDS, data/control plane 분리 이유를 강의 형식으로 정리'
+pubDate: 2026-07-20
+tags: ["envoy", "xds", "control-plane", "architecture"]
+draft: false
+exploredFrom: envoy-filter-chain
+readingQueueFrom: matt-klein-universal-data-plane-api
+exploreNext:
+  - envoy-circuit-breakers-outlier
+  - envoy-connection-pools
+  - envoy-proxy-insider

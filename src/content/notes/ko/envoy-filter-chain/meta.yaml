@@ -1,0 +1,10 @@
+description: 'Listener/Network/HTTP 필터, StopIteration, flow control, 실전 필터 패턴을 강의 형식으로 정리'
+pubDate: 2026-07-20
+tags: ["envoy", "filters", "network-filter", "extensibility"]
+draft: false
+exploredFrom: envoy-threading-model
+readingQueueFrom: envoy-filters-like-a-ninja-part-1
+exploreNext:
+  - envoy-xds-universal-data-plane
+  - envoy-connection-pools
+  - envoy-proxy-insider

@@ -1,0 +1,7 @@
+label:
+  en: 'Envoy xDS / universal data plane API'
+  ko: 'Envoy xDS / universal data plane API'
+reason:
+  en: 'LDS/RDS/CDS/EDS/SDS, ADS ordering, delta xDS ACK/NACK'
+  ko: 'LDS/RDS/CDS/EDS/SDS, ADS 순서, delta xDS ACK/NACK'
+note: envoy-xds-universal-data-plane

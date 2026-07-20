@@ -1,0 +1,6 @@
+label:
+  en: 'Envoy per-worker connection pools'
+  ko: 'Envoy worker별 connection pool'
+reason:
+  en: 'HTTP/1 vs HTTP/2 pools, max_requests_per_connection, worker-local upstream sockets'
+  ko: 'HTTP/1 vs HTTP/2 pool, max_requests_per_connection, worker 로컬 upstream 소켓'

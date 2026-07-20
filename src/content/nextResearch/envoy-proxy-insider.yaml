@@ -1,0 +1,6 @@
+label:
+  en: 'Envoy Proxy Insider (Mark Zhu book)'
+  ko: 'Envoy Proxy Insider (Mark Zhu 오픈북)'
+reason:
+  en: 'Deeper event-driven / listener / buffer internals beyond the Matt Klein series'
+  ko: 'Matt Klein 시리즈 너머 event-driven / listener / buffer 내부 구조'

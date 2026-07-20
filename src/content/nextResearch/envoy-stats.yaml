@@ -1,0 +1,7 @@
+label:
+  en: 'Envoy stats subsystem'
+  ko: 'Envoy stats 서브시스템'
+reason:
+  en: 'How counters/gauges/histograms stay fast under high concurrency and survive hot restart overlap'
+  ko: '높은 동시성에서도 counter/gauge/histogram이 빠르게 쌓이고 hot restart 중에도 관측이 이어지는 방식'
+note: envoy-stats

@@ -1,0 +1,10 @@
+description: 'Lecture-style notes on Envoy hot restart: drain, UDS RPC, shared memory, container-friendly design'
+pubDate: 2026-07-20
+tags: ["envoy", "architecture", "hot-restart", "operations"]
+draft: false
+exploredFrom: envoy-threading-model
+readingQueueFrom: matt-klein-envoy-hot-restart
+exploreNext:
+  - envoy-stats
+  - envoy-filter-chain
+  - envoy-proxy-insider
