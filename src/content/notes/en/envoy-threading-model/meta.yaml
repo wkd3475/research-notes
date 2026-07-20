@@ -1,0 +1,10 @@
+description: 'Lecture-style notes on Envoy main/worker threads, connection pinning, TLS/RCU, and cluster updates'
+pubDate: 2026-07-20
+tags: ["envoy", "architecture", "threading"]
+draft: false
+readingQueueFrom: matt-klein-envoy-threading-model
+exploreNext:
+  - envoy-hot-restart
+  - envoy-stats
+  - envoy-filter-chain
+  - envoy-xds-universal-data-plane

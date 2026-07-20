@@ -1,0 +1,7 @@
+label:
+  en: 'Envoy filter chain and network filters'
+  ko: 'Envoy filter chain과 network filter'
+reason:
+  en: 'Listener → network → HTTP filter hierarchy, StopIteration, backpressure'
+  ko: 'Listener → network → HTTP 필터 계층, StopIteration, backpressure'
+note: envoy-filter-chain
