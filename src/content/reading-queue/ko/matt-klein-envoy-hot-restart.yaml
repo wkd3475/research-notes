@@ -1,0 +1,10 @@
+title: 'Envoy hot restart'
+url: https://blog.envoyproxy.io/envoy-hot-restart-1d16b14555b5
+reason: >-
+  Envoy에 대해 여러 시리즈에 걸쳐 알면 좋은 디테일한 내용을 읽어보고자 함.
+savedAt: 2026-07-20
+tags:
+  - envoy
+  - architecture
+  - hot-restart
+source: Envoy Proxy (Matt Klein)

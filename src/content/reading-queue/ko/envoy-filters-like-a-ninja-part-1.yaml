@@ -1,0 +1,10 @@
+title: 'How to Write Envoy Filters Like a Ninja! — Part 1'
+url: https://blog.envoyproxy.io/how-to-write-envoy-filters-like-a-ninja-part-1-d166e5abec09
+reason: >-
+  Envoy에 대해 여러 시리즈에 걸쳐 알면 좋은 디테일한 내용을 읽어보고자 함.
+savedAt: 2026-07-20
+tags:
+  - envoy
+  - filters
+  - extensibility
+source: Envoy Proxy

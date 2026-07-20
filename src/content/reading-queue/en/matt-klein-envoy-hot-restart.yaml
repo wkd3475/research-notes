@@ -1,0 +1,10 @@
+title: 'Envoy hot restart'
+url: https://blog.envoyproxy.io/envoy-hot-restart-1d16b14555b5
+reason: >-
+  Want to read detailed Envoy material worth knowing across multiple series.
+savedAt: 2026-07-20
+tags:
+  - envoy
+  - architecture
+  - hot-restart
+source: Envoy Proxy (Matt Klein)

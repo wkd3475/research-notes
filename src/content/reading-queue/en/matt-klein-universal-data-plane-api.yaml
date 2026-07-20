@@ -1,0 +1,10 @@
+title: 'The universal data plane API'
+url: https://blog.envoyproxy.io/the-universal-data-plane-api-d15cec7a
+reason: >-
+  Want to read detailed Envoy material worth knowing across multiple series.
+savedAt: 2026-07-20
+tags:
+  - envoy
+  - xds
+  - control-plane
+source: Envoy Proxy (Matt Klein)

@@ -1,0 +1,10 @@
+title: 'Envoy stats'
+url: https://blog.envoyproxy.io/envoy-stats-b65c7f363342
+reason: >-
+  Envoy에 대해 여러 시리즈에 걸쳐 알면 좋은 디테일한 내용을 읽어보고자 함.
+savedAt: 2026-07-20
+tags:
+  - envoy
+  - architecture
+  - stats
+source: Envoy Proxy (Matt Klein)

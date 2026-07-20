@@ -1,0 +1,10 @@
+title: 'Envoy threading model'
+url: https://blog.envoyproxy.io/envoy-threading-model-a8d44b922310
+reason: >-
+  Want to read detailed Envoy material worth knowing across multiple series.
+savedAt: 2026-07-20
+tags:
+  - envoy
+  - architecture
+  - threading
+source: Envoy Proxy (Matt Klein)
