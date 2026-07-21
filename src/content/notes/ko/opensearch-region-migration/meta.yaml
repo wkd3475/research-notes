@@ -7,6 +7,7 @@ tags:
   - disaster-recovery
 draft: false
 exploreNext:
+  - opensearch-ccr-internals
   - opensearch-ccr-failover-promotion
   - opensearch-snapshot-rto-sizing
   - opensearch-client-cutover-dns

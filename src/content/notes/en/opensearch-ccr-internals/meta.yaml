@@ -1,0 +1,12 @@
+description: 'How OpenSearch cross-cluster replication works under the hood — persistent tasks, retention leases, snapshot-repository bootstrap, and the reader/writer long-poll loop'
+pubDate: 2026-07-21
+tags:
+  - opensearch
+  - replication
+  - internals
+  - disaster-recovery
+draft: false
+exploredFrom: opensearch-region-migration
+exploreNext:
+  - opensearch-ccr-failover-promotion
+  - opensearch-snapshot-rto-sizing

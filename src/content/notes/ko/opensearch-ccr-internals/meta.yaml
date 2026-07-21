@@ -1,0 +1,12 @@
+description: 'OpenSearch cross-cluster replication의 내부 동작 — persistent task, retention lease, snapshot repository bootstrap, reader/writer long-poll 루프'
+pubDate: 2026-07-21
+tags:
+  - opensearch
+  - replication
+  - internals
+  - disaster-recovery
+draft: false
+exploredFrom: opensearch-region-migration
+exploreNext:
+  - opensearch-ccr-failover-promotion
+  - opensearch-snapshot-rto-sizing
