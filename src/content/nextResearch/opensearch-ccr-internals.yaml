@@ -1,0 +1,7 @@
+label:
+  en: 'OpenSearch CCR internals — how the follower replicates'
+  ko: 'OpenSearch CCR 내부 동작 — follower는 어떻게 복제하나'
+reason:
+  en: 'Persistent tasks, retention leases, snapshot-repository bootstrap, and the reader/writer long-poll loop behind the pull model'
+  ko: 'pull 모델 뒤의 persistent task, retention lease, snapshot repository bootstrap, reader/writer long-poll 루프를 뜯어본다'
+note: opensearch-ccr-internals
