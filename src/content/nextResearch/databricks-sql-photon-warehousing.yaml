@@ -1,0 +1,6 @@
+label:
+  en: 'Databricks SQL, Photon, and lakehouse warehousing'
+  ko: 'Databricks SQL·Photon과 레이크하우스 웨어하우징'
+reason:
+  en: 'SQL warehouses, Photon engine, metric views, AI/BI Dashboards, Genie'
+  ko: 'SQL warehouse, Photon 엔진, metric views, AI/BI Dashboard, Genie'

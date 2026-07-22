@@ -1,0 +1,6 @@
+label:
+  en: 'Lakeflow pipelines and Connect deep dive'
+  ko: 'Lakeflow pipelines·Connect 심화'
+reason:
+  en: 'declarative ETL, expectations, Auto Loader vs Connect, Jobs orchestration'
+  ko: '선언형 ETL, expectations, Auto Loader vs Connect, Jobs 오케스트레이션'

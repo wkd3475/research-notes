@@ -1,0 +1,14 @@
+description: 'Senior-oriented survey of Databricks Data Intelligence Platform — planes, Delta/UC contracts, Lakeflow, SQL/Photon, Mosaic AI, Lakebase, FinOps hooks'
+pubDate: 2026-07-22
+tags:
+  - databricks
+  - lakehouse
+  - data-platform
+  - unity-catalog
+  - delta-lake
+draft: false
+exploreNext:
+  - unity-catalog-object-model
+  - lakeflow-pipelines-deep-dive
+  - databricks-sql-photon-warehousing
+  - mosaic-ai-model-serving

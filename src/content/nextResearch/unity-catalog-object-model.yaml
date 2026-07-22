@@ -1,0 +1,6 @@
+label:
+  en: 'Unity Catalog object model and privileges'
+  ko: 'Unity Catalog 객체 모델과 권한'
+reason:
+  en: 'catalog.schema.object hierarchy, managed vs external, ACLs, lineage mechanics'
+  ko: 'catalog.schema.object 계층, managed vs external, ACL, lineage 동작'
