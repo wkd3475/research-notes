@@ -1,0 +1,6 @@
+label:
+  en: 'Mosaic AI Model Serving and AI Gateway'
+  ko: 'Mosaic AI Model Serving과 AI Gateway'
+reason:
+  en: 'endpoint types, Foundation Model APIs, Unity Catalog AI governance'
+  ko: '엔드포인트 유형, Foundation Model APIs, Unity Catalog AI 거버넌스'

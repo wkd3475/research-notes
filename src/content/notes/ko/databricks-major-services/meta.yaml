@@ -1,0 +1,14 @@
+description: 'Databricks Data Intelligence Platform 주요 서비스 논문형 정리 — 레이크하우스, Delta Lake, Unity Catalog, Lakeflow, SQL, Mosaic AI, Lakebase'
+pubDate: 2026-07-22
+tags:
+  - databricks
+  - lakehouse
+  - data-platform
+  - unity-catalog
+  - delta-lake
+draft: false
+exploreNext:
+  - unity-catalog-object-model
+  - lakeflow-pipelines-deep-dive
+  - databricks-sql-photon-warehousing
+  - mosaic-ai-model-serving
