@@ -6,16 +6,21 @@ title: 'Databricks Major Services: A Platform Survey'
 
 - [What is Databricks?](https://docs.databricks.com/aws/en/introduction/)
 - [The scope of the Databricks platform](https://docs.databricks.com/aws/en/lakehouse-architecture/scope)
-- [What is a data lakehouse?](https://docs.databricks.com/aws/en/lakehouse/)
-- [What is Unity Catalog?](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
 - [Databricks reference architectures](https://docs.databricks.com/aws/en/lakehouse-architecture/reference)
+- [What is a data lakehouse?](https://docs.databricks.com/aws/en/lakehouse/)
+- [What is Delta Lake in Databricks?](https://docs.databricks.com/aws/en/delta/)
+- [What is Unity Catalog?](https://docs.databricks.com/aws/en/data-governance/unity-catalog/)
+- [Connect to serverless compute](https://docs.databricks.com/aws/en/compute/serverless/)
+- [Compute selection recommendations](https://docs.databricks.com/aws/en/compute/choose-compute)
+- [SQL warehouse types](https://docs.databricks.com/aws/en/compute/sql-warehouse/warehouse-types)
+- [Migrate from classic compute to serverless](https://docs.databricks.com/aws/en/compute/serverless/migration)
 - [Lakeflow: A new era of agentic data engineering](https://www.databricks.com/blog/lakeflow-new-era-agentic-data-engineering)
 
 ---
 
 ## Why I looked this up
 
-Asked for a paper-style survey of Databricks’ major services.
+Asked for a paper-style survey of Databricks’ major services, then for a senior-engineer-depth rewrite and deploy.
 
 ---
 
@@ -29,130 +34,191 @@ Asked for a paper-style survey of Databricks’ major services.
 
 ### Abstract
 
-Databricks positions itself as a **Data Intelligence Platform**: a lakehouse-based, open stack for ETL, analytics/BI, and ML/AI, with generative AI layered on top of platform metadata. This note surveys the major services as documented in the official platform scope — storage (Delta Lake on cloud object storage), governance (Unity Catalog), ingest/transform/orchestration (Lakeflow, Auto Loader, Structured Streaming), warehousing (Databricks SQL), ML/AI (MLflow, Model Serving, AI functions), operational OLTP (Lakebase), apps, and cross-org sharing (OpenSharing / Marketplace / Clean Rooms). The organizing claim is simple: one open data foundation plus one governance plane, with workload-specific compute and tools on top.
+Databricks is best evaluated as a **layered control/data system**, not as “managed Spark.” The Data Intelligence Platform stacks (1) open table formats on customer object storage, (2) Unity Catalog as a cross-workspace data-and-AI control plane, (3) multiple compute planes (classic in-customer-VPC clusters, Databricks-managed serverless, SQL warehouses, Model Serving), and (4) persona-specific products (Lakeflow, Databricks SQL, Mosaic AI, Lakebase, Apps, OpenSharing). This note is a senior-oriented map: what each major service actually owns, where bytes and IAM live, and which trade-offs show up in design reviews.
 
-### 1. Introduction
+### 1. Introduction — what “unified platform” really means
 
-Enterprise data stacks historically split into a **data lake** (cheap, flexible object storage; weak transactions and governance) and a **data warehouse** (strong SQL/BI; costly, less friendly to ML and unstructured data). Teams then duplicated pipelines, catalogs, and access policies across systems.
+The lakehouse pitch is familiar: keep **object-storage economics** while recovering warehouse properties (ACID, schema, performant SQL) and serving ML from the same tables. Databricks’ stronger claim is **one governance plane for data and AI assets** (tables, volumes, features, models, serving endpoints) plus GenAI that reads that metadata (Genie, assistive coding, semantic/metric layers).
 
-Databricks’ answer is the **lakehouse**: warehouse-grade reliability and governance on lake-cost storage, with a single source of truth for engineers, analysts, and ML practitioners. The current product framing adds a **data intelligence engine** — GenAI that uses lakehouse metadata (schemas, lineage, business semantics) so search, coding assistance, and natural-language analytics sit on the same governed data.
+For a senior engineer, the useful questions are operational:
 
-This survey maps that framing to concrete services. It is a structural overview, not a how-to for any one product area.
+| Question | Why it matters |
+|----------|----------------|
+| Where does compute run? | Classic = your cloud account; serverless SQL/notebooks/jobs = Databricks-managed plane; Model Serving control plane is Databricks-hosted |
+| Where is the source of truth for permissions? | Unity Catalog metastore vs legacy Hive metastore / IAM instance profiles |
+| What is the table contract? | Delta (default) vs Iceberg; managed vs external; UniForm / open APIs for foreign engines |
+| How does data move? | Connect / Auto Loader / Structured Streaming / Federation (query pushdown, no copy) |
+| How do you observe cost and access? | `system.*` tables (billing, audit) vs ad-hoc cluster metrics |
 
-### 2. Platform frame: domains and personas
+### 2. Control plane, classic data plane, serverless plane
 
-Official docs describe the modern data/AI platform as stacked **domains**: storage, governance, AI engine, ingest/transform, advanced analytics/ML/AI, data warehouse, operational database, automation, ETL/DS tools, BI tools, data/AI apps, and collaboration/sharing.
-
-**Personas** cut across those domains: data engineers (reliable ETL), data scientists (models and insight), ML engineers (production serving), business analysts/users (dashboards and questions), app developers (secure data apps), and external partners (shared data products).
-
-Databricks claims coverage of all domains on one foundation, with **Apache Spark / Photon** as the primary compute engines and **Unity Catalog** as the central data-and-AI governance solution.
-
-### 3. Storage foundation: cloud object storage and Delta Lake
-
-All lakehouse data lives in the customer’s cloud object storage (AWS, Azure, or GCP). Databricks does not invent a proprietary on-disk format for the lakehouse core: **Delta Lake** is the recommended table format (ACID file transactions, schema enforcement, updates, time travel via the transaction log). Tables can also interoperate with **Apache Iceberg** clients; Unity Catalog managed tables are recommended for both Delta and Iceberg where supported.
-
-| Property | Role in the lakehouse |
-|----------|------------------------|
-| Cloud object storage | Scalable, durable physical home for files |
-| Delta Lake | Reliability layer: transactions, consistency, schema, versioning |
-| Open formats | Avoid lock-in; external engines can read via open APIs / credential vending |
-
-Raw structured, semi-structured, and unstructured files land first; conversion to Delta (or Iceberg) tables is where schema checks and governance registration typically begin.
-
-### 4. Governance: Unity Catalog
-
-**Unity Catalog** is the unified governance layer for data and AI. Once enabled on a workspace, it sits under queries and model calls: access control, lineage, discovery, and audit logging. Workspaces created after 2023-11-08 enable it by default; older workspaces can upgrade. An open-source Unity Catalog implementation also exists.
-
-**Object model.** Governable assets are securable objects. Data and AI assets (tables, views, volumes, functions, models, model/MCP services) use a three-level namespace: `catalog.schema.object`. Tables and volumes may be **managed** (Unity Catalog owns storage lifecycle) or **external** (governance only). Credentials, external locations, connections, and shares hang under the metastore.
-
-**Capability set.**
-
-| Capability | What it provides |
-|------------|------------------|
-| Access control | Privileges, ABAC, row/column filters, workspace bindings |
-| Discovery | Catalog Explorer and related UIs/APIs |
-| Lineage | Automatic tracking from sources through models, services, dashboards |
-| Auditing | System-table audit logs of data access and activity |
-| Classification & quality | Tagging/classification; profiling and quality monitoring |
-| Federation | Lakehouse Federation brings external SQL sources under UC governance |
-| Sharing & AI governance | OpenSharing; AI Gateway for generative model traffic |
-
-Unity Catalog is the spine that lets ETL, SQL, and ML share one policy and metadata plane instead of three catalogs.
-
-### 5. Ingest, transform, and orchestration: Lakeflow and streaming
-
-**Lakeflow** is the unified data-engineering surface: Connect (ingestion), pipelines (declarative transform), and Jobs (orchestration).
-
-- **Lakeflow Connect** — built-in connectors from enterprise apps and databases into Unity Catalog–governed Delta tables, typically on serverless compute and Lakeflow pipelines.
-- **Auto Loader** — incremental, idempotent ingestion of files landing in cloud storage without manually tracking state.
-- **Lakeflow pipelines** — declarative ETL with dataset dependencies, scaling, and **expectations** for data quality.
-- **Lakeflow Jobs** — schedule and orchestrate notebooks, SQL, Spark, dbt, ML workloads, and pipelines across clouds.
-- **Structured Streaming** — Spark streaming tightly coupled to Delta; foundation for incremental pipelines and Auto Loader patterns.
-
-Together these cover batch and streaming paths into the same governed tables that BI and ML consume.
-
-### 6. Data warehouse and BI: Databricks SQL
-
-**Databricks SQL** is the warehouse/BI product on the lakehouse: SQL warehouses (including serverless options), SQL editor, and integration with external BI tools. Fine-grained access is enforced through Unity Catalog.
-
-On top of SQL:
-
-- **Unity Catalog semantics / metric views** — define KPIs once; query across dimensions as a shared semantic layer for people and AI tools.
-- **AI/BI Dashboards** — AI-assisted dashboard authoring and visualization.
-- **Genie Agents** — natural-language exploration configured with datasets, sample queries, and domain language.
-- **AI Functions** — call LLMs and AI capabilities from SQL for enrichment inside analytic workflows.
-
-Warehousing here is not a separate silo of proprietary storage; it is SQL compute and UX over the same Delta/UC tables.
-
-### 7. ML, AI, and Mosaic AI surfaces
-
-Databricks ML builds on Spark runtimes, **MLflow** (experiment tracking and model lifecycle), Feature Store and Model Registry (integrated with Unity Catalog), AutoML, and libraries such as Hugging Face Transformers for LLM customization.
-
-Serving and genAI product surfaces commonly appear under **Mosaic AI**:
-
-- **Model Serving** — scalable real-time endpoints in the Databricks control plane (including Foundation Model APIs for hosted models).
-- **AI Gateway** — govern and monitor access to generative models and serving endpoints.
-- Broader agent/framework tooling for production AI apps on governed data.
-
-The architectural point is the same as for SQL: models and features are first-class Unity Catalog assets, not a parallel shadow registry.
-
-### 8. Operational database: Lakebase
-
-**Lakebase** is a managed **Postgres** OLTP database integrated with the Data Intelligence Platform. It supports transactional workloads beside the analytical lakehouse, with sync paths between OLTP and OLAP, and integration hooks to Feature management, SQL warehouses, and Databricks Apps. This closes a historical gap where “online” serving stores lived outside the lakehouse governance story.
-
-### 9. Apps, collaboration, and sharing
-
-| Service | Role |
-|---------|------|
-| **Databricks Apps** | Build and host secure data/AI applications on platform data under UC |
-| **OpenSharing** | Open protocol for secure live sharing across orgs and compute platforms (managed via Unity Catalog) |
-| **Databricks Marketplace** | Forum for discovering/exchanging data products via OpenSharing |
-| **Clean Rooms** | Multi-party analysis on sensitive data without direct peer data access, using OpenSharing + serverless compute |
-
-Internal sharing can be as simple as granting table/view privileges; external sharing uses the open sharing stack rather than ad-hoc file drops.
-
-### 10. Control plane vs data plane (brief)
-
-Databricks manages a **control plane** (workspace UI, Job scheduling, Model Serving control, governance services) while **data** typically remains in the customer’s cloud account storage and customer-scoped compute. That split matters for security reviews: policies and metadata are centralized; bytes stay in the cloud you already trust for the lake.
-
-### 11. Synthesis: how the major services fit
+Treat Databricks as three coupled planes:
 
 ```
-Collaboration / Apps     Apps · OpenSharing · Marketplace · Clean Rooms
-BI / SQL                 Databricks SQL · Dashboards · Genie · AI Functions
-ML / AI                  MLflow · Model Serving · AI Gateway · Feature/Model in UC
-Orchestration            Lakeflow Jobs · CI/CD · Git folders
-Ingest / Transform       Connect · Auto Loader · Pipelines · Structured Streaming
-Governance               Unity Catalog (+ Federation, quality, lineage)
-Storage                  Delta Lake / Iceberg on cloud object storage
-OLTP (adjacent)          Lakebase (Postgres)
+┌─────────────────────────────────────────────────────────┐
+│ Control plane (Databricks account / region)             │
+│  Workspace UI, Jobs API, UC metastore services,         │
+│  Model Serving control, Notebooks metadata, …           │
+└───────────────────────────┬─────────────────────────────┘
+                            │ schedules / auth / policies
+        ┌───────────────────┴───────────────────┐
+        ▼                                       ▼
+┌──────────────────────┐              ┌──────────────────────┐
+│ Classic data plane   │              │ Serverless plane     │
+│ (customer cloud acct)│              │ (Databricks-managed) │
+│ Clusters, classic    │              │ Serverless notebooks │
+│ SQL warehouse VMs,   │              │ / jobs / pipelines,  │
+│ customer VPC/peering │              │ serverless SQL WH,   │
+│ IAM roles / profiles │              │ NCC / Private Link   │
+└──────────┬───────────┘              └──────────┬───────────┘
+           │                                     │
+           └──────────────┬──────────────────────┘
+                          ▼
+              Customer object storage (S3/ADLS/GCS)
+              Delta / Iceberg tables + UC volumes
 ```
 
-**Thesis restated.** Delta Lake makes the lake reliable; Unity Catalog makes it governable for data *and* AI; Lakeflow moves data in and through; Databricks SQL and Mosaic AI consume it; Lakebase and Apps extend into OLTP and product surfaces; OpenSharing extends trust across organizational boundaries — without requiring a second copy of every dataset for each persona.
+**Implications for reviews**
+
+- **Data residency / blast radius:** table bytes stay in your buckets; metastore and serving control are Databricks-side. Ask where audit logs and system tables live and who can query them.
+- **Networking migration:** classic patterns (VPC peering, instance profiles, `dbfs:/`) do **not** transfer cleanly to serverless. Official migration path: Unity Catalog + external locations, Network Connectivity Config (NCC) / Private Link, volumes instead of DBFS, Lakehouse Federation instead of custom JDBC JARs.
+- **Serverless is versionless:** runtime rolls forward automatically. That is a feature for patch cadence and a constraint if you need pinned DBR + custom libs / RDD / R.
+
+### 3. Storage contract — Delta Lake (and Iceberg)
+
+**Delta Lake** is Parquet + a **file-based transaction log** with an open protocol. On Databricks it is the default table format. Guarantees seniors actually use:
+
+| Mechanism | Engineering use |
+|-----------|-----------------|
+| ACID via transaction log | Concurrent writers/readers without corrupting directories; never hand-edit `_delta_log` |
+| Schema enforcement on write | Reject bad batches at ingest; pair with expectations in Lakeflow |
+| Schema evolution / column mapping | Evolve without full rewrites; rename/drop without rewriting files |
+| Time travel / `DESCRIBE HISTORY` | Incident rollback, audit of who wrote what version |
+| Change Data Feed (CDF) | Downstream incremental consumers without re-scanning full tables |
+| Liquid clustering / data skipping / OPTIMIZE | Prefer liquid clustering over brittle partition keys for evolving query patterns; compact small files; VACUUM for retention/cost |
+| MERGE / selective overwrite | CDC upserts and partition-scoped rewrites |
+
+**Medallion** remains the default curation pattern (bronze → silver → gold as successive Delta tables). Lakeflow pipelines encode dependencies so gold does not silently run on stale silver.
+
+**Iceberg / openness.** Managed tables can target Delta or Iceberg; UniForm / open APIs / credential vending let external engines (Spark, Trino, DuckDB, Iceberg REST clients) read under UC policy. Design reviews should state whether “open” means *format* only or *multi-engine write path* — those are different SLAs.
+
+**Managed vs external tables (decision table)**
+
+| | Managed | External |
+|--|---------|----------|
+| Storage lifecycle | UC owns location + cleanup | You own path; UC governs only |
+| Default recommendation | Yes, for new lakes | Legacy lakes, shared buckets, partner-owned paths |
+| Failure mode | Accidental `DROP` can delete data UC manages | Orphan files if you drop UC metadata but leave objects |
+
+### 4. Unity Catalog — the real platform spine
+
+UC is not “a nicer Hive metastore.” It is the **authorization, discovery, lineage, and AI-asset registry** that serverless and modern products assume.
+
+**Object model.** Three-level namespace `catalog.schema.object` for tables, views, volumes, functions, models, model/MCP services. Metastore-level objects: storage credentials, external locations, connections, shares. Workspaces created after **2023-11-08** get UC by default.
+
+**Capabilities that show up in production designs**
+
+- Privileges + ABAC, row/column filters, **workspace bindings** (isolate which workspace sees which catalog)
+- Runtime lineage into models, dashboards, services
+- Audit + quality monitoring; anomalies and profiles
+- **Lakehouse Federation:** map foreign SQL engines (Postgres, MySQL, Redshift, …) into UC; queries push down — no mandatory ETL copy
+- **Catalog Federation:** bring Hive Metastore / Glue catalogs under UC policy without immediate physical migration
+- OpenSharing + AI Gateway for outbound data and generative traffic
+
+**Senior rule of thumb:** if a design still depends on Hive metastore tables, instance-profile paths, or `dbfs:/` for durable assets, it is on the **classic** path and will block or complicate serverless, predictive optimization, and several AI features. Federation is the bridge, not a permanent substitute for a clear ownership model on hot paths.
+
+### 5. Compute selection — where work actually runs
+
+Photon is Databricks’ **vectorized** engine under SQL warehouses (and many DataFrame/SQL paths). Warehouse type still matters more than “Photon yes/no” for ops:
+
+| Compute | Runs in | Use when | Avoid when |
+|---------|---------|----------|------------|
+| **Serverless compute** (notebooks / jobs / Lakeflow) | Databricks serverless plane | Default automated ETL; fast start; UC-governed | Need RDD/R, exotic libs, pinned DBR, unsupported sources |
+| **Classic jobs / all-purpose clusters** | Customer account | Custom Spark conf, GPUs, legacy HMS, deep library control | Paying for idle all-purpose for scheduled jobs |
+| **Serverless SQL warehouse** | Databricks | BI / interactive SQL; seconds-scale start; IWM / Predictive IO | Legacy external HMS; some custom networking cases |
+| **Pro SQL warehouse** | Customer account (typically) | Serverless unavailable; federation/hybrid networking needs | You wanted zero cluster ops |
+| **Classic SQL warehouse** | Customer account | Legacy / entry-level only | New BI platforms — prefer serverless/pro |
+| **Model Serving** | Databricks control plane endpoints | Low-latency inference, Foundation Model APIs | Treating it as a training cluster |
+
+Serverless notebooks/jobs/pipelines require **UC-enabled** workspaces. Predictive optimization and data quality monitoring also bill under serverless infrastructure even when you did not manually start a serverless job — budget with `system.billing.usage`, accepting up to ~24h lag.
+
+### 6. Ingest / transform / orchestrate — Lakeflow and streaming
+
+**Lakeflow** consolidates three surfaces that seniors previously assembled from Auto Loader + DLT + Jobs:
+
+1. **Connect** — managed connectors from SaaS/DBs → UC Delta tables (serverless + pipelines). Incremental read/write oriented.
+2. **Pipelines** (declarative) — dataset graph, expectations (data quality gates), streaming tables / materialized views, infra scaling.
+3. **Jobs** — multi-task orchestration across notebooks, SQL, Spark, dbt, ML, pipelines; CI/CD via Declarative Automation Bundles / Git folders.
+
+**Path selection for CDC / files**
+
+| Pattern | Typical path |
+|---------|----------------|
+| Files landing in cloud storage | Auto Loader → bronze Delta (or `COPY INTO` for simpler SQL incremental loads) |
+| SaaS / DB connectors | Lakeflow Connect |
+| Event buses (Kafka/Kinesis) | Structured Streaming → Delta; then medallion |
+| CDC to queue then stream | Queue → Structured Streaming |
+| CDC dumped as files | Auto Loader (batch-shaped CDC) |
+| Need query without copy | Lakehouse Federation (accept source load + pushdown limits) |
+
+Idempotency and exactly-once *semantics* still depend on Delta commits + well-designed MERGE/CDF — the platform removes plumbing, not data-contract design.
+
+### 7. Databricks SQL, semantics, and BI
+
+Databricks SQL is **SQL compute + UX on the same UC tables**, not a proprietary warehouse store. Analysts hit serverless/pro warehouses; external BI (Tableau, QuickSight, …) connects to the same engine.
+
+Layered products on top:
+
+- **Metric views / UC semantics** — define KPIs once; avoid N conflicting dashboard SQL dialects
+- **AI/BI Dashboards** — assisted authoring on governed metrics
+- **Genie** — NL→SQL over curated datasets + samples + glossary; quality tracks how carefully you scoped the agent’s corpus
+- **AI Functions** — LLM calls inside SQL pipelines (cost/latency/PII review required)
+
+Credential passthrough is **not** the warehouse story — UC is.
+
+### 8. Mosaic AI / ML lifecycle
+
+Traditional ML: ML runtimes, AutoML, **MLflow**, Feature Store + Model Registry **inside UC**, Jobs for training orchestration, Model Serving for online inference.
+
+GenAI additions: Foundation Model APIs on serving, RAG/agent apps on UC data, **AI Gateway** for policy/monitoring on generative endpoints. External frameworks (OpenAI, LangGraph, Hugging Face) can be called from the platform; governance still wants UC + Gateway rather than unbounded personal keys in notebooks.
+
+**Review checklist:** feature tables and model versions are UC securables; serving endpoints are not “outside” the lakehouse permission model; evaluate online feature path (Lakebase / feature serving) separately from batch training reads.
+
+### 9. Lakebase, Apps, sharing
+
+| Service | Senior take |
+|---------|-------------|
+| **Lakebase** (managed Postgres OLTP) | Puts transactional state next to the lakehouse with sync hooks to features/SQL/Apps — reduces the “Redis/RDS outside governance” default, but you still design consistency between OLTP writes and lake freshness |
+| **Databricks Apps** | Serverless-hosted apps on platform identity/data; prefer Lakebase when the app needs true OLTP |
+| **OpenSharing** | Live, governed share of object-store data; Marketplace and Clean Rooms build on it |
+| **Clean Rooms** | Multi-party compute without mutual raw data exposure |
+
+Internal share = GRANT. External share = OpenSharing contract (recipients, rotation, revocation), not S3 pre-signed URL folklore.
+
+### 10. Observability and FinOps hooks
+
+- **System tables** — account operational store for audit, billing, lineage consumers
+- **Data quality monitoring** — profiles/anomalies (serverless-backed)
+- **Billable usage** — attribute DBUs to jobs/warehouses; do not trust UI alone for chargeback
+
+### 11. Synthesis diagram
+
+```
+Sharing / Apps     OpenSharing · Marketplace · Clean Rooms · Apps
+Serve              SQL WH · Model Serving · Lakebase · AI Gateway
+Query / Process    Spark · Photon · ML runtimes · MLflow
+Transform          Lakeflow pipelines · Structured Streaming
+Ingest             Connect · Auto Loader · partner/batch · CDC streams
+Govern             Unity Catalog (+ Federation, quality, lineage, audit)
+Store              Delta / Iceberg on customer object storage
+Planes             Control · Classic data · Serverless
+```
+
+**Design thesis.** Pick the **storage contract** (managed Delta + medallion) and **governance contract** (UC metastore, external locations, no durable DBFS) first. Then choose **compute plane** per workload class. Products (SQL, Mosaic, Lakebase, Apps) are consumers of those contracts — not parallel platforms.
 
 ### 12. Conclusion
 
-Treating Databricks as “just Spark notebooks” understates the product. The major services form a layered platform: open storage format, unified governance, declarative and streaming data engineering, SQL warehousing, ML/AI lifecycle and serving, OLTP adjacency, and cross-org collaboration. For deeper work, the natural next cuts are Unity Catalog’s privilege model, Lakeflow pipeline mechanics, Databricks SQL/Photon behavior, and Mosaic AI serving/gateway details.
+A senior reading of Databricks is: open tables on your storage; UC as the cross-cutting control plane for data *and* AI; multiple compute planes with very different networking/IAM assumptions; Lakeflow/SQL/Mosaic/Lakebase as workload UIs on that substrate. The failure mode is treating notebooks + classic clusters + Hive metastore as “Databricks” while the rest of the platform has already moved to UC + serverless. Deeper follow-ups: UC privilege/isolation model, Lakeflow pipeline execution semantics, Photon/SQL warehouse sizing, Model Serving + AI Gateway.
 
 ---
 
@@ -161,33 +227,33 @@ Treating Databricks as “just Spark notebooks” understates the product. The m
 *Click a card to reveal the answer.*
 
 :::quiz
-**Q1.** What problem does the lakehouse pattern claim to solve relative to separate lakes and warehouses?
+**Q1.** Why is “serverless vs classic” a networking/IAM decision, not just a cost slider?
 ---
-It aims to combine lake-cost, open object storage with warehouse-like reliability (transactions, schema, performance) and a single governed source of truth so ETL, BI, and ML do not each need a separate copy and catalog.
+Classic compute runs in the customer cloud account (VPC, instance profiles, peering patterns). Serverless runs in a Databricks-managed plane and expects UC external locations, NCC/Private Link, and volumes — legacy `dbfs:/`, HMS, and instance-profile paths often break or are unsupported.
 :::
 
 :::quiz
-**Q2.** How does Unity Catalog’s three-level namespace relate to managed vs external tables?
+**Q2.** What does Delta’s transaction log buy you that “Parquet in S3” does not, in production terms?
 ---
-Data/AI assets live under `catalog.schema.object`. **Managed** tables/volumes: Unity Catalog governs access *and* storage lifecycle. **External**: Unity Catalog governs access only; storage remains where you pointed it.
+ACID commits, concurrent readers/writers without directory corruption, schema-on-write enforcement, time travel/history, and CDF for incremental downstreams — all via an open log protocol rather than hoping object listings stay consistent.
 :::
 
 :::quiz
-**Q3.** Name the three Lakeflow pillars and one adjacent ingest tool often used with cloud files.
+**Q3.** When do you choose Lakehouse Federation over Lakeflow Connect / Auto Loader?
 ---
-**Connect** (enterprise connectors), **pipelines** (declarative ETL), **Jobs** (orchestration). **Auto Loader** incrementally loads files from cloud storage into the lakehouse.
+When you need governed query access with pushdown to an external SQL system **without** copying into the lake first. Use Connect/Auto Loader when you need lake-resident medallion tables, SLAs decoupled from the source, or heavy transform/history on Delta.
 :::
 
 :::quiz
-**Q4.** How do Databricks SQL and Mosaic AI Model Serving both depend on Unity Catalog?
+**Q4.** Name two Unity Catalog features that matter specifically for multi-workspace enterprises.
 ---
-SQL warehouses query UC-governed tables with fine-grained ACLs; models/features/endpoints are also UC-governed assets, with AI Gateway extending policy to generative model traffic — one governance plane for analytics and AI.
+Account-scoped policies across workspaces; **workspace bindings** to isolate catalog visibility; plus shared lineage/audit. (Also metastore-level credentials/locations/shares.)
 :::
 
 :::quiz
-**Q5.** What is Lakebase, and why does the platform include an OLTP product?
+**Q5.** Why can billing show serverless job SKUs even if nobody clicked “serverless job”?
 ---
-Lakebase is a managed Postgres OLTP database on Databricks. It lets transactional apps sit next to the analytical lakehouse with sync and integration to features, SQL, and Apps, instead of leaving online stores entirely outside the platform.
+Features like data quality monitoring and predictive optimization run on serverless infrastructure and bill under serverless job usage — inspect `system.billing.usage`, not only manually started jobs.
 :::
 
 ---

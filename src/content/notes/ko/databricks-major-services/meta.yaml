@@ -1,4 +1,4 @@
-description: 'Databricks Data Intelligence Platform 주요 서비스 논문형 정리 — 레이크하우스, Delta Lake, Unity Catalog, Lakeflow, SQL, Mosaic AI, Lakebase'
+description: 'Databricks Data Intelligence Platform 시니어 관점 서베이 — 플레인, Delta/UC 계약, Lakeflow, SQL/Photon, Mosaic AI, Lakebase, FinOps'
 pubDate: 2026-07-22
 tags:
   - databricks
