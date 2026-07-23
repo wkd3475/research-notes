@@ -1,0 +1,14 @@
+description: 'OpenSearch 코어 기본 기능 논문형 서베이 — 문서·인덱스·샤드·노드 역할·역색인·쓰기 경로·Query DSL·집계'
+pubDate: 2026-07-23
+tags:
+  - opensearch
+  - search
+  - lucene
+  - distributed-systems
+  - analytics
+draft: false
+exploreNext:
+  - opensearch-mapping-analyzers
+  - opensearch-query-dsl-scoring
+  - opensearch-write-path-refresh-flush
+  - opensearch-ccr-internals

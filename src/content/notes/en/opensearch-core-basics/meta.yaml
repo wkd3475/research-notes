@@ -1,0 +1,14 @@
+description: 'Paper-style survey of OpenSearch core: documents, indices, shards, node roles, inverted index, write path, Query DSL, and aggregations'
+pubDate: 2026-07-23
+tags:
+  - opensearch
+  - search
+  - lucene
+  - distributed-systems
+  - analytics
+draft: false
+exploreNext:
+  - opensearch-mapping-analyzers
+  - opensearch-query-dsl-scoring
+  - opensearch-write-path-refresh-flush
+  - opensearch-ccr-internals

@@ -1,0 +1,6 @@
+label:
+  en: 'OpenSearch write path — refresh, flush, merge'
+  ko: 'OpenSearch 쓰기 경로 — refresh, flush, merge'
+reason:
+  en: 'Translog durability vs search visibility, segment immutability, and merge policy trade-offs'
+  ko: '트랜스로그 durability와 검색 가시성, 세그먼트 불변성, merge 정책 트레이드오프'

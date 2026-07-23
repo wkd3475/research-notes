@@ -1,0 +1,6 @@
+label:
+  en: 'OpenSearch mappings and text analyzers'
+  ko: 'OpenSearch 매핑과 텍스트 분석기'
+reason:
+  en: 'Field types, multi-fields, analyzer/tokenizer/filter pipelines, and why keyword vs text matters in production'
+  ko: '필드 타입, multi-field, analyzer/tokenizer/filter 파이프라인, keyword vs text가 운영에서 왜 갈리는지'

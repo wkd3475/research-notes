@@ -1,0 +1,6 @@
+label:
+  en: 'OpenSearch Query DSL and BM25 scoring'
+  ko: 'OpenSearch Query DSL과 BM25 스코어링'
+reason:
+  en: 'Leaf vs compound queries, query vs filter context, bool composition, and when relevance scoring is skipped'
+  ko: 'leaf vs compound 쿼리, query vs filter 컨텍스트, bool 조합, 스코어링을 건너뛰는 경우'
