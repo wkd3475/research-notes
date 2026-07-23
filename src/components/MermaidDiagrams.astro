@@ -1,0 +1,58 @@
+---
+/**
+ * Renders fenced ```mermaid blocks in note HTML as diagrams.
+ * Marked leaves them as <pre><code class="language-mermaid">…</code></pre>.
+ */
+---
+
+<script>
+  import mermaid from 'mermaid';
+
+  function isDarkMode() {
+    const mode = document.documentElement.getAttribute('data-color-mode');
+    if (mode === 'dark') return true;
+    if (mode === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+
+  async function renderMermaid() {
+    const blocks = Array.from(
+      document.querySelectorAll('pre > code.language-mermaid'),
+    );
+    if (blocks.length === 0) return;
+
+    mermaid.initialize({
+      startOnLoad: false,
+      securityLevel: 'strict',
+      theme: isDarkMode() ? 'dark' : 'neutral',
+      flowchart: { htmlLabels: true, curve: 'basis' },
+      themeVariables: {
+        fontFamily:
+          "Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      },
+    });
+
+    for (const [i, code] of blocks.entries()) {
+      const pre = code.parentElement;
+      if (!pre) continue;
+      const source = code.textContent ?? '';
+      const host = document.createElement('div');
+      host.className = 'mermaid-diagram';
+      host.setAttribute('role', 'img');
+      host.setAttribute('aria-label', 'Diagram');
+      const id = `mermaid-${i}-${Math.random().toString(36).slice(2, 9)}`;
+      try {
+        const { svg } = await mermaid.render(id, source);
+        host.innerHTML = svg;
+        pre.replaceWith(host);
+      } catch (err) {
+        console.error('Mermaid render failed', err);
+        host.classList.add('mermaid-diagram--error');
+        host.textContent = 'Diagram failed to render.';
+        pre.replaceWith(host);
+      }
+    }
+  }
+
+  void renderMermaid();
+</script>

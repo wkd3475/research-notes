@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import ExploreNextLinks from '../components/ExploreNextLinks.astro';
+import MermaidDiagrams from '../components/MermaidDiagrams.astro';
 import NoteAdjacentNav from '../components/NoteAdjacentNav.astro';
 import NoteHistory from '../components/NoteHistory.astro';
 import PreviousResearchLinks from '../components/PreviousResearchLinks.astro';
@@ -94,5 +95,6 @@ const adjacentNotes = getAdjacentNotes(allNotes, translationId, locale);
     )}
     <NoteAdjacentNav adjacent={adjacentNotes} locale={locale} />
     <ScrollToTop locale={locale} />
+    <MermaidDiagrams />
   </article>
 </BaseLayout>

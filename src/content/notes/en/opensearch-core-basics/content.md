@@ -16,7 +16,7 @@ title: 'OpenSearch Core Basics: A Feature Survey'
 
 ## Why I looked this up
 
-Asked for a detailed paper-style introduction to OpenSearch’s basic features.
+Asked for a detailed paper-style introduction to OpenSearch’s basic features, then for architecture diagrams so the hierarchy and request/write paths are easier to picture.
 
 ---
 
@@ -31,6 +31,41 @@ Asked for a detailed paper-style introduction to OpenSearch’s basic features.
 ### Abstract
 
 OpenSearch is a **distributed search and analytics engine** built on Apache Lucene. Its public surface looks like “put JSON in, get ranked hits and charts out,” but the useful mental model is a **hierarchy of documents → indices → shards → nodes → cluster**, with an **inverted index** for lexical search, a **translog / refresh / flush / merge** write path for durability and visibility, and a **Query DSL + aggregations** API for retrieval and analytics. This note surveys those core primitives—what each owns, how requests flow, and which defaults matter in design reviews—without diving into cross-cluster replication or region migration (covered elsewhere).
+
+```mermaid
+flowchart TB
+  subgraph Cluster["OpenSearch cluster"]
+    direction TB
+    CM["Cluster manager<br/>cluster state · allocation"]
+    subgraph Nodes["Nodes"]
+      direction LR
+      N1["Data / ingest / coordinating"]
+      N2["Data / ingest / coordinating"]
+      N3["Data / ingest / coordinating"]
+    end
+    CM -.-> Nodes
+  end
+
+  subgraph Index["Index (logical)"]
+    direction TB
+    Docs["Documents (JSON)"]
+    Map["Mapping (schema)"]
+    Docs --- Map
+  end
+
+  subgraph Shards["Physical layout"]
+    direction LR
+    P0["Primary P0"]
+    R0["Replica R0"]
+    P1["Primary P1"]
+    R1["Replica R1"]
+    P0 --- R0
+    P1 --- R1
+  end
+
+  Index --> Shards
+  Shards --> Nodes
+```
 
 ### 1. Introduction — what “search and analytics engine” means
 
@@ -57,6 +92,18 @@ OpenSearch Core sits under optional plugins and Dashboards: lexical search (BM25
 
 **Mapping.** The schema for how fields are stored and indexed. OpenSearch can infer types dynamically, but production systems usually define mappings explicitly so a phone number does not become a `text` field that is tokenized and scored like prose.
 
+```mermaid
+flowchart LR
+  D1["Document<br/>{ name, tags, price }"]
+  D2["Document<br/>{ name, tags, price }"]
+  IDX["Index: products<br/>settings + mapping"]
+  D1 --> IDX
+  D2 --> IDX
+  IDX --> T["text: name<br/>analyzed · BM25"]
+  IDX --> K["keyword: tags<br/>exact · aggs"]
+  IDX --> N["numeric: price<br/>range · sort · aggs"]
+```
+
 Common field-type families:
 
 | Family | Typical use | Search behavior |
@@ -68,6 +115,13 @@ Common field-type families:
 | Geo / vector | Locations, embeddings | Specialized query types (geo, k-NN) |
 
 **Multi-fields** are the standard pattern for “search *and* facet the same string”: map `product_name` as `text` with a `keyword` subfield (e.g. `product_name.raw`) so full-text search and aggregations do not fight each other. Aggregating directly on analyzed `text` (via `fielddata`) is expensive and discouraged.
+
+```mermaid
+flowchart TB
+  F["Field: product_name"]
+  F --> TXT["text<br/>full-text search"]
+  F --> RAW["keyword subfield .raw<br/>filter · sort · aggregations"]
+```
 
 ### 3. Cluster architecture — nodes and roles
 
@@ -83,20 +137,49 @@ An OpenSearch **cluster** is one or more **nodes** that share a `cluster.name` a
 
 Default: each node is cluster-manager-eligible, data, ingest, and coordinating. Dedicated roles are set via `node.roles` in `opensearch.yml`. Traffic from clients and Dashboards should prefer ingest/coordinating/data nodes—not the cluster manager.
 
-Request path sketch:
+```mermaid
+flowchart TB
+  Client["Clients / Dashboards / Data Prepper"]
 
+  subgraph Prod["Example production shape"]
+    direction TB
+    subgraph Managers["Cluster managers ×3"]
+      CM1["CM"]
+      CM2["CM leader"]
+      CM3["CM"]
+    end
+    Coord["Coordinating-only"]
+    Ingest["Ingest-only"]
+    subgraph Data["Data nodes"]
+      D1["Data"]
+      D2["Data"]
+      D3["Data"]
+    end
+  end
+
+  Client --> Coord
+  Client --> Ingest
+  Coord --> Data
+  Ingest --> Data
+  Managers -.->|"cluster state"| Data
 ```
-Client / Dashboards / Data Prepper
-        │
-        ▼
-┌───────────────────┐
-│ Coordinating node │  parse request, pick shards, reduce responses
-└─────────┬─────────┘
-          │ fan-out
-          ▼
-┌───────────────────┐
-│ Data nodes        │  execute on primary/replica shards (Lucene)
-└───────────────────┘
+
+Search / index request path (data plane):
+
+```mermaid
+sequenceDiagram
+  participant C as Client
+  participant Coord as Coordinating node
+  participant D1 as Data node A
+  participant D2 as Data node B
+
+  C->>Coord: GET index/_search
+  Coord->>D1: query shard P0 / R0
+  Coord->>D2: query shard P1 / R1
+  D1-->>Coord: shard hits
+  D2-->>Coord: shard hits
+  Coord->>Coord: reduce / rank
+  Coord-->>C: final response
 ```
 
 Cluster-manager work (create index, update mapping, allocate shards) is separate from that data path but must stay healthy: a lost quorum freezes cluster-state changes even if searches on already-allocated shards continue for a while.
@@ -116,13 +199,41 @@ Design rules of thumb from the docs:
 - Replicas land on **different nodes** than their primary.
 - More replicas help **read-heavy** workloads and availability; they cost disk and indexing fan-out write amplification.
 
+```mermaid
+flowchart TB
+  IDX["Index: orders<br/>3 primaries · 1 replica each"]
+
+  subgraph N1["Data node 1"]
+    P0["Primary P0"]
+    R2["Replica R2"]
+  end
+  subgraph N2["Data node 2"]
+    P1["Primary P1"]
+    R0["Replica R0"]
+  end
+  subgraph N3["Data node 3"]
+    P2["Primary P2"]
+    R1["Replica R1"]
+  end
+
+  IDX --> P0
+  IDX --> P1
+  IDX --> P2
+  P0 -.->|"copy"| R0
+  P1 -.->|"copy"| R1
+  P2 -.->|"copy"| R2
 ```
-Index "orders"
-  ├── Primary P0 ──► Replica R0
-  ├── Primary P1 ──► Replica R1
-  └── Primary P2 ──► Replica R2
-         │
-         └── distributed across data nodes
+
+Each shard is itself a Lucene index of immutable segments:
+
+```mermaid
+flowchart LR
+  Shard["Shard = Lucene index"]
+  Shard --> S1["Segment"]
+  Shard --> S2["Segment"]
+  Shard --> S3["Segment"]
+  S1 --> II["Inverted index"]
+  S1 --> DV["Doc values"]
 ```
 
 ### 5. Inverted index, analysis, and relevance
@@ -131,11 +242,36 @@ Lexical search rests on an **inverted index**: a map from **terms** to the docum
 
 **Text analysis** runs at index time (and usually at query time for full-text queries):
 
+```mermaid
+flowchart LR
+  Raw["Raw text"] --> CF["Character filters"]
+  CF --> TK["Tokenizer"]
+  TK --> TF["Token filters<br/>lowercase · stop · stem…"]
+  TF --> Terms["Terms + positions"]
+  Terms --> Inv["Inverted index"]
+```
+
 1. **Character filters** — normalize raw characters.
 2. **Tokenizer** — split into tokens (often words) with positions.
 3. **Token filters** — lowercase, stopwords, stemming, synonyms, …
 
 The default **standard analyzer** lowercases and tokenizes; that is why searches are typically case-insensitive for `text` fields. Phrase queries use stored positions so terms must appear near each other.
+
+```mermaid
+flowchart TB
+  subgraph Docs["Documents"]
+    Doc1["Doc 1: Beauty is in the eye…"]
+    Doc2["Doc 2: Beauty and the beast"]
+  end
+  subgraph Inv["Inverted index"]
+    B["beauty → 1, 2"]
+    T["the → 1, 2"]
+    Beast["beast → 2"]
+  end
+  Docs --> Inv
+  Q["Query: beauty"] --> Inv
+  Inv --> Hits["Hits: Doc 1, Doc 2<br/>ranked by BM25"]
+```
 
 **Relevance.** Matching documents get a score. OpenSearch ranks with **Okapi BM25**, combining:
 
@@ -150,6 +286,18 @@ The default **standard analyzer** lowercases and tokenizes; that is why searches
 ### 6. Write path — durability vs search visibility
 
 Indexing is not “write once to Lucene and done.” Official concepts docs describe a lifecycle:
+
+```mermaid
+flowchart LR
+  W["Index / bulk request"] --> Prim["Primary shard"]
+  Prim --> TL["Translog<br/>fsync → durable ack"]
+  Prim --> Buf["Lucene in-memory buffer"]
+  Prim --> Rep["Replica shards"]
+  Buf -->|"refresh"| Seg["New segment<br/>searchable"]
+  Seg -->|"flush fsync"| Disk["Durable Lucene files"]
+  Disk --> TL2["Translog can prune"]
+  Seg -->|"merge"| Big["Larger segments"]
+```
 
 1. **Accept on primary** — write to the shard **translog**; fsync the translog before ack so the update is **durable**. Also hand the change to the Lucene writer’s in-memory buffer. Replicate to replicas as configured.
 2. **Refresh** — periodically turn the in-memory buffer into new on-disk **segments** and open a new reader so documents become **searchable**. Often called a soft commit: on disk, but not yet the durability boundary for Lucene files.
@@ -180,6 +328,15 @@ Full-text leaf queries (`match`, …) analyze the query string with the field’
 
 `bool` is the workhorse compound: `must` / `should` / `must_not` / `filter`. Put non-scoring constraints in `filter`.
 
+```mermaid
+flowchart TB
+  Bool["bool query"]
+  Bool --> Must["must<br/>must match · scored"]
+  Bool --> Filter["filter<br/>must match · no score · cacheable"]
+  Bool --> Should["should<br/>optional boost"]
+  Bool --> Not["must_not<br/>exclude"]
+```
+
 Some query types are **expensive** (fuzzy, prefix, wildcards, certain `query_string` forms, ranges on text/keyword). Clusters can disable them via `search.allow_expensive_queries` and track offenders with shard slow logs.
 
 Adjacent languages exist for other surfaces: **query string** (URL-friendly), **DQL** (Dashboards filtering), **PPL** (piped observability-style analysis). Core application search usually starts with Query DSL.
@@ -195,6 +352,15 @@ Aggregations summarize matching documents (optionally after a query narrows the 
 | **Pipeline** | Aggregate over other agg outputs | `avg_bucket`, `cumulative_sum`, `bucket_sort` |
 
 **Nested aggregations** (sub-aggs under buckets) power Dashboards visualizations: e.g. `terms` on category → nested `avg` on price. Aggregations are CPU- and memory-heavier than simple searches; they lean on **doc values** (column-oriented on-disk structures) for sorting and aggregating.
+
+```mermaid
+flowchart TB
+  Q["Optional query<br/>narrow the doc set"] --> Buckets["Bucket agg<br/>e.g. terms(category)"]
+  Buckets --> B1["Bucket: shoes"]
+  Buckets --> B2["Bucket: shirts"]
+  B1 --> M1["Metric: avg(price)"]
+  B2 --> M2["Metric: avg(price)"]
+```
 
 Rule: aggregate on `keyword` (or numeric/date), not on analyzed `text`.
 
@@ -215,29 +381,24 @@ This survey stops at the primitives those features share. Cross-cluster replicat
 
 ### 10. Synthesis diagram
 
-```
-Clients / Dashboards / Ingest tools
-              │
-              ▼
-     Coordinating / Ingest nodes
-              │
-              ▼
-┌─────────────────────────────────────┐
-│ Cluster state (cluster manager)     │
-│  indices · mappings · allocation    │
-└─────────────────────────────────────┘
-              │
-              ▼
-┌─────────────────────────────────────┐
-│ Index = documents + mapping         │
-│   └── Shards (primary + replicas)   │
-│         └── Lucene segments         │
-│               inverted index ·      │
-│               doc values            │
-└─────────────────────────────────────┘
-              │
-     search ←─┴─→ aggregations
-     (Query DSL, BM25 / filters)   (metrics · buckets · pipelines)
+```mermaid
+flowchart TB
+  Clients["Clients / Dashboards / Ingest"]
+  Coord["Coordinating / Ingest nodes"]
+  CM["Cluster manager<br/>indices · mappings · allocation"]
+  Index["Index = documents + mapping"]
+  Shards["Shards: primary + replicas"]
+  Lucene["Lucene segments<br/>inverted index · doc values"]
+  Search["Search<br/>Query DSL · BM25 · filters"]
+  Aggs["Aggregations<br/>metrics · buckets · pipelines"]
+
+  Clients --> Coord
+  Coord --> CM
+  Coord --> Index
+  Index --> Shards
+  Shards --> Lucene
+  Lucene --> Search
+  Lucene --> Aggs
 ```
 
 **Design thesis.** Fix the **mapping contract** (`text` vs `keyword`, multi-fields) and **shard sizing** before tuning queries. Separate **durability** (translog) from **search visibility** (refresh). Put filters in filter context; score only what users need ranked. Treat aggregations as a first-class analytics path on the same shards—not a bolt-on warehouse—while respecting their CPU/memory cost.
@@ -287,3 +448,4 @@ Metric (stats), bucket (grouping), and pipeline (aggs-on-aggs). Aggregating anal
 ## Memo
 
 —
+

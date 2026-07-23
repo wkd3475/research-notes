@@ -1083,6 +1083,28 @@ a.grass-cell:focus-visible,
   font-size: 0.875rem;
 }
 
+.note-content .mermaid-diagram {
+  margin: 1.5rem 0;
+  padding: 1rem 0.75rem;
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.note-content .mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.note-content .mermaid-diagram--error {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: left;
+  padding: 1rem;
+}
+
 .note-content code {
   font-family: var(--font-mono);
   font-size: 0.9em;
