@@ -1,0 +1,6 @@
+label:
+  en: 'Operating the OpenTelemetry Collector pipeline'
+  ko: 'OpenTelemetry Collector 파이프라인 운영'
+reason:
+  en: 'Agent + gateway topology, memory_limiter ordering, tail sampling, and the metric-cardinality traps that decide whether a Collector deployment survives production'
+  ko: 'agent + gateway 구성, memory_limiter 순서, tail sampling, Collector 배포의 생사를 가르는 메트릭 카디널리티 함정'

@@ -1,0 +1,15 @@
+description: '2026 로깅 트렌드 서베이 — 일급 신호가 된 OpenTelemetry 로그, trace 컨텍스트 상관, 구조화 로그와 wide event(observability 2.0), 컬럼형/object storage 경제성, Collector/Fluent Bit/Vector 파이프라인, 필터링·tail sampling 비용 통제, GenAI 관측성'
+pubDate: 2026-07-24
+tags:
+  - logging
+  - observability
+  - opentelemetry
+  - wide-events
+  - clickhouse
+  - loki
+draft: false
+exploreNext:
+  - otel-collector-pipeline-ops
+  - wide-events-columnar-storage
+  - log-storage-economics-loki-clickhouse
+  - genai-llm-observability
