@@ -1,0 +1,15 @@
+description: 'Survey of 2026 logging trends: OpenTelemetry logs as a first-class signal, trace-context correlation, structured logs and wide events (observability 2.0), columnar/object-storage economics, the Collector/Fluent Bit/Vector pipeline, cost control via filtering and tail sampling, and GenAI observability'
+pubDate: 2026-07-24
+tags:
+  - logging
+  - observability
+  - opentelemetry
+  - wide-events
+  - clickhouse
+  - loki
+draft: false
+exploreNext:
+  - otel-collector-pipeline-ops
+  - wide-events-columnar-storage
+  - log-storage-economics-loki-clickhouse
+  - genai-llm-observability

@@ -1,0 +1,6 @@
+label:
+  en: 'Wide events and columnar storage internals'
+  ko: 'wide event와 컬럼형 저장소 내부'
+reason:
+  en: 'How a single wide structured event is projected into metrics/logs/traces, and why Parquet/ClickHouse columnar compression makes high-cardinality data affordable'
+  ko: '하나의 wide 구조화 이벤트가 metric/log/trace로 투영되는 방식, Parquet/ClickHouse 컬럼 압축이 고카디널리티 데이터를 감당하게 만드는 이유'

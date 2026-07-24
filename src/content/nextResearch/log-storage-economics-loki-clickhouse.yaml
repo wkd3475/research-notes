@@ -1,0 +1,6 @@
+label:
+  en: 'Log storage economics: Loki vs ClickHouse vs Elasticsearch'
+  ko: '로그 저장 경제성: Loki vs ClickHouse vs Elasticsearch'
+reason:
+  en: 'Label-only indexing vs columnar compression vs inverted index, hot/warm/cold tiering to object storage, and the 7-year archive cost math'
+  ko: '라벨 전용 인덱싱 vs 컬럼 압축 vs 역색인, object storage로의 hot/warm/cold 티어링, 7년 아카이브 비용 계산'

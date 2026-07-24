@@ -1,0 +1,6 @@
+label:
+  en: 'GenAI/LLM observability with OTel semantic conventions'
+  ko: 'OTel 시맨틱 컨벤션 기반 GenAI/LLM 관측성'
+reason:
+  en: 'gen_ai.* attributes, token/cost/latency tracking, and why non-deterministic AI agents push teams toward wide-event observability'
+  ko: 'gen_ai.* 속성, 토큰/비용/지연 추적, 비결정적 AI 에이전트가 팀을 wide-event 관측성으로 미는 이유'
